@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
+class TasteUser extends Model
 {
     //
 	// protected $guarded = ["id"];
