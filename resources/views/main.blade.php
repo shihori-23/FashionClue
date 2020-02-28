@@ -6,6 +6,7 @@
 
 
         <title>Fashion clue</title>
+        <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
 
 

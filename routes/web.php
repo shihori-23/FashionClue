@@ -11,16 +11,16 @@
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
+//　LPページのルート
 Route::get('/', function () {
     return view('index');
 });
 
+//　ログインのに表示されるホーム画面のルート
+Route::group(['middleware' => 'auth'], function () {
 Route::get('/main', function () {
     return view('main');
+});
 });
 
 Auth::routes();

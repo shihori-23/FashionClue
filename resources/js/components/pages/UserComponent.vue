@@ -1,8 +1,8 @@
 <template>
     <v-app>
-        <!-- <UserHeader /> -->
+        <Header />
         <div class="router">
-        <transition name="slide" mode="out-in">
+        <transition>
             <router-view></router-view>
         </transition>
         </div>
@@ -10,16 +10,16 @@
         ログインしました
         <v-btn color="blue" text @click="snackbar = false">Close</v-btn>
         </v-snackbar>
-        <!-- <UserFooter /> -->
+        <Footer />
     </v-app>
 </template>
 <script>
-// import UserHeader from "../component/header";
-// import UserFooter from "../component/footer";
+import Header from "../items/HeaderComponent";
+import Footer from "../items/FooterComponent";
 export default {
   components: {
-    // UserHeader,
-    // UserFooter
+    Header,
+    Footer
   },
   data() {
     return {
@@ -52,16 +52,5 @@ export default {
 <style scoped>
 .router {
   margin-top: 56px;
-}
-.slide-enter-active {
-  transition: all .3s ease;
-}
-.slide-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-enter, .slide-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
-  transform: translateX(10px);
-  opacity: 0;
 }
 </style>
