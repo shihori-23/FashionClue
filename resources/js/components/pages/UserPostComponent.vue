@@ -1,5 +1,8 @@
 <template>
-  <p>質問投稿ページ</p>
+  <div>
+    <p>質問投稿ページ</p>
+    <p>{{ title }}</p>
+  </div>
 </template>
 <script>
 
@@ -9,6 +12,7 @@ export default {
   },
   data() {
     return {
+      title:'aaa',
     };
   },
 

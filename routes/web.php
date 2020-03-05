@@ -18,9 +18,9 @@ Route::get('/', function () {
 
 //　ログインのに表示されるホーム画面のルート
 Route::group(['middleware' => 'auth'], function () {
-Route::get('/main', function () {
-    return view('main');
-});
+    Route::get('/main', function () {
+        return view('main');
+    });
 });
 
 Auth::routes();

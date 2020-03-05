@@ -2,11 +2,9 @@
     <v-app>
         <Header />
         <div class="router">
-        <transition>
             <router-view></router-view>
-        </transition>
         </div>
-        <v-snackbar v-model="snackbar" :timeout="timeout">
+        <v-snackbar v-model="snackbar" :timeout="timeout" class="snackbar">
         ログインしました
         <v-btn color="blue" text @click="snackbar = false">Close</v-btn>
         </v-snackbar>
@@ -29,22 +27,18 @@ export default {
   },
 
   created() {
-    // this.getUid();
+    this.getUid();
   },
   methods: {
-    // getUid: function() {
-    //   axios
-    //     .get("api/uid")
-    //     .then(res => {
-    //       let role = res.data.role;
-    //       if (role === 2) {
-    //         this.$router.push({ name: "CharismaHome" });
-    //       } else {
-    //         this.snackbar = true;
-    //       }
-    //     })
-    //     .catch(err => console.log(err));
-    // }
+    getUid: function() {
+      axios
+        .get("api/uid")
+        .then(res => {
+          console.log(res.data.uid);
+          this.snackbar = true;
+        })
+        .catch(err => console.log(err));
+    }
   }
 };
 </script>
@@ -52,5 +46,9 @@ export default {
 <style scoped>
 .router {
   margin-top: 56px;
+}
+.snackbar{
+  margin-bottom:56px;
+  z-index: 200;
 }
 </style>

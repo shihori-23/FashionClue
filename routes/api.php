@@ -13,6 +13,20 @@ use Illuminate\Http\Request;
 |
 */
 
+//　はじめから記述されていたもの
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//　API定義
+//　認証後であれば下記ルート定義が有効になる
+Route::group(['middleware' => 'auth'], function () {
+    //　ログイン中のuidの取得
+    Route::get('uid', 'Api\UsersController@uid');
+    //　ログイン中のユーザーのプロフィール取得
+    Route::get('get/profile', 'Api\UsersController@show');
+    //　プロフィールの編集
+    Route::post('edit/profile', 'Api\UsersController@edit');
+//認証閉じタグここまで
+});
+//認証閉じタグここまで
