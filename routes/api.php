@@ -27,6 +27,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get/profile', 'Api\UsersController@show');
     //　プロフィールの編集
     Route::post('edit/profile', 'Api\UsersController@edit');
+    //　テイストの編集
+    Route::post('edit/tastes', 'Api\UsersController@editTaste');
 //認証閉じタグここまで
 });
 //認証閉じタグここまで

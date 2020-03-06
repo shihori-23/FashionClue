@@ -10,7 +10,7 @@
         </div>
 
     </header>
-    </template>
+</template>
 <script>
 export default {
     data() {

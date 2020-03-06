@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
-    <v-container class="text-center">
+    <v-container class="main_profile text-center">
       <h2 class="subtitle-1">プロフィール編集</h2>
-       <div class="text-center">
+      <div class="text-center">
         <v-dialog v-model="dialog" width="400">
           <v-card>
             <v-card-title class="headline grey lighten-2" primary-title>プロフィールを保存しました</v-card-title>
@@ -33,19 +33,16 @@
           />
         </label>
       </div>
-
       <v-row justify="center">
         <v-col cols="11">
           <v-text-field
             label="アカウント名"
             id="name"
             counter="20"
-            @blur="forcusout('name')"
             v-model="user.name"
             color="#81cac4"
             :readonly="readonly_name"
             append-icon="mdi-pencil"
-            @click:append="change('name')"
           ></v-text-field>
         </v-col>
         <v-col cols="11">
@@ -66,15 +63,6 @@
           color="#81cac4"
           v-model="user.gender"
           ></v-select>
-          <!-- <v-text-field
-            label="性別"
-            id="gender"
-            v-model="gender"
-            :readonly="readonly_gender"
-            color="#81cac4"
-            append-outer-icon="mdi-pencil"
-            @click:append-outer="change('gender')"
-          ></v-text-field> -->
         </v-col>
         <v-col cols="11">
           <v-text-field
@@ -84,23 +72,41 @@
             :readonly="readonly_age"
             color="#81cac4"
             append-icon="mdi-pencil"
-            @click:append="change('age')"
           ></v-text-field>
         </v-col>
         <v-col cols="11">
           <v-textarea
-            label="BIO"
+            label="自己紹介"
             id="bio"
             name="input-7-4"
             v-model="user.bio"
             :readonly="readonly_bio"
             color="#81cac4"
+            rows="3"
+            row-height="15"
             append-icon="mdi-pencil"
-            @click:append="change('bio')"
           ></v-textarea>
         </v-col>
       </v-row>
-      <v-btn @click="save" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
+      <v-btn @click="saveUserProflile" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
+    </v-container>
+    <v-container class="sub_profile">
+      <v-col v-if="notEntered">
+        <p>好みのテイストを３つまで選択して下さい</p>
+        <v-chip-group
+          v-model="selection"
+          active-class="deep-purple accent-4 white--text"
+          column
+          multiple
+          max=3
+        >
+          <v-chip v-for="taste in tastes" :key="taste.id" :value="taste.tastes_name">{{ taste.taste_name }}</v-chip>
+        </v-chip-group>
+        <v-btn @click="tasteSave" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
+      </v-col>
+        <v-col v-if="!notEntered">
+        <p>性別を登録して追加情報を登録しましょう</p>
+      </v-col>
     </v-container>
   </div>
 </template>
@@ -118,14 +124,24 @@ export default {
       user: {},
       gender:"",
       items: ['レディース', 'メンズ'],
-      readonly_name: true,
+      readonly_name: false,
       readonly_email: true,
-      readonly_bio: true,
-      readonly_age: true,
+      readonly_bio: false,
+      readonly_age: false,
+      selection:"",
+      tastes: [],
+      notEntered:false,
     };
   },
   created() {
     this.getProfile();
+    console.log(this.selection);
+  },
+  watch: {
+      selection: function(newVal, oldVal) {
+      console.log(this.selection);
+  }
+
   },
 
   methods: {
@@ -135,6 +151,9 @@ export default {
         .get("api/get/profile")
         .then(res => {
           this.user = res.data.profile;
+          this.tastes = res.data.tastes;
+          this.notEntered = res.data.notEntered;
+          console.log(res.data.notEntered);
           // 性別の判断
           if(res.data.profile.gender == 0){
               this.user.gender = this.items[0];
@@ -143,39 +162,8 @@ export default {
               this.user.gender = this.items[1];
               console.log("メンズ");
           }
-          console.log(res.data.profile);
-          console.log(res.data.profile.gender);
         })
         .catch(err => console.log(err));
-    },
-    //鉛筆マークを押したらReadOnlyが外れて、フォーカス
-    change: function(kind) {
-      if (kind == "name") {
-        this.readonly_name = false;
-      } else if (kind == "email") {
-        this.readonly_email = false;
-      } else if (kind == "bio") {
-        this.readonly_bio = false;
-      } else if (kind == "gender") {
-        this.readonly_gender = false;
-      } else if (kind == "age") {
-        this.readonly_age = false;
-      } 
-      document.getElementById(kind).focus();
-    },
-    //フォーカス外れたらリードオンリーにする。
-    forcusout: function(kind) {
-      if (kind == "name") {
-        this.readonly_name = true;
-      } else if (kind == "email") {
-        this.readonly_email = true;
-      } else if (kind == "bio") {
-        this.readonly_bio = true;
-      } else if (kind == "gender") {
-        this.readonly_gender = true;
-      } else if (kind == "age") {
-        this.readonly_age = true;
-      }
     },
     //画像の処理
     //画像ファイルを設置
@@ -186,7 +174,7 @@ export default {
     //変更を保存
     //めんどくさい三項演算子の部分はnullの文字列入っちゃう対策
     //appendはinput fileで画像を送信するときに使う。
-    save: function() {
+    saveUserProflile: function() {
       let formData = new FormData();
       formData.append("image", this.fileInfo);
       formData.append("name", this.user.name);
@@ -208,10 +196,10 @@ export default {
       };
       axios
         .post("api/edit/profile", formData, config)
-        .then(res => {;
+        .then(res => {
           this.dialog = true;
           this.user = res.data.profile;
-          this.user.image = res.data.profile.image;
+
           console.log(res.data.profile.image);
           // 性別の判断
           if(res.data.profile.gender == 0){
@@ -221,11 +209,20 @@ export default {
           }
         })
         .catch(err => console.log(err));
-    }
+    },
+    tasteSave: function() {
+      axios
+        .post("api/edit/tastes",{
+          tastes_id: this.selection
+        })
+        .then(res => {
+          console.log(res.data);
+        })
+        .catch(err => console.log(err));
+    },
   }
 };
 </script>
-
 
 <style scoped>
 .v-subheader {
@@ -233,20 +230,22 @@ export default {
 }
 
 .wrap {
+  width: 100%;
+  background-color:#fafafa;
   margin-bottom: 56px;
 }
 
 .image {
-  width: 150px;
+  width: 120px;
   margin: 8px auto;
-  height: 150px;
+  height: 120px;
   border-radius: 75px;
   position: relative;
 }
 
 .image img {
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
   border-radius: 75px;
   object-fit: cover;
 }
@@ -257,8 +256,8 @@ export default {
 
 .add_btn {
   position: absolute;
-  top: 112px;
-  right: 30%;
+  top: 80px;
+  right: 33%;
   background: #81cac4;
   padding: 4px;
   border-radius: 50%;
@@ -282,25 +281,6 @@ export default {
   width: 50%;
 }
 
-/* .user_profile span {
-  display: block;
-  color: #fff;
-  font-weight: bold;
-  font-size: 16px;
-  font-family: “游ゴシック”, “Yu Gothic”;
-  background: #81cac4;
-  padding: 8px 0;
-  border-radius: 16px;
-  max-width: 168px;
-  margin: auto;
-  text-align: center;
-  transition: 0.3s;
-  cursor: pointer;
-}
-.user_profile span:hover {
-  opacity: 0.7;
-} */
-
 .user_profile input {
   opacity: 0;
 }
@@ -308,5 +288,11 @@ export default {
 .submit_btn {
   color: #fff;
   font-weight: bold;
+}
+
+.sub_profile{
+  width: 95%;
+  margin:1em auto;
+  background: #fafafa;
 }
 </style>

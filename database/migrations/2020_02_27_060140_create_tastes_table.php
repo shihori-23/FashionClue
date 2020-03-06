@@ -17,7 +17,8 @@
 						$table->integer('taste_type')->nullable();
 						$table->string('taste_name')->nullable();
 						$table->timestamps();
-						$table->softDeletes();
+                        $table->softDeletes();
+                        $table->unique(['taste_type', 'taste_name'], 'uq_tastes_01');
 
                     });
                 }
