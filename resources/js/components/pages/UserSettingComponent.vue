@@ -135,15 +135,12 @@ export default {
   },
   created() {
     this.getProfile();
-    console.log(this.selection);
   },
   watch: {
       selection: function(newVal, oldVal) {
       console.log(this.selection);
-  }
-
   },
-
+  },
   methods: {
     //プロフィールの取得
     getProfile: function() {
@@ -153,7 +150,8 @@ export default {
           this.user = res.data.profile;
           this.tastes = res.data.tastes;
           this.notEntered = res.data.notEntered;
-          console.log(res.data.notEntered);
+          console.log(res.data);
+
           // 性別の判断
           if(res.data.profile.gender == 0){
               this.user.gender = this.items[0];
@@ -162,18 +160,28 @@ export default {
               this.user.gender = this.items[1];
               console.log("メンズ");
           }
+          this.selectedTasteConvert(res);
         })
         .catch(err => console.log(err));
+    },
+    //　テイストタグのデータを配列に入れる処理
+    selectedTasteConvert: function(res) {
+          const selectedTasteArray = res.data.selectedTastes;
+          const selectedtasteList = selectedTasteArray.map(function(row){
+          return [ row["taste_id"] ]
+          }).reduce(function(a,b){
+            return a.concat(b);
+          });
+          this.selection = selectedtasteList;   
     },
     //画像の処理
     //画像ファイルを設置
     fileSelected(event) {
       this.fileInfo = event.target.files[0];
-      this.user.image_url = window.URL.createObjectURL(this.fileInfo);
+      this.user.image = window.URL.createObjectURL(this.fileInfo);
     },
     //変更を保存
     //めんどくさい三項演算子の部分はnullの文字列入っちゃう対策
-    //appendはinput fileで画像を送信するときに使う。
     saveUserProflile: function() {
       let formData = new FormData();
       formData.append("image", this.fileInfo);

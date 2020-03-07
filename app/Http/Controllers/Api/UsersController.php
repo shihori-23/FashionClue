@@ -35,8 +35,11 @@ class UsersController extends Controller
         } else {
             $genderNotEntered = true;
         }
-        // $array2 = array('id'=>$taste->id,'taste_name'=>$taste->taste_name);
-        return response()->json(['profile'=>$array,'tastes'=>$taste,'notEntered'=>$genderNotEntered], 200);
+
+        //　選択済のテイストがあれば取得して配列に入れる
+        $selectedTastes = TasteUser::where('user_id','=',Auth::id())->select('taste_id')->get();
+
+        return response()->json(['profile'=>$array,'tastes'=>$taste,'notEntered'=>$genderNotEntered,'selectedTastes'=>$selectedTastes], 200);
     }
 
     //プロフィール編集
@@ -91,18 +94,19 @@ class UsersController extends Controller
 
         //　一旦ログインユーザーのテイストデータを消す
         $oldTastes = TasteUser::where('user_id','=',$user_id)->get();
-        if ($oldTastes->isEmpty()) {
-        //　すでにテイストを登録してなければ何もしない            
+        if ($oldTastes->isEmpty()) { 
+
         } else {
             $delete = TasteUser::where('user_id','=',$user_id)->delete();
-            $tastes = [];
-
-            for($i = 0; $i < count($selectedTastes); $i++){
-                array_push($tastes,['user_id' => $user_id,'taste_id'=> $selectedTastes[$i],'created_at' => $dt,'updated_at' => $dt]);
-            }
-            $tastesUser = new TasteUser;
-            $tastesUser->insert($tastes);
         }
+
+        $tastes = [];
+
+        for($i = 0; $i < count($selectedTastes); $i++){
+            array_push($tastes,['user_id' => $user_id,'taste_id'=> $selectedTastes[$i],'created_at' => $dt,'updated_at' => $dt]);
+        }
+        $tastesUser = new TasteUser;
+        $tastesUser->insert($tastes);
 
         return response()->json(['done'=>true], 200);
     }
