@@ -3,17 +3,27 @@
     <v-container class="main_profile text-center">
       <h2 class="subtitle-1">プロフィール編集</h2>
       <div class="text-center">
-        <v-dialog v-model="dialog" width="400">
+        <v-dialog v-model="success_dialog" width="400">
           <v-card>
             <v-card-title class="headline grey lighten-2" primary-title>プロフィールを保存しました</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="dialog = false">閉じる</v-btn>
+              <v-btn color="primary" text @click="success_dialog = false">閉じる</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="error_dialog" width="400">
+          <v-card>
+            <v-card-title class="headline grey lighten-2" primary-title>入力エラーです。再度確認の上、変更を保存してください</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="error_dialog = false">閉じる</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </div>
-
+      <v-form ref="form" v-model="valid" lazy-validation>
       <div class="image_container">
         <div class="image">
           <img :src="user.image"/>
@@ -35,60 +45,66 @@
       </div>
       <v-row justify="center">
         <v-col cols="11">
-          <v-text-field
-            label="アカウント名"
-            id="name"
-            counter="20"
-            v-model="user.name"
-            color="#81cac4"
-            :readonly="readonly_name"
-            append-icon="mdi-pencil"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="11">
-          <v-text-field
-            label="email"
-            id="email" 
-            v-model="user.email" 
-            :readonly="readonly_email" 
-            color="#81cac4" 
-            append-icon="mdi-information-outline"
+            <v-text-field
+              label="アカウント名"
+              id="name"
+              counter="20"
+              v-model="user.name"
+              color="#81cac4"
+              :readonly="readonly_name"
+              :rules="[rules.required,rules.name_counter]"
+              append-icon="mdi-pencil"
             ></v-text-field>
-        </v-col>
-        <v-col cols="11">
-          <v-select
-          :items="items"
-          label="性別"
-          id="gender"
-          color="#81cac4"
-          v-model="user.gender"
-          ></v-select>
-        </v-col>
-        <v-col cols="11">
-          <v-text-field
-            label="age"
-            id="age"
-            v-model="user.age"
-            :readonly="readonly_age"
+          </v-col>
+          <v-col cols="11">
+            <v-text-field
+              label="email"
+              id="email" 
+              v-model="user.email" 
+              :readonly="readonly_email" 
+              color="#81cac4" 
+              append-icon="mdi-information-outline"
+              ></v-text-field>
+          </v-col>
+          <v-col cols="11">
+            <v-select
+            :items="items"
+            label="性別"
+            id="gender"
             color="#81cac4"
-            append-icon="mdi-pencil"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="11">
-          <v-textarea
-            label="自己紹介"
-            id="bio"
-            name="input-7-4"
-            v-model="user.bio"
-            :readonly="readonly_bio"
-            color="#81cac4"
-            rows="3"
-            row-height="15"
-            append-icon="mdi-pencil"
-          ></v-textarea>
-        </v-col>
-      </v-row>
-      <v-btn @click="saveUserProflile" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
+            v-model="user.gender"
+            ></v-select>
+          </v-col>
+          <v-col cols="11">
+            <v-text-field
+              label="年齢"
+              id="age"
+              type="number"
+              min="0"
+              v-model="user.age"
+              :readonly="readonly_age"
+              color="#81cac4"
+              append-icon="mdi-pencil"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="11">
+            <v-textarea
+              label="自己紹介"
+              id="bio"
+              name="input-7-4"
+              v-model="user.bio"
+              :readonly="readonly_bio"
+              :rules="[rules.bio_counter]"
+              counter="200"
+              color="#81cac4"
+              rows="3"
+              row-height="15"
+              append-icon="mdi-pencil"
+            ></v-textarea>
+          </v-col>
+        </v-row>
+        <v-btn @click="saveUserProflile" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
+        </v-form>
     </v-container>
     <v-container class="sub_profile">
       <v-col v-if="notEntered">
@@ -100,7 +116,7 @@
           multiple
           max=3
         >
-          <v-chip v-for="taste in tastes" :key="taste.id" :value="taste.tastes_name">{{ taste.taste_name }}</v-chip>
+          <v-chip v-for="taste in tastes" :key="taste.id" :value="taste.id">{{ taste.taste_name }}</v-chip>
         </v-chip-group>
         <v-btn @click="tasteSave" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
       </v-col>
@@ -115,22 +131,29 @@
 export default {
   data() {
     return {
-      rules: {
-        required: value => !!value || "Required.",
-        counter: value => value.length <= 20 || "Max 20 characters"
+      //バリデーション系の定義
+      rules:{
+      required:value => !!value || "入力必須です。",
+      name_counter:value =>　value.length <= 20 || "アカウント名は20字以下で入力してください。",
+      bio_counter: value =>　value.length <= 200 || "自己紹介は200字以下で入力してください。",
       },
-      dialog: false,
-      fileInfo: "",
-      user: {},
-      gender:"",
-      items: ['レディース', 'メンズ'],
+      //真偽値の定義
+      valid: true,
+      success_dialog: false,
+      error_dialog: false,
       readonly_name: false,
       readonly_email: true,
       readonly_bio: false,
       readonly_age: false,
-      selection:"",
-      tastes: [],
       notEntered:false,
+
+      //データ型の定義  
+      fileInfo: "",
+      user: {},
+      gender:"",
+      items: ['レディース', 'メンズ'],
+      selection:[],
+      tastes: [],
     };
   },
   created() {
@@ -172,40 +195,66 @@ export default {
           }).reduce(function(a,b){
             return a.concat(b);
           });
-          this.selection = selectedtasteList;   
+          this.selection = selectedtasteList;
+          console.log(this.selection);  
     },
     //画像の処理
     //画像ファイルを設置
     fileSelected(event) {
+        const file = event.target.files[0];
+        const name = file.name;
+        const size = file.size;
+        const type = file.type;
+        const errors = '';
+
+      //上限サイズを3MB確認
+      if (size > 3000000) {
+        errors += 'ファイルの上限サイズ3MBを超えています\n'
+      }
+  
+      //.jpg .gif .png . pdf のみ許可
+      if (type != 'image/jpeg' && type != 'image/gif' && type != 'image/png' && type != 'application/pdf') {
+        errors += '.jpg、.gif、.png、.pdfのいずれかのファイルのみ許可されています\n'
+      }
+  
+      if (errors) {
+        //errorsが存在する場合は内容をalert
+        alert(errors)
+        //valueを空にしてリセットする
+        event.currentTarget.value = ''
+      }
       this.fileInfo = event.target.files[0];
       this.user.image = window.URL.createObjectURL(this.fileInfo);
     },
     //変更を保存
     //めんどくさい三項演算子の部分はnullの文字列入っちゃう対策
     saveUserProflile: function() {
-      let formData = new FormData();
-      formData.append("image", this.fileInfo);
-      formData.append("name", this.user.name);
-      formData.append("email", this.user.email);
-      this.user.bio
-        ? formData.append("bio", this.user.bio)
-        : formData.append("bio", "");
-      this.user.age
-        ? formData.append("age", this.user.age)
-        : formData.append("age", "");
-      this.user.gender
-        ? formData.append("gender", this.user.gender)
-        : formData.append("gender", "");
-      
-      var config = {
-        headers: {
-          "content-type": "multipart/form-data"
-        }
-      };
-      axios
+      //入力値のエラーを確認
+      if (this.$refs.form.validate()) {
+
+        let formData = new FormData();
+        formData.append("image", this.fileInfo);
+        formData.append("name", this.user.name);
+        formData.append("email", this.user.email);
+        this.user.bio
+          ? formData.append("bio", this.user.bio)
+          : formData.append("bio", "");
+        this.user.age
+          ? formData.append("age", this.user.age)
+          : formData.append("age", "");
+        this.user.gender
+          ? formData.append("gender", this.user.gender)
+          : formData.append("gender", "");
+        
+        var config = {
+          headers: {
+            "content-type": "multipart/form-data"
+          }
+        };
+        axios
         .post("api/edit/profile", formData, config)
         .then(res => {
-          this.dialog = true;
+          this.success_dialog = true;
           this.user = res.data.profile;
 
           console.log(res.data.profile.image);
@@ -216,7 +265,13 @@ export default {
               this.user.gender = this.items[1];
           }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.error_dialog = true;
+          console.log(err.response.data.errors)
+          })
+      } else {
+        console.log('エラーがあるよ！');
+      }
     },
     tasteSave: function() {
       axios
@@ -226,7 +281,7 @@ export default {
         .then(res => {
           console.log(res.data);
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err.response.data.errors));
     },
   }
 };

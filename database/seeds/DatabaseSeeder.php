@@ -26,5 +26,6 @@ class DatabaseSeeder extends Seeder
 		$this->call(TasteUserTableSeeder::class);
 		$this->call(BookmarkAnswerTableSeeder::class);
 		$this->call(AnswerNoticeTableSeeder::class);
+		$this->call(UsersTableSeeder::class);
     }
 }

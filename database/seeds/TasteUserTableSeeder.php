@@ -14,14 +14,26 @@ use Illuminate\Database\Seeder;
             
             $faker = Faker\Factory::create("ja_JP");
             
-            for( $i=0; $i<10; $i++ ){
-
-                App\TasteUser::create([
-					"user_id" => $faker->randomDigit(),
-					"taste_id" => $faker->randomDigit(),
-					"created_at" => $faker->dateTime("now"),
-					"updated_at" => $faker->dateTime("now")
-                ]);
-            }
+            $data = [
+                [
+                    'user_id' => 1,
+                    'taste_id' => 11,
+                    "created_at" => $faker->dateTime("now"),
+                    "updated_at" => $faker->dateTime("now"),
+                ],
+                [
+                    'user_id' => 1,
+                    'taste_id' => 12,
+                    "created_at" => $faker->dateTime("now"),
+                    "updated_at" => $faker->dateTime("now"),
+                ],
+                [
+                    'user_id' => 1,
+                    'taste_id' => 13,
+                    "created_at" => $faker->dateTime("now"),
+                    "updated_at" => $faker->dateTime("now"),
+                ],
+            ];
+                DB::table('taste_users')->insert($data);
         }
     }

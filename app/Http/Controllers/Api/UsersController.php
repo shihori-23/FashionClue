@@ -45,7 +45,14 @@ class UsersController extends Controller
     //プロフィール編集
     public function edit(Request $request)
     {   
-
+        //バリデーション
+        $validatedData = $request->validate([ 
+            'name' => 'required | max:20',
+            'email' => 'required | email',
+            'age' => 'integer | nullable',
+            'bio' =>  'max:200',
+            'image' => 'file | image | max:3000000'
+        ]);
         // return response()->json(['done'=>$request->gender], 200);
 
         $user = User::find(Auth::id());
@@ -101,7 +108,6 @@ class UsersController extends Controller
         }
 
         $tastes = [];
-
         for($i = 0; $i < count($selectedTastes); $i++){
             array_push($tastes,['user_id' => $user_id,'taste_id'=> $selectedTastes[$i],'created_at' => $dt,'updated_at' => $dt]);
         }
