@@ -67,13 +67,14 @@
                     ></v-text-field>
                 </v-col>
                 <v-col cols="11">
-                    <v-select
-                    :items="items"
-                    label="性別"
-                    id="gender"
-                    color="#81cac4"
-                    v-model="userProfile.gender"
-                    ></v-select>
+
+                    <v-radio-group v-model="userProfile.gender" label="性別" id="gender" color="#81cac4">
+                        <v-radio v-for="(item,index) in gender"
+                            :key="index"
+                            :label="item"
+                            :value="index"
+                        ></v-radio>
+                    </v-radio-group>
                 </v-col>
                 <v-col cols="11">
                     <v-text-field
@@ -161,7 +162,7 @@ export default {
 
       notEntered:false,
       userProfile: {},
-      items: ['レディース', 'メンズ'],
+      gender: ['レディース', 'メンズ'],
       selection:[],
       tastes: [],
     };
@@ -188,16 +189,15 @@ export default {
           this.tastes = res.data.tastes;
           this.notEntered = res.data.notEntered;
           console.log(res.data);
-          console.log(this.userProfile,111);
 
           // 性別の判断
-          if(res.data.profile.gender == 0){
-              this.userProfile.gender = this.items[0];
-              console.log("レディース");
-          } else if (res.data.profile.gender == 1){
-              this.userProfile.gender = this.items[1];
-              console.log("メンズ");
-          }
+        //   if(res.data.profile.gender == 0){
+        //       this.userProfile.gender = this.gender[0];
+        //       console.log("レディース");
+        //   } else if (res.data.profile.gender == 1){
+        //       this.userProfile.gender = this.gender[1];
+        //       console.log("メンズ");
+        //   }
           this.selectedTasteConvert(res);
         })
         .catch(err => console.log(err));
@@ -220,7 +220,6 @@ export default {
             return a.concat(b);
         });
         this.selection = selectedtasteList;
-        console.log(this.selection);
     },
     //画像の処理
     //画像ファイルを設置
@@ -264,7 +263,7 @@ export default {
          * GetやGetAllメソッドで確認できる
          *---------------------------------------------- */
         Object.keys(this.userProfile).forEach(key=>{
-            console.log(key)
+            console.log(key,this.userProfile[key])
             formData.append(key, this.userProfile[key]);
         });
 
@@ -289,19 +288,14 @@ export default {
         };
 
         axios.post("api/edit/profile", formData, config).then(res => {
-
         /*----------------------------------------------
          * 何度も唱えそうものは変数化
          *---------------------------------------------- */
           const updatedUserProfile = res.data.profile;
-          const updatedUserGender = updatedUserProfile.gender;
+          const updatedUserGender = parseInt(updatedUserProfile.gender);
           this.isDialogOpen.successDialog = true;
           this.userProfile = updatedUserProfile;
-
-          // たぶんここはこれからのところだから、一旦コードだけ書き換え
-          if(updatedUserGender){
-            this.userProfile.gender = this.items[updatedUserGender];
-          }
+          this.userProfile.gender = updatedUserGender;
 
         }).catch(err => {
           this.isDialogOpen.errorDialog = true;

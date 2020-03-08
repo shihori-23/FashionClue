@@ -53,9 +53,9 @@ class UsersController extends Controller
             'bio' =>  'max:200',
             // 'image' => 'file | image | max:3000000'
         ]);
-        // return response()->json(['done'=>$request->gender], 200);
 
         $user = User::find(Auth::id());
+
         //もしファイルがあれば更新
         if ($request->file('image')) {
             //ファイルが保存される先の名前
@@ -64,32 +64,21 @@ class UsersController extends Controller
             // $user->image = str_replace('public/', '/image/profile', $profile_image->image_url);
             $user->image = str_replace('public/', 'storage/', $user->image);
         }
-        //　フォームに入力さえたデータ
-        if ($request->has('bio')) {
-            $user->bio = $request->bio;
-        }
-        if ($request->has('age')) {
-            $user->age = $request->age;
-        }
-        if ($request->has('gender')) {
-            //　性別をint形式に変換
-            $gender = $request->gender;
-            if ($gender == "レディース") {
-                $user->gender = 0;
-            } else if ($gender == "メンズ") {
-                $user->gender = 1;
+
+        $result = $user->fill($request->all())->save();
+
+        /*
+        * $result == trueだと更新がきちんとできたことになるので、
+        * フォームから送信されたrequestオブジェクトをそのままフロントにreturnする用に使える
+        */
+        if ($result) {
+            $ary = [];
+            foreach (array_keys($request->all()) as $keyName) {
+                $ary[$keyName] = $request[$keyName];
             }
         }
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->save();
 
-        //　更新したユーザー情報の取得
-        $user_key = Auth::id();
-        $users_profile = User::find(Auth::id());
-        $array = array('name' => $users_profile->name, 'email' => $users_profile->email, 'image' => $users_profile->image, 'bio' => $users_profile->bio, 'age' => $users_profile->age, 'gender' => $users_profile->gender);
-
-        return response()->json(['done' => true, 'profile' => $array], 200);
+        return response()->json(['done' => true, 'profile' => $ary], 200);
     }
     //　テイストの編集
     public function editTaste(Request $request)
