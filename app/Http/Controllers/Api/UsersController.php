@@ -12,7 +12,7 @@ use App\Taste;
 use App\TasteUser;
 
 class UsersController extends Controller
-{   
+{
     //　ログインユーザーのuidを取得
     public function uid()
     {
@@ -23,12 +23,12 @@ class UsersController extends Controller
     // ユーザーのプロフィール取得とテイストの取得
     public function show()
     {
-        $user = Auth::user(); 
-        $user_gender = Auth::user()->gender;               
-        $array = array('name'=>$user->name,'email'=>$user->email,'image'=>$user->image,'bio'=>$user->bio,'age'=>$user->age,'gender'=>$user->gender);
-        
+        $user = Auth::user();
+        $user_gender = Auth::user()->gender;
+        $array = array('name' => $user->name, 'email' => $user->email, 'image' => $user->image, 'bio' => $user->bio, 'age' => $user->age, 'gender' => $user->gender);
+
         //　性別判断し、存在するテイストを取得
-        $taste = Taste::where('taste_type','=',$user_gender)->select('id','taste_name')->get();
+        $taste = Taste::where('taste_type', '=', $user_gender)->select('id', 'taste_name')->get();
         //　性別登録をしているか判定
         if ($user_gender === null) {
             $genderNotEntered = false;
@@ -37,27 +37,27 @@ class UsersController extends Controller
         }
 
         //　選択済のテイストがあれば取得して配列に入れる
-        $selectedTastes = TasteUser::where('user_id','=',Auth::id())->select('taste_id')->get();
+        $selectedTastes = TasteUser::where('user_id', '=', Auth::id())->select('taste_id')->get();
 
-        return response()->json(['profile'=>$array,'tastes'=>$taste,'notEntered'=>$genderNotEntered,'selectedTastes'=>$selectedTastes], 200);
+        return response()->json(['profile' => $array, 'tastes' => $taste, 'notEntered' => $genderNotEntered, 'selectedTastes' => $selectedTastes], 200);
     }
 
     //プロフィール編集
     public function edit(Request $request)
-    {   
+    {
         //バリデーション
-        $validatedData = $request->validate([ 
+        $validatedData = $request->validate([
             'name' => 'required | max:20',
             'email' => 'required | email',
             'age' => 'integer | nullable',
             'bio' =>  'max:200',
-            'image' => 'file | image | max:3000000'
+            // 'image' => 'file | image | max:3000000'
         ]);
         // return response()->json(['done'=>$request->gender], 200);
 
         $user = User::find(Auth::id());
         //もしファイルがあれば更新
-        if ($request->file('image')) {   
+        if ($request->file('image')) {
             //ファイルが保存される先の名前
             $user->image = $request->file('image')->store('public/image/profile');
             //ここで、こっちが保存される先の名前を決める
@@ -67,19 +67,19 @@ class UsersController extends Controller
         //　フォームに入力さえたデータ
         if ($request->has('bio')) {
             $user->bio = $request->bio;
-        } 
+        }
         if ($request->has('age')) {
             $user->age = $request->age;
-        } 
+        }
         if ($request->has('gender')) {
             //　性別をint形式に変換
             $gender = $request->gender;
-            if ($gender == "レディース"){
+            if ($gender == "レディース") {
                 $user->gender = 0;
-            } else if($gender == "メンズ"){
+            } else if ($gender == "メンズ") {
                 $user->gender = 1;
             }
-        } 
+        }
         $user->name = $request->name;
         $user->email = $request->email;
         $user->save();
@@ -87,12 +87,13 @@ class UsersController extends Controller
         //　更新したユーザー情報の取得
         $user_key = Auth::id();
         $users_profile = User::find(Auth::id());
-        $array = array('name'=>$users_profile->name,'email'=>$users_profile->email,'image'=>$users_profile->image,'bio'=>$users_profile->bio,'age'=>$users_profile->age,'gender'=>$users_profile->gender);
+        $array = array('name' => $users_profile->name, 'email' => $users_profile->email, 'image' => $users_profile->image, 'bio' => $users_profile->bio, 'age' => $users_profile->age, 'gender' => $users_profile->gender);
 
-        return response()->json(['done'=>true,'profile'=>$array], 200);
+        return response()->json(['done' => true, 'profile' => $array], 200);
     }
     //　テイストの編集
-    public function editTaste(Request $request){
+    public function editTaste(Request $request)
+    {
 
         //　Requestを定義
         $selectedTastes = $request->tastes_id;
@@ -100,20 +101,19 @@ class UsersController extends Controller
         $dt = now();
 
         //　一旦ログインユーザーのテイストデータを消す
-        $oldTastes = TasteUser::where('user_id','=',$user_id)->get();
-        if ($oldTastes->isEmpty()) { 
-
+        $oldTastes = TasteUser::where('user_id', '=', $user_id)->get();
+        if ($oldTastes->isEmpty()) {
         } else {
-            $delete = TasteUser::where('user_id','=',$user_id)->delete();
+            $delete = TasteUser::where('user_id', '=', $user_id)->delete();
         }
 
         $tastes = [];
-        for($i = 0; $i < count($selectedTastes); $i++){
-            array_push($tastes,['user_id' => $user_id,'taste_id'=> $selectedTastes[$i],'created_at' => $dt,'updated_at' => $dt]);
+        for ($i = 0; $i < count($selectedTastes); $i++) {
+            array_push($tastes, ['user_id' => $user_id, 'taste_id' => $selectedTastes[$i], 'created_at' => $dt, 'updated_at' => $dt]);
         }
         $tastesUser = new TasteUser;
         $tastesUser->insert($tastes);
 
-        return response()->json(['done'=>true], 200);
+        return response()->json(['done' => true], 200);
     }
 }
