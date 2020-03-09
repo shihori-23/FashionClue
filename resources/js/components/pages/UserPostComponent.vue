@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <p>質問投稿ページ</p>
-    <p>{{ title }}</p>
+  <div class="wrap">
+    <v-container>
+      <p>質問投稿ページ</p>
+    </v-container>
   </div>
 </template>
 <script>

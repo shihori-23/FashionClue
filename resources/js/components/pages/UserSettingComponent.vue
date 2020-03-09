@@ -3,22 +3,22 @@
     <v-container class="main_profile text-center">
       <h2 class="subtitle-1">プロフィール編集</h2>
       <div class="text-center">
-        <v-dialog v-model="success_dialog" width="400">
+        <v-dialog v-model="isDialogOpen.successDialog" width="400">
           <v-card>
             <v-card-title class="headline grey lighten-2" primary-title>プロフィールを保存しました</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="success_dialog = false">閉じる</v-btn>
+              <v-btn color="primary" text @click="closeDialog('successDialog')">閉じる</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
 
-        <v-dialog v-model="error_dialog" width="400">
+        <v-dialog v-model="isDialogOpen.errorDialog" width="400">
           <v-card>
             <v-card-title class="headline grey lighten-2" primary-title>入力エラーです。再度確認の上、変更を保存してください</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="error_dialog = false">閉じる</v-btn>
+              <v-btn color="primary" text @click="closeDialog('errorDialog')">閉じる</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -26,13 +26,10 @@
       <v-form ref="form" v-model="valid" lazy-validation>
       <div class="image_container">
         <div class="image">
-          <img :src="user.image"/>
+          <img :src="userProfile.image"/>
         </div>
         <label class="user_profile" for="user_profile">
-          <!-- <v-btn color="#81cac4" fab small> -->
           <v-icon color="#fff" class="add_btn">mdi-camera</v-icon>
-          <!-- </v-btn> -->
-          <!-- <span>ファイルを選択</span> -->
           <input
             id="user_profile"
             multiple
@@ -49,10 +46,10 @@
               label="アカウント名"
               id="name"
               counter="20"
-              v-model="user.name"
+              v-model="userProfile.name"
               color="#81cac4"
-              :readonly="readonly_name"
-              :rules="[rules.required,rules.name_counter]"
+              :readonly="readonlyFlag.name"
+              :rules="[rules.required, rules.nameCounter]"
               append-icon="mdi-pencil"
             ></v-text-field>
           </v-col>
@@ -60,29 +57,36 @@
             <v-text-field
               label="email"
               id="email" 
-              v-model="user.email" 
-              :readonly="readonly_email" 
+              v-model="userProfile.email" 
+              :readonly="readonlyFlag.email" 
               color="#81cac4" 
               append-icon="mdi-information-outline"
               ></v-text-field>
           </v-col>
-          <v-col cols="11">
+          <v-radio-group v-model="userProfile.gender" label="性別" id="gender" color="#81cac4">
+            <v-radio v-for="(item,index) in gender"
+                :key="index"
+                :label="item"
+                :value="index"
+            ></v-radio>
+          </v-radio-group>
+          <!-- <v-col cols="11">
             <v-select
             :items="items"
             label="性別"
             id="gender"
             color="#81cac4"
-            v-model="user.gender"
+            v-model="userProfile.gender"
             ></v-select>
-          </v-col>
+          </v-col> -->
           <v-col cols="11">
             <v-text-field
               label="年齢"
               id="age"
               type="number"
               min="0"
-              v-model="user.age"
-              :readonly="readonly_age"
+              v-model="userProfile.age"
+              :readonly="readonlyFlag.age"
               color="#81cac4"
               append-icon="mdi-pencil"
             ></v-text-field>
@@ -92,9 +96,9 @@
               label="自己紹介"
               id="bio"
               name="input-7-4"
-              v-model="user.bio"
-              :readonly="readonly_bio"
-              :rules="[rules.bio_counter]"
+              v-model="userProfile.bio"
+              :readonly="readonlyFlag.bio"
+              :rules="[rules.bioCounter]"
               counter="200"
               color="#81cac4"
               rows="3"
@@ -103,7 +107,7 @@
             ></v-textarea>
           </v-col>
         </v-row>
-        <v-btn @click="saveUserProflile" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
+        <v-btn @click="saveUserProfileData" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
         </v-form>
     </v-container>
     <v-container class="sub_profile">
@@ -121,8 +125,8 @@
         <v-btn @click="tasteSave" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
       </v-col>
         <v-col v-if="!notEntered">
-        <p>性別を登録して追加情報を登録しましょう</p>
-      </v-col>
+          <p>性別を登録して追加情報を登録しましょう</p>
+        </v-col>
     </v-container>
   </div>
 </template>
@@ -134,30 +138,36 @@ export default {
       //バリデーション系の定義
       rules:{
       required:value => !!value || "入力必須です。",
-      name_counter:value =>　value.length <= 20 || "アカウント名は20字以下で入力してください。",
-      bio_counter: value =>　value.length <= 200 || "自己紹介は200字以下で入力してください。",
+      nameCounter:value => value.length <= 20 || "アカウント名は20字以下で入力してください。",
+      bioCounter: value => value.length <= 200 || "自己紹介は200字以下で入力してください。",
       },
       //真偽値の定義
       valid: true,
-      success_dialog: false,
-      error_dialog: false,
-      readonly_name: false,
-      readonly_email: true,
-      readonly_bio: false,
-      readonly_age: false,
+      isDialogOpen: {
+        successDialog:false,
+        errorDialog:false,
+      },
+      readonlyFlag:{
+        name: false,
+        email: true,
+        bio: false,
+        age: false,
+      },
       notEntered:false,
 
       //データ型の定義  
-      fileInfo: "",
-      user: {},
-      gender:"",
-      items: ['レディース', 'メンズ'],
+      userProfile: {},
+      fileInfo:"",
+      gender: ['レディース', 'メンズ'],
       selection:[],
       tastes: [],
     };
   },
   created() {
-    this.getProfile();
+  
+  },
+  mounted() {
+      this.getUserProfileData();
   },
   watch: {
       selection: function(newVal, oldVal) {
@@ -166,37 +176,34 @@ export default {
   },
   methods: {
     //プロフィールの取得
-    getProfile: function() {
+    getUserProfileData: function() {
       axios
         .get("api/get/profile")
         .then(res => {
-          this.user = res.data.profile;
+          this.userProfile = res.data.profile;
           this.tastes = res.data.tastes;
           this.notEntered = res.data.notEntered;
           console.log(res.data);
+          console.log(this.userProfile,111);
 
-          // 性別の判断
-          if(res.data.profile.gender == 0){
-              this.user.gender = this.items[0];
-              console.log("レディース");
-          } else if (res.data.profile.gender == 1){
-              this.user.gender = this.items[1];
-              console.log("メンズ");
-          }
           this.selectedTasteConvert(res);
         })
         .catch(err => console.log(err));
     },
+    //　ダイアログを閉じる
+    closeDialog(dialogName){
+        this.isDialogOpen[dialogName] = false;
+    },
     //　テイストタグのデータを配列に入れる処理
     selectedTasteConvert: function(res) {
-          const selectedTasteArray = res.data.selectedTastes;
-          const selectedtasteList = selectedTasteArray.map(function(row){
-          return [ row["taste_id"] ]
-          }).reduce(function(a,b){
-            return a.concat(b);
-          });
-          this.selection = selectedtasteList;
-          console.log(this.selection);  
+        const selectedTasteArray = res.data.selectedTastes;
+        const selectedtasteList = selectedTasteArray.map(function(row){
+        return [ row["taste_id"] ]
+        }).reduce(function(a,b){
+          return a.concat(b);
+        });
+        this.selection = selectedtasteList;
+        console.log(this.selection);  
     },
     //画像の処理
     //画像ファイルを設置
@@ -224,27 +231,41 @@ export default {
         event.currentTarget.value = ''
       }
       this.fileInfo = event.target.files[0];
-      this.user.image = window.URL.createObjectURL(this.fileInfo);
+      this.userProfile.image = window.URL.createObjectURL(this.fileInfo);
+    },
+    //formのデータを定義
+    setUserProfileData() {
+      let formData = new FormData();
+
+      Object.keys(this.userProfile).forEach(key=>{
+          console.log(key,this.userProfile[key])
+          formData.append(key, this.userProfile[key]);
+      });
+      formData.append("image", this.fileInfo);
+
+      return formData;
     },
     //変更を保存
-    //めんどくさい三項演算子の部分はnullの文字列入っちゃう対策
-    saveUserProflile: function() {
+    saveUserProfileData: function() {
       //入力値のエラーを確認
       if (this.$refs.form.validate()) {
 
-        let formData = new FormData();
-        formData.append("image", this.fileInfo);
-        formData.append("name", this.user.name);
-        formData.append("email", this.user.email);
-        this.user.bio
-          ? formData.append("bio", this.user.bio)
-          : formData.append("bio", "");
-        this.user.age
-          ? formData.append("age", this.user.age)
-          : formData.append("age", "");
-        this.user.gender
-          ? formData.append("gender", this.user.gender)
-          : formData.append("gender", "");
+        const formData = this.setUserProfileData();
+        console.log(this.userProfile.image);
+
+        // let formData = new FormData();
+        // formData.append("image", this.fileInfo);
+        // formData.append("name", this.user.name);
+        // formData.append("email", this.user.email);
+        // this.user.bio
+        //   ? formData.append("bio", this.user.bio)
+        //   : formData.append("bio", "");
+        // this.user.age
+        //   ? formData.append("age", this.user.age)
+        //   : formData.append("age", "");
+        // this.user.gender
+        //   ? formData.append("gender", this.user.gender)
+        //   : formData.append("gender", "");
         
         var config = {
           headers: {
@@ -252,27 +273,28 @@ export default {
           }
         };
         axios
-        .post("api/edit/profile", formData, config)
-        .then(res => {
-          this.success_dialog = true;
-          this.user = res.data.profile;
-
-          console.log(res.data.profile.image);
-          // 性別の判断
-          if(res.data.profile.gender == 0){
-              this.user.gender = this.items[0];
-          } else if (res.data.profile.gender == 1){
-              this.user.gender = this.items[1];
-          }
-        })
-        .catch(err => {
-          this.error_dialog = true;
-          console.log(err.response.data.errors)
+          .post("api/edit/profile", formData, config)
+          .then(res => {
+            console.log(res.data.profile);
+            const updatedUserProfile = res.data.profile;
+            const updatedUserGender = parseInt(updatedUserProfile.gender);
+            this.isDialogOpen.successDialog = true;
+            // this.userProfile = updatedUserProfile;
+            this.userProfile.gender = updatedUserGender;
+            // 性別の判断
+            if(updatedUserGender){
+              this.userProfile.gender = this.gender[updatedUserGender];
+            }
           })
+          .catch(err => {
+            this.isDialogOpen.errorDialog = true;
+            console.log(err);
+            }) 
       } else {
         console.log('エラーがあるよ！');
       }
     },
+    //　テイスト情報を取得
     tasteSave: function() {
       axios
         .post("api/edit/tastes",{
@@ -281,7 +303,7 @@ export default {
         .then(res => {
           console.log(res.data);
         })
-        .catch(err => console.log(err.response.data.errors));
+        .catch(err => console.log(err));
     },
   }
 };
