@@ -135,8 +135,8 @@
 export default {
   data() {
     return {
-      //バリデーション系の定義
-      rules:{
+      //バリデーション系の定義　（未対応TypeError: Cannot read property 'length' of undefined　というエラーが出るけど動く）
+      rules:  {
       required:value => !!value || "入力必須です。",
       nameCounter:value => value.length <= 20 || "アカウント名は20字以下で入力してください。",
       bioCounter: value => value.length <= 200 || "自己紹介は200字以下で入力してください。",
@@ -164,7 +164,6 @@ export default {
     };
   },
   created() {
-  
   },
   mounted() {
       this.getUserProfileData();

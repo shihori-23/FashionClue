@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 import UserComponent from "./components/pages/UserComponent";
 import UserHomeComponent from "./components/pages/UserHomeComponent";
 import UserPostComponent from "./components/pages/UserPostComponent";
+import UserPostDetailComponent from "./components/pages/UserPostDetailComponent";
 import UserNoticeComponent from "./components/pages/UserNoticeComponent";
 import UserSettingComponent from "./components/pages/UserSettingComponent";
 import UserBookmarkComponent from "./components/pages/UserBookmarkComponent";
@@ -30,6 +31,11 @@ const routes = [
                 path: "/user/post",
                 component: UserPostComponent,
                 name: "UserPost"
+            },
+            {
+                path: "/user/post/:postId",
+                component: UserPostDetailComponent,
+                name: "UserPostDetail"
             },
             {
                 path: "/user/notice",

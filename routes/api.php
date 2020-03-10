@@ -29,6 +29,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('edit/profile', 'Api\UsersController@edit');
     //　テイストの編集
     Route::post('edit/tastes', 'Api\UsersController@editTaste');
+    //　質問の投稿
+    Route::post('post/question', 'Api\PostsController@save');
+    //　質問詳細画面への投稿の表示
+    Route::get('get/question/{postId}', 'Api\PostsController@show');
+    //　回答投稿
+    Route::post('post/answer', 'Api\AnswersController@save');
 //認証閉じタグここまで
 });
 //認証閉じタグここまで
