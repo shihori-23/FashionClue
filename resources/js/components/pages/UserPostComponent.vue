@@ -2,7 +2,7 @@
   <div class="wrap">
     <v-container　class="text-center">
       <h2 class="subtitle-1">質問投稿ページ</h2>
-        <v-form ref="form" v-model="valid" lazy-validation>
+      <v-form ref="form" v-model="valid" lazy-validation>
         <v-row justify="center">
             <v-col cols="11">
               <v-textarea
@@ -39,7 +39,7 @@
             </v-col>
           </v-row>
             <v-btn @click="saveQuestionPostData" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
-          </v-form>
+      </v-form>
     </v-container>
   </div>
 </template>

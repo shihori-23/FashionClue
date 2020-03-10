@@ -95,7 +95,7 @@
             <v-textarea
               label="自己紹介"
               id="bio"
-              name="input-7-4"
+              name="bio"
               v-model="userProfile.bio"
               :readonly="readonlyFlag.bio"
               :rules="[rules.bioCounter]"

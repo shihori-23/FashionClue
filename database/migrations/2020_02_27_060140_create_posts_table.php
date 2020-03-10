@@ -17,7 +17,7 @@
 						$table->string('category')->nullable();
 						$table->text('text')->nullable();
 						$table->integer('user_id')->nullable();
-						$table->string('image')->nullable();
+						$table->string('post_image')->nullable();
 						$table->timestamps();
 						$table->softDeletes();
 

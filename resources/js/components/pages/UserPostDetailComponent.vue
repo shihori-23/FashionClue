@@ -6,12 +6,12 @@
         <v-card class="mx-auto post_card" max-width="344" outlined>
           <div class="d-flex align-center justify-space-between">
             <div class="iconImage">
-              <img :src="questionPost.image"/>
+              <img :src="questionPostUser.image"/>
             </div>
             <div>
             <p>{{ questionPostUser.name }}</p>
             <span>{{　gender[questionPostUser.gender]　}}</span>
-            <span>{{ questionPostUser.age }}</span>
+            <span>{{ questionPostUser.age }}歳</span>
             </div>
           </div>
           <div class="">
@@ -20,6 +20,10 @@
           <v-btn icon @click="answerTabelFlag = true">
             <i class="fas fa-comment"></i>
           </v-btn>
+        </v-card>
+
+        <v-card v-if="postedAnswersFlag" class="mx-auto post_card" max-width="344" outlined>
+          <p>コメントが既にあります</p>
         </v-card>
 
         <v-card v-if="answerTabelFlag" class="mx-auto answer_card" max-width="344" outlined>
@@ -61,6 +65,7 @@
                 @change="fileSelected"
               ></v-file-input>
             </v-col>
+            <input type="hidden" name="postId" id="postId" v-model="answerPost.postId">
             <v-btn @click="saveAnswerPostData" color="#81CAC4" class="submit_btn">回答</v-btn>
             </v-form>
         </v-card>
@@ -91,13 +96,16 @@ export default {
         url: false,
       },
       answerTabelFlag: false,
+      postedAnswersFlag: false,
       
       //データ型の定義
       questionPost:{},
       questionPostUser:{},
       selectedTastes:[],
       gender: ['女性', '男性'],
-      answerPost:{},
+      answerPost:{
+        postId:this.$route.params.postId,
+      },
       fileInfo:"",
     };
   },
@@ -114,11 +122,15 @@ export default {
       axios
         .get("api/get/question/" + this.$route.params.postId)
         .then(res => {
+          console.log(res.data);
           this.questionPost = res.data.posts;
           this.questionPostUser = res.data.postUser;
           this.questionPostUser.gender = parseInt(res.data.postUser.gender);
+          const postedAnswers = res.data.postedAnswers;
+          if (postedAnswers.length > 0) {
+            this.postedAnswersFlag = true;
+          }
 
-          console.log(res.data);
           this.selectedTasteConvert(res);
         })
         .catch(err => console.log(err));
@@ -155,6 +167,7 @@ export default {
           formData.append(key, this.answerPost[key]);
       });
       formData.append("image", this.fileInfo);
+      formData.append("image", this.fileInfo);
 
       return formData;
     },
@@ -171,8 +184,7 @@ export default {
           .post("api/post/answer", formData, config)
           .then(res => {
             console.log(res.data);
-
-            // router.push({ name: 'UserPostDetail', params: { postId: res.data.id }})
+            this.answerTabelFlag = false;
           })
           .catch(err => {
             // this.isDialogOpen.errorDialog = true;

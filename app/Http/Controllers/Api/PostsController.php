@@ -40,9 +40,9 @@ use App\TasteUser;
             //もしファイルがあれば更新
             if ($request->file('image')) {   
                 //ファイルが保存される先の名前
-                $posts->image = $request->file('image')->store('public/image/profile');
+                $posts->post_image = $request->file('image')->store('public/image/profile');
                 //保存される名前を決める
-                $posts->image = str_replace('public/', 'storage/', $posts->image);
+                $posts->post_image = str_replace('public/', 'storage/', $posts->post_image);
             }
             $posts->save();
 
@@ -66,7 +66,14 @@ use App\TasteUser;
             //　質問したユーザーの好みの情報を取得
             $selectedTastes = TasteUser::where('user_id','=',$postUserId)->select('taste_id')->get();
 
-            return response()->json(['posts'=>$posts, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes], 200);
+            //　質問に対する回答を取得
+            $postedAnswers = DB::table('answers as a')
+                        ->join('users as u', 'u.id', '=', 'a.user_id')
+                        ->where('a.post_id', '=', $postId)
+                        ->select('u.id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image')
+                        ->get();
+
+            return response()->json(['posts'=>$posts, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes,'postedAnswers'=>$postedAnswers], 200);
         }
     }
     

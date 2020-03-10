@@ -19,8 +19,30 @@ use App\User;
         //　回答投稿
         public function save(Request $request)
         {
-            $user = $request;
-            return response()->json(['id'=>$user], 200);
+            // バリデーション
+            $validatedData = $request->validate([ 
+                'text' => 'required | max:500',
+                'url' => 'nullable| max:500',
+                'image' => 'max:3000000 | nullable'
+            ]);
+
+            $userId = Auth::id();
+    
+            $answers = new Answer;
+            $answers->user_id = $userId;
+            $answers->post_id = $request->postId;
+            $answers->text = $request->text;
+            $answers->url = $request->url;
+
+            //もしファイルがあれば更新
+            if ($request->file('image')) {   
+                //ファイルが保存される先の名前
+                $answers->answer_image = $request->file('image')->store('public/image/profile');
+                //保存される名前を決める
+                $answers->answer_image = str_replace('public/', 'storage/', $answers->answer_image);
+            }
+            $answers->save();
+            return response()->json(['id'=>$answers], 200);
         }
     
         

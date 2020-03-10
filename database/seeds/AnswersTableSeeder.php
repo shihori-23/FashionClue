@@ -20,7 +20,7 @@ use Illuminate\Database\Seeder;
 					"user_id" => $faker->randomDigit(),
 					"text" => $faker->word(),
 					"url" => $faker->url(),
-					"image" => $faker->bothify('##??.jpg'),
+					"answer_image" => $faker->bothify('##??.jpg'),
 					"post_id" => $faker->randomDigit(),
 					"created_at" => $faker->dateTime("now"),
 					"updated_at" => $faker->dateTime("now")

@@ -17,7 +17,7 @@
 						$table->integer('user_id')->nullable();
 						$table->string('text')->nullable();
 						$table->string('url')->nullable();
-						$table->string('image')->nullable();
+						$table->string('answer_image')->nullable();
 						$table->integer('post_id')->nullable();
 						$table->timestamps();
 						$table->softDeletes();
