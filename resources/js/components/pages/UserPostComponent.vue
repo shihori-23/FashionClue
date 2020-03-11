@@ -30,10 +30,10 @@
             <v-col cols="11">
               <v-file-input
                 chips
+                multiple
                 counter
                 accept="image/*"
                 label="添付画像を選択してください"
-                :rules="[rules.imageMax]"
                 @change="fileSelected"
               ></v-file-input>
             </v-col>
@@ -76,11 +76,15 @@ export default {
   methods: {
     fileSelected(event) {
         const file = event;
+        // const name = file.name;
+        // const size = file.size;
+        // const type = file.type;
+        // const errors = 'type';
 
-        //　画像の定義(プレビューは一旦保留)
-        this.fileInfo = event;
-        // this.questionPost.image = window.URL.createObjectURL(this.fileInfo);
-        console.log(this.fileInfo);
+      //　画像の定義(プレビューは一旦保留)
+      this.fileInfo = event;
+      // this.questionPost.image = window.URL.createObjectURL(this.fileInfo);
+      console.log(this.fileInfo);
     },
     setQuestionData: function() {
       let formData = new FormData();
@@ -89,8 +93,13 @@ export default {
           console.log(key,this.questionPost[key])
           formData.append(key, this.questionPost[key]);
       });
-      formData.append("image", this.fileInfo);
 
+    //   formData.append("image[]", this.fileInfo);
+      for (let i = 0; i < this.fileInfo.length; i++) {
+        let name = 'image[' + i + ']'
+        formData.append(name, this.fileInfo[i])
+      }
+        console.log(...formData.entries());
       return formData;
     },
     saveQuestionPostData: function() {
