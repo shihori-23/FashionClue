@@ -64,13 +64,18 @@ use App\TasteUser;
             $postUser= User::where('id', '=', $postUserId)->select('name','gender','age','image')->first();
 
             //　質問したユーザーの好みの情報を取得
-            $selectedTastes = TasteUser::where('user_id','=',$postUserId)->select('taste_id')->get();
+            // $selectedTastes = TasteUser::where('user_id','=',$postUserId)->select('taste_id')->get();
+            $selectedTastes = DB::table('taste_users as tu')
+                                ->join('tastes as t', 't.id','=', 'tu.taste_id')
+                                ->where('tu.user_id','=',$postUserId)
+                                ->select('t.taste_name')
+                                ->get();
 
             //　質問に対する回答を取得
             $postedAnswers = DB::table('answers as a')
                         ->join('users as u', 'u.id', '=', 'a.user_id')
                         ->where('a.post_id', '=', $postId)
-                        ->select('u.id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image')
+                        ->select('u.id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image', 'a.created_at')
                         ->get();
 
             return response()->json(['posts'=>$posts, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes,'postedAnswers'=>$postedAnswers], 200);
