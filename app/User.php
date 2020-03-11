@@ -16,11 +16,11 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'password', 'age', 'gender' ,'bio',
+        'name', 'email', 'password', 'age', 'gender', 'bio', 'api_token'
     ];
 
     protected $guarded = [
-        'id', 'email', 'password', 'api_token', 'image',
+        'id', 'email', 'password', 'image',
     ];
 
     /**
@@ -41,4 +41,3 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 }
-

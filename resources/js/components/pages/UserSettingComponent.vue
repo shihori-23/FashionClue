@@ -56,10 +56,10 @@
           <v-col cols="11">
             <v-text-field
               label="email"
-              id="email" 
-              v-model="userProfile.email" 
-              :readonly="readonlyFlag.email" 
-              color="#81cac4" 
+              id="email"
+              v-model="userProfile.email"
+              :readonly="readonlyFlag.email"
+              color="#81cac4"
               append-icon="mdi-information-outline"
               ></v-text-field>
           </v-col>
@@ -137,9 +137,9 @@ export default {
     return {
       //バリデーション系の定義　（未対応TypeError: Cannot read property 'length' of undefined　というエラーが出るけど動く）
       rules:  {
-      required:value => !!value || "入力必須です。",
-      nameCounter:value => value.length <= 20 || "アカウント名は20字以下で入力してください。",
-      bioCounter: value => value.length <= 200 || "自己紹介は200字以下で入力してください。",
+        required: value => !!value || "入力必須です。",
+        nameCounter: value => (value || '').length <= 20 || "アカウント名は20字以下で入力してください。",
+        bioCounter: value => (value || '').length <= 200 || "自己紹介は200字以下で入力してください。",
       },
       //真偽値の定義
       valid: true,
@@ -155,7 +155,7 @@ export default {
       },
       notEntered:false,
 
-      //データ型の定義  
+      //データ型の定義
       userProfile: {},
       fileInfo:"",
       gender: ['レディース', 'メンズ'],
@@ -164,18 +164,19 @@ export default {
     };
   },
   created() {
+    this.getUserProfileData();
   },
   mounted() {
-      this.getUserProfileData();
+
   },
   watch: {
-      selection: function(newVal, oldVal) {
-      console.log(this.selection);
-  },
+    selection: function(newVal, oldVal) {
+        console.log(this.selection);
+    },
   },
   methods: {
     //プロフィールの取得
-    getUserProfileData: function() {
+    getUserProfileData() {
       axios
         .get("api/get/profile")
         .then(res => {
@@ -202,7 +203,7 @@ export default {
           return a.concat(b);
         });
         this.selection = selectedtasteList;
-        console.log(this.selection);  
+        console.log(this.selection);
     },
     //画像の処理
     //画像ファイルを設置
@@ -217,12 +218,12 @@ export default {
       if (size > 3000000) {
         errors += 'ファイルの上限サイズ3MBを超えています\n'
       }
-  
+
       //.jpg .gif .png . pdf のみ許可
       if (type != 'image/jpeg' && type != 'image/gif' && type != 'image/png' && type != 'application/pdf') {
         errors += '.jpg、.gif、.png、.pdfのいずれかのファイルのみ許可されています\n'
       }
-  
+
       if (errors) {
         //errorsが存在する場合は内容をalert
         alert(errors)
@@ -250,27 +251,13 @@ export default {
       if (this.$refs.form.validate()) {
 
         const formData = this.setUserProfileData();
-        console.log(this.userProfile.image);
 
-        // let formData = new FormData();
-        // formData.append("image", this.fileInfo);
-        // formData.append("name", this.user.name);
-        // formData.append("email", this.user.email);
-        // this.user.bio
-        //   ? formData.append("bio", this.user.bio)
-        //   : formData.append("bio", "");
-        // this.user.age
-        //   ? formData.append("age", this.user.age)
-        //   : formData.append("age", "");
-        // this.user.gender
-        //   ? formData.append("gender", this.user.gender)
-        //   : formData.append("gender", "");
-        
         var config = {
           headers: {
             "content-type": "multipart/form-data"
           }
         };
+
         axios
           .post("api/edit/profile", formData, config)
           .then(res => {
@@ -288,7 +275,7 @@ export default {
           .catch(err => {
             this.isDialogOpen.errorDialog = true;
             console.log(err);
-            }) 
+            })
       } else {
         console.log('エラーがあるよ！');
       }

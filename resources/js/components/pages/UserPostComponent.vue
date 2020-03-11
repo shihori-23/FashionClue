@@ -62,7 +62,7 @@ export default {
       readonlyFlag:{
         question: false,
       },
-      
+
       //データ型の定義
       questionPost:{},
       fileInfo:"",
@@ -76,15 +76,11 @@ export default {
   methods: {
     fileSelected(event) {
         const file = event;
-        // const name = file.name;
-        // const size = file.size;
-        // const type = file.type;
-        // const errors = 'type';
 
-      //　画像の定義(プレビューは一旦保留)
-      this.fileInfo = event;    
-      // this.questionPost.image = window.URL.createObjectURL(this.fileInfo);
-      console.log(this.fileInfo);
+        //　画像の定義(プレビューは一旦保留)
+        this.fileInfo = event;
+        // this.questionPost.image = window.URL.createObjectURL(this.fileInfo);
+        console.log(this.fileInfo);
     },
     setQuestionData: function() {
       let formData = new FormData();
@@ -100,7 +96,7 @@ export default {
     saveQuestionPostData: function() {
       if (this.$refs.form.validate()){
         const formData = this.setQuestionData();
-    
+
 
       var config = {
           headers: {
@@ -116,7 +112,7 @@ export default {
           .catch(err => {
             // this.isDialogOpen.errorDialog = true;
             console.log(err);
-            }) 
+            })
       } else {
         console.log('エラーがあるよ！');
       }
