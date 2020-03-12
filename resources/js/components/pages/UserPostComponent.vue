@@ -127,8 +127,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 .image {
   width: 120px;
   margin: 8px auto;

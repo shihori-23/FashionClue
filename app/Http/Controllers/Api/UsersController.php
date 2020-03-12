@@ -50,7 +50,7 @@ class UsersController extends Controller
             'name' => 'required | max:20',
             'email' => 'required | email',
             // 'age' => 'integer | nullable',
-            'bio' =>  'max:200',
+            'bio' =>  'max:200 | nullable',
             'image' => 'max:3000000 | nullable'
         ]);
 
@@ -61,7 +61,7 @@ class UsersController extends Controller
         if ($result) {
             $ary = [];
             foreach (array_keys($request->all()) as $keyName) {
-                $ary[$keyName] = $request[$keyName];
+                    $ary[$keyName] = $request[$keyName];
             }
         }
 

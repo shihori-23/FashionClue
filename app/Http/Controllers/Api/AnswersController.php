@@ -27,6 +27,7 @@ use App\User;
             ]);
 
             $userId = Auth::id();
+            $postId = $request->postId;
     
             $answers = new Answer;
             $answers->user_id = $userId;
@@ -42,7 +43,15 @@ use App\User;
                 $answers->answer_image = str_replace('public/', 'storage/', $answers->answer_image);
             }
             $answers->save();
-            return response()->json(['id'=>$answers], 200);
+
+            //             
+            $postedAnswers = DB::table('answers as a')
+                                ->join('users as u', 'u.id', '=', 'a.user_id')
+                                ->where('a.post_id', '=', $postId)
+                                ->select('u.id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image', 'a.created_at')
+                                ->get();
+            
+            return response()->json(['id'=>$answers,'postedAnswers'=>$postedAnswers], 200);
         }
     
         

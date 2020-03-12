@@ -17,7 +17,8 @@
 						$table->integer('post_id')->nullable();
 						$table->integer('user_id')->nullable();
 						$table->timestamps();
-						$table->softDeletes();
+                        $table->softDeletes();
+                        $table->unique(['post_id', 'user_id'], 'uq_bookmark_posts_01');
 
                     });
                 }

@@ -26,7 +26,7 @@
       <v-form ref="form" v-model="valid" lazy-validation>
       <div class="image_container">
         <div class="image">
-          <img :src="userProfile.image"/>
+          <img :src="fileInfo"/>
         </div>
         <label class="user_profile" for="user_profile">
           <v-icon color="#fff" class="add_btn">mdi-camera</v-icon>
@@ -138,8 +138,8 @@ export default {
       //バリデーション系の定義　（未対応TypeError: Cannot read property 'length' of undefined　というエラーが出るけど動く）
       rules:  {
       required:value => !!value || "入力必須です。",
-      nameCounter:value => value.length <= 20 || "アカウント名は20字以下で入力してください。",
-      bioCounter: value => value.length <= 200 || "自己紹介は200字以下で入力してください。",
+      nameCounter:value => (value || '').length <= 20 || "アカウント名は20字以下で入力してください。",
+      bioCounter: value => (value || '').length <= 200 || "自己紹介は200字以下で入力してください。",
       },
       //真偽値の定義
       valid: true,
@@ -182,6 +182,7 @@ export default {
           this.userProfile = res.data.profile;
           this.tastes = res.data.tastes;
           this.notEntered = res.data.notEntered;
+          this.fileInfo = res.data.profile.image;
           console.log(res.data);
           console.log(this.userProfile,111);
 
@@ -229,19 +230,21 @@ export default {
         //valueを空にしてリセットする
         event.currentTarget.value = ''
       }
-      this.fileInfo = event.target.files[0];
-      this.userProfile.image = window.URL.createObjectURL(this.fileInfo);
+      this.userProfile.image  = event.target.files[0];
+      this.fileInfo = window.URL.createObjectURL(this.userProfile.image);
     },
     //formのデータを定義
     setUserProfileData() {
       let formData = new FormData();
 
       Object.keys(this.userProfile).forEach(key=>{
-          console.log(key,this.userProfile[key])
-          formData.append(key, this.userProfile[key]);
-      });
-      formData.append("image", this.fileInfo);
-
+          if(this.userProfile[key] === null){
+            }else{
+              console.log(key,this.userProfile[key])
+              formData.append(key, this.userProfile[key]);
+            }   
+        });
+      // formData.append("image", this.fileInfo);
       return formData;
     },
     //変更を保存
@@ -280,10 +283,6 @@ export default {
             this.isDialogOpen.successDialog = true;
             // this.userProfile = updatedUserProfile;
             this.userProfile.gender = updatedUserGender;
-            // 性別の判断
-            if(updatedUserGender){
-              this.userProfile.gender = this.gender[updatedUserGender];
-            }
           })
           .catch(err => {
             this.isDialogOpen.errorDialog = true;

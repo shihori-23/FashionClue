@@ -10,9 +10,9 @@
                 <img :src="questionPostUser.image"/>
               </div>
               <div>
-              <p>{{ questionPostUser.name }}</p>
-              <span>{{　gender[questionPostUser.gender]　}}</span>
-              <span>{{ questionPostUser.age }}歳</span>
+                <p>{{ questionPostUser.name }}</p>
+                <span>{{　gender[questionPostUser.gender]　}}</span>
+                <span>{{ questionPostUser.age }}歳</span>
               </div>
               <div class="categoryChip">
                 <v-chip class="ma-1" x-small>{{ questionPost.category }}</v-chip>
@@ -27,11 +27,13 @@
             <v-btn icon @click="answerIconClick()">
               <i class="fas fa-comment"></i>
             </v-btn>
+            <BookmarkComponent v-if="postIsBookmarkedId.includes($route.params.postId)" :post_id="parseInt($route.params.postId)" :isBookmarked="false"/>
+            <BookmarkComponent v-else :post_id="parseInt($route.params.postId)" :isBookmarked="true"/>
             <span class="caption">{{ questionPost.created_at }}</span>
           </v-card>
         </v-col>
 
-        <v-col v-if="postedAnswersFlag" cols="12">
+        <v-col v-if="tableFlag.postedAnswer" cols="12">
           <p>回答({{ postedAnswers.length }})</p>
           <v-card v-for="(answer,index) in postedAnswers" :key="index" class="postedAnswerCard card" max-width="344" outlined>
             <div>
@@ -50,7 +52,7 @@
         </v-col>
 
 
-        <v-card v-if="answerTabelFlag" class="mx-auto answerCard card" max-width="344" outlined>
+        <v-card v-if="tableFlag.answerInput" class="mx-auto answerCard card" max-width="344" outlined>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-col cols="12">
               <v-textarea
@@ -101,10 +103,11 @@
 </template>
 
 <script>
+import BookmarkComponent from "../items/BookmarkComponent"
 
 export default {
   components: {
-
+    BookmarkComponent,
   },
   data() {
     return {
@@ -120,8 +123,10 @@ export default {
         text: false,
         url: false,
       },
-      answerTabelFlag: false,
-      postedAnswersFlag: false,
+      tableFlag: {
+        answerInput:false,
+        postedAnswers:false,
+      },
       
       //データ型の定義
       questionPost:{},
@@ -132,15 +137,16 @@ export default {
       answerPost:{
         postId:this.$route.params.postId,
       },
+      postIsBookmarkedId:[],
       fileInfo:"",
     };
   },
 
   created() {
-
+    this.getPostData();
+    this.postIsBookmarkedCheck();
   },
   mounted() {
-    this.getPostData();
   },
   methods: {
     //質問内容の取得
@@ -153,10 +159,10 @@ export default {
           this.questionPostUser = res.data.postUser;
           this.questionPostUser.gender = parseInt(res.data.postUser.gender);
           const postedAnswersData = res.data.postedAnswers;
-          this.postedAnswers = postedAnswersData
+          this.postedAnswers = postedAnswersData;
 
           if (postedAnswersData.length > 0) {
-            this.postedAnswersFlag = true;
+            this.tableFlag.postedAnswer  = true;
             console.log(this.postedAnswers);
           }
 
@@ -175,16 +181,26 @@ export default {
         this.selectedTastes = selectedtasteList;
         console.log(this.selectedTastes);  
     },
+    //質問に対してお気に入りしているか確認
+    postIsBookmarkedCheck: function(){
+      axios
+        .get("api/get/bookmark/" + this.$route.params.postId)
+        .then(res => {
+          console.log(res.data.bookmarkId);
+          this.postIsBookmarkedId = res.data.bookmarkId
+        })
+        .catch(err => console.log(err));
+    },
     // コメント（回答）系のmethods
     //　「回答する」アイコンを押したときの処理
     answerIconClick: function (){
-        this.answerTabelFlag = true;
-        this.postedAnswersFlag = false;
+        this.tableFlag.answerInput = true;
+        this.tableFlag.postedAnswer = false;
     },
     cancelBtnClick: function(){
-        this.answerTabelFlag = false;
+        this.tableFlag.answerInput = false;
         if (this.postedAnswers.length > 0) {
-          this.postedAnswersFlag = true;
+          this.tableFlag.postedAnswer = true;
         }
     },
     //　画像ファイルの定義
@@ -225,7 +241,9 @@ export default {
           .post("api/post/answer", formData, config)
           .then(res => {
             console.log(res.data);
-            this.answerTabelFlag = false;
+            this.tableFlag.answerInput = false;
+            this.tableFlag.postedAnswer = true;
+            this.postedAnswers  = res.data.postedAnswers;
           })
           .catch(err => {
             // this.isDialogOpen.errorDialog = true;
@@ -272,9 +290,15 @@ export default {
     object-fit: cover;
   }
 
-  .categoryChip{
+  .postImgWrap{
     position: relative;
+  }
+
+  .categoryChip{
+    position: absolute;
+    top: 0;
     right:8px;
+
   }
 
   /* 回答投稿に対するスタイル */

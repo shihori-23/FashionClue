@@ -16,13 +16,10 @@
     </head>
     <body>
         <div id="top">
-            <v-btn >
-                <a href="{{ route('register') }}" class="btn-gradient-3d-simple">会員登録</a>
-            </v-btn>
-
-            <v-btn>
-                <a href="{{ route('login') }}" class="btn-gradient-3d-simple2">ログイン</a>
-            </v-btn>
+            <div class="btnWrap">
+                <a href="{{ route('register') }}" class="btn-gradient-3d-simple registerBtn">会員登録</a>
+                <a href="{{ route('login') }}" class="btn-gradient-3d-simple2 loginBtn">ログイン</a>
+            </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
