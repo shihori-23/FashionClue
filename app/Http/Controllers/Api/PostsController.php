@@ -14,7 +14,8 @@ use App\PostNotice;
 use App\User;
 use App\Taste;
 use App\TasteUser;
-
+use Image;
+use Storage;
 
 class PostsController extends Controller
 {
@@ -49,15 +50,19 @@ class PostsController extends Controller
         if ($request->hasFile('image')) {
 
             $images = $request->file('image');
+
+
             foreach ($images as $image) {
+                $imagePath = Image::make($image);
+                var_dump($image);
+                $url = $imagePath->save('storage/image/profile/' . $image->hashName())->resize(300, 300);
                 //ファイルが保存される先の名前
-                $path =  $image->store('public/image/profile');
-                $saveImagePath = str_replace('public/', 'storage/', $path);
+                // $path =  $image->store('public/image/profile');
 
                 //保存される名前を決める
                 $photo = PostPhoto::create([
                     'post_id' => $id,
-                    'image_url' => $saveImagePath,
+                    'image_url' => $url,
                 ]);
             }
         }

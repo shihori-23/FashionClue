@@ -28,6 +28,7 @@
               ></v-select>
             </v-col>
             <v-col cols="11">
+                <input type="file" name="image[]" id="">
               <v-file-input
                 chips
                 multiple
@@ -82,7 +83,7 @@ export default {
         // const errors = 'type';
 
       //　画像の定義(プレビューは一旦保留)
-      this.fileInfo = event;
+      this.questionPost.images = event;
       // this.questionPost.image = window.URL.createObjectURL(this.fileInfo);
       console.log(this.fileInfo);
     },
@@ -95,7 +96,7 @@ export default {
       });
 
     //   formData.append("image[]", this.fileInfo);
-      for (let i = 0; i < this.fileInfo.length; i++) {
+      for (let i = 0; i < this.questionPost.images.length; i++) {
         let name = 'image[' + i + ']'
         formData.append(name, this.fileInfo[i])
       }
