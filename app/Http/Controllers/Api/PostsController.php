@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PostRequest;
 use Illuminate\Http\Request;
 use Auth;
 use Validate;
@@ -22,15 +23,15 @@ use App\TasteUser;
          *
          * @return \Illuminate\View\View
          */
-        public function save(Request $request)
+        public function save(PostRequest $request)
         {
             // バリデーション
-            $validatedData = $request->validate([ 
-                'text' => 'required | max:500',
-                'image' => 'max:3000000 | nullable'
-            ]);
+            // $validatedData = $request->validate([ 
+            //     'text' => 'required | max:500',
+            //     'image' => 'max:3000000 | nullable'
+            // ]);
 
-            $userId = Auth::id();
+            // $userId = Auth::id();
     
             $posts = new Post;
             $posts->user_id = $userId;

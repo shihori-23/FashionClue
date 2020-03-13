@@ -2,6 +2,18 @@
   <div class="wrap">
     <v-container　class="text-center">
       <h2 class="subtitle-1">質問投稿ページ</h2>
+
+      <v-dialog v-model="isDialogOpen.errorDialog" width="400">
+          <v-card>
+            <v-card-title class="headline grey lighten-2" primary-title>{{ axiosErrorMessages }}</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="closeDialog('errorDialog')">閉じる</v-btn>
+            </v-card-actions>
+          </v-card>
+      </v-dialog>
+
+
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-row justify="center">
             <v-col cols="11">
@@ -10,7 +22,7 @@
                 id="question"
                 name="input-7-4"
                 v-model="postContent.text"
-                :readonly="readonlyFlag.question"
+                :readonly="readOnly.question"
                 :rules="[validationRules.required]"
                 counter="500"
                 color="#81cac4"
@@ -54,10 +66,12 @@ export default {
   *
   * @param {Object} validationRules・・・・・・・バリデーションルールの設定
   * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
-  * @param {Object} readonlyFlag・・・各フォームが読み取り専用かどうかの状態を管理。
+  * @param {Object} readOnly・・・各フォームが読み取り専用かどうかの状態を管理。
+  * @param {Object} isDialogOpen・・・Dialogの表示非表示を管理。
   * @param {Object} postContent・・・質問投稿のデータを管理
   * @param {String} fileInfo・・・画像プレビュー用のURLを管理（現在不使用）
   * @param {Object} categories・・・質問投稿の際のカテゴリ選択タブ用のデータを管理（要：DBから取得するように変更）
+  * @param {String} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
   *
   **/
   data() {
@@ -69,14 +83,18 @@ export default {
       },
       //真偽値の管理
       valid: true,
-      readonlyFlag:{
+      readOnly:{
         question: false,
       },
-      
+      isDialogOpen:{
+        errorDialog:false,
+      }
+      ,
       //データ型の定義
       postContent:{},
       fileInfo:"",
       categories:['トップス', 'アウター', 'ボトムス', 'スカート','ワンピース','シューズ' ,'ファッション小物'],
+      axiosErrorMessages:[],
     };
   },
 
@@ -107,6 +125,26 @@ export default {
 
       return formData;
     },
+    //　サーバー側からのエラーを定義
+    axiosErrorData: function(err) {
+      const axiosErrorRes = err.response.data;
+      const axiosvalidationErrorRes = axiosErrorRes.errors;
+      const imageError = axiosvalidationErrorRes.image;
+      const textError = axiosvalidationErrorRes.text;
+      // エラーの要因を判定
+      if (axiosvalidationErrorRes &&　imageError) {
+        this.axiosErrorMessages = imageError[0];
+      } else if(axiosvalidationErrorRes &&　textError){
+        this.axiosErrorMessages = textError[0];
+      } else {
+        this.axiosErrorMessages = "回答が送信されませんでした。再度送信してください。";
+      }
+      this.isDialogOpen.errorDialog = true;
+      console.log(axiosErrorRes.errors);
+      console.log(axiosErrorRes);
+      console.log(axiosvalidationErrorRes.image);
+    },
+    //　質問投稿をPost
     saveQuestionPostData: function() {
       if (this.$refs.form.validate()){
         const formData = this.setQuestionData();
@@ -129,13 +167,15 @@ export default {
             this.$router.push(transitionDestinationObj);
           })
           .catch(err => {
-            // this.isDialogOpen.errorDialog = true;
-            console.log(err);
+            this.axiosErrorData(err);
             }) 
       } else {
         console.log('エラーがあるよ！');
       }
-
+    },
+    //　ダイアログを閉じる
+    closeDialog(dialogName){
+        this.isDialogOpen[dialogName] = false;
     },
   }
 };
