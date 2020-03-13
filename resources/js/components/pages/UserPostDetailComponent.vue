@@ -7,33 +7,33 @@
           <v-card class="mx-auto postCard card" max-width="344" outlined>
             <div class="d-flex align-center justify-flex-start postImgWrap">
               <div class="iconImage">
-                <img :src="questionPostUser.image"/>
+                <img :src="postUser.image"/>
               </div>
               <div>
-                <p>{{ questionPostUser.name }}</p>
-                <span>{{　gender[questionPostUser.gender]　}}</span>
-                <span>{{ questionPostUser.age }}歳</span>
+                <p>{{ postUser.name }}</p>
+                <span>{{　gender[postUser.gender]　}}</span>
+                <span>{{ postUser.age }}歳</span>
               </div>
               <div class="categoryChip">
-                <v-chip class="ma-1" x-small>{{ questionPost.category }}</v-chip>
+                <v-chip class="ma-1" x-small>{{ postUser.category }}</v-chip>
               </div>
               <!-- <div>
                 <v-chip v-for="(taste,index) in selectedTastes" :key=index class="ma-1" x-small>{{ taste }}</v-chip>
               </div> -->
             </div>
             <div class="textWrap">
-              <p>{{ questionPost.text }}</p>
+              <p>{{ postContent.text }}</p>
             </div>
-            <v-btn icon @click="answerIconClick()">
+            <v-btn icon @click="answerOperationAtClick()">
               <i class="fas fa-comment"></i>
             </v-btn>
-            <BookmarkComponent v-if="postIsBookmarkedId.includes($route.params.postId)" :post_id="parseInt($route.params.postId)" :isBookmarked="false"/>
-            <BookmarkComponent v-else :post_id="parseInt($route.params.postId)" :isBookmarked="true"/>
-            <span class="caption">{{ questionPost.created_at }}</span>
+            <BookmarkComponent v-if="postIsBookmarkedId.includes($route.params.postId)" :post_id="parseInt($route.params.postId)" :isBookmarked="true"/>
+            <BookmarkComponent v-else :post_id="parseInt($route.params.postId)" :isBookmarked="false"/>
+            <span class="caption">{{ postContent.created_at }}</span>
           </v-card>
         </v-col>
 
-        <v-col v-if="tableFlag.postedAnswer" cols="12">
+        <v-col v-if="isVisible.postedAnswer" cols="12">
           <p>回答({{ postedAnswers.length }})</p>
           <v-card v-for="(answer,index) in postedAnswers" :key="index" class="postedAnswerCard card" max-width="344" outlined>
             <div>
@@ -52,16 +52,16 @@
         </v-col>
 
 
-        <v-card v-if="tableFlag.answerInput" class="mx-auto answerCard card" max-width="344" outlined>
+        <v-card v-if="isVisible.answerInput" class="mx-auto answerCard card" max-width="344" outlined>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-col cols="12">
               <v-textarea
                 label="回答の内容を入力してください"
                 id="answerText"
                 name="answer"
-                v-model="answerPost.text"
-                :readonly="readonlyFlag.text"
-                :rules="[rules.required]"
+                v-model="answerContent.text"
+                :readonly="isReadOnly.text"
+                :rules="[validationRules.required]"
                 counter="500"
                 color="#81cac4"
                 rows="3"
@@ -74,8 +74,8 @@
                 label="URL(任意)"
                 id="answerUrl"
                 name="url"
-                v-model="answerPost.url"
-                :readonly="readonlyFlag.url"
+                v-model="answerContent.url"
+                :readonly="isReadOnly.url"
                 counter="500"
                 color="#81cac4"
               ></v-text-field>
@@ -87,12 +87,12 @@
                 counter
                 accept="image/*"
                 label="添付画像を選択してください"
-                :rules="[rules.imageMax]"
+                :rules="[validationRules.imageMax]"
                 @change="fileSelected"
               ></v-file-input>
             </v-col>
-            <input type="hidden" name="postId" id="postId" v-model="answerPost.postId">
-            <v-btn @click="cancelBtnClick()" class="cansel_btn" text>キャンセル</v-btn>
+            <input type="hidden" name="postId" id="postId" v-model="answerContent.postId">
+            <v-btn @click="cancelOperationAtClick()" class="cansel_btn" text>キャンセル</v-btn>
             <v-btn @click="saveAnswerPostData" color="#81CAC4" class="submit_btn" text>回答</v-btn>
             </v-form>
         </v-card>
@@ -109,32 +109,49 @@ export default {
   components: {
     BookmarkComponent,
   },
+    /**
+  *
+  * @param {Object} validationRules・・・・・・・バリデーションルールの設定
+  * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
+  * @param {Object} isReadOnly・・・各フォームが読み取り専用かどうかの状態を管理
+  * @param {Object} isVisible・・・各セクションの表示非表示の切り替えを管理
+  * @param {Object} postContent・・・質問投稿のデータを管理
+  * @param {Object} postUser・・・質問投稿をしたユーザーのデータを管理
+  * @param {Object} postedAnswers・・・質問投稿に対するすでに回答されたデータを管理
+  * @param {Array} selectedTastes・・・質問投稿者の登録したテイストデータを管理
+  * @param {Array} gender・・・性別データを管理
+  * @param {Object} answerPost・・・質問投稿に対する新たに回答する入力データを管理
+  * @param {Array} postIsBookmarkedId・・・ログインユーザーのお気に入り済のpost_idを管理
+  * @param {String} fileInfo・・・画像プレビュー用のURLを管理（現在不使用）
+  *
+  **/
+
   data() {
     return {
       //　バリデーション系の定義
-      rules: {
+      validationRules: {
         required: value => !!value || "入力必須です。",
         imageMax: value => !value || value.size < 200000000 || '画像は2MB以下のものを選択してください!',
       },
 
       valid: true,
-      readonlyFlag:{
+      isReadOnly:{
         question: false,
         text: false,
         url: false,
       },
-      tableFlag: {
+      isVisible: {
         answerInput:false,
         postedAnswers:false,
       },
       
       //データ型の定義
-      questionPost:{},
-      questionPostUser:{},
+      postContent:{},
+      postUser:{},
       postedAnswers:{},
       selectedTastes:[],
       gender: ['女性', '男性'],
-      answerPost:{
+      answerContent:{
         postId:this.$route.params.postId,
       },
       postIsBookmarkedId:[],
@@ -155,17 +172,17 @@ export default {
         .get("api/get/question/" + this.$route.params.postId)
         .then(res => {
           console.log(res.data);
-          this.questionPost = res.data.posts;
-          this.questionPostUser = res.data.postUser;
-          this.questionPostUser.gender = parseInt(res.data.postUser.gender);
-          const postedAnswersData = res.data.postedAnswers;
+          const getData = res.data;
+          this.postContent = getData.postContent;
+          this.postUser = getData.postUser;
+          this.postUser.gender = parseInt(getData.postUser.gender);
+          const postedAnswersData = getData.postedAnswers;
           this.postedAnswers = postedAnswersData;
 
           if (postedAnswersData.length > 0) {
-            this.tableFlag.postedAnswer  = true;
+            this.isVisible.postedAnswer  = true;
             console.log(this.postedAnswers);
           }
-
           this.selectedTasteConvert(res);
         })
         .catch(err => console.log(err));
@@ -193,37 +210,37 @@ export default {
     },
     // コメント（回答）系のmethods
     //　「回答する」アイコンを押したときの処理
-    answerIconClick: function (){
-        this.tableFlag.answerInput = true;
-        this.tableFlag.postedAnswer = false;
+    answerOperationAtClick: function (){
+        this.isVisible.answerInput = true;
+        this.isVisible.postedAnswer = false;
     },
-    cancelBtnClick: function(){
-        this.tableFlag.answerInput = false;
+    cancelOperationAtClick: function(){
+        this.isVisible.answerInput = false;
         if (this.postedAnswers.length > 0) {
-          this.tableFlag.postedAnswer = true;
+          this.isVisible.postedAnswer = true;
         }
     },
     //　画像ファイルの定義
-    fileSelected(event) {
-        const file = event;
+    fileSelected(imageFile) {
+        const file = imageFile;
         const name = file.name;
         const size = file.size;
         const type = file.type;
         const errors = 'type';
 
       //　画像の定義(プレビュー表示一旦保留)
-      this.fileInfo = event;
-      console.log(this.fileInfo);
+      this.answerContent.image = imageFile;
+      console.log(this.answerContent.image);
     },
     //　回答の入力データを定義
     setAnswerData: function() {
       let formData = new FormData();
 
-      Object.keys(this.answerPost).forEach(key=>{
-          console.log(key,this.answerPost[key])
-          formData.append(key, this.answerPost[key]);
+      Object.keys(this.answerContent).forEach(attributeName=>{
+          console.log(attributeName,this.answerContent[attributeName])
+          formData.append(attributeName, this.answerContent[attributeName]);
       });
-      formData.append("image", this.fileInfo);
+      // formData.append("image", this.fileInfo);
 
       return formData;
     },
@@ -241,8 +258,8 @@ export default {
           .post("api/post/answer", formData, config)
           .then(res => {
             console.log(res.data);
-            this.tableFlag.answerInput = false;
-            this.tableFlag.postedAnswer = true;
+            this.isVisible.answerInput = false;
+            this.isVisible.postedAnswer = true;
             this.postedAnswers  = res.data.postedAnswers;
           })
           .catch(err => {

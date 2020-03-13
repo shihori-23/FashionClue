@@ -9,9 +9,9 @@
                 label="質問や相談を記入してください"
                 id="question"
                 name="input-7-4"
-                v-model="questionPost.text"
+                v-model="postContent.text"
                 :readonly="readonlyFlag.question"
-                :rules="[rules.required]"
+                :rules="[validationRules.required]"
                 counter="500"
                 color="#81cac4"
                 rows="3"
@@ -24,7 +24,7 @@
               label="カテゴリ"
               id="gender"
               color="#81cac4"
-              v-model="questionPost.category"
+              v-model="postContent.category"
               ></v-select>
             </v-col>
             <v-col cols="11">
@@ -33,8 +33,8 @@
                 counter
                 accept="image/*"
                 label="添付画像を選択してください"
-                :rules="[rules.imageMax]"
-                @change="fileSelected"
+                :rules="[validationRules.imageMax]"
+                @change="selectImageFile"
               ></v-file-input>
             </v-col>
           </v-row>
@@ -50,21 +50,31 @@ export default {
   components: {
 
   },
+  /**
+  *
+  * @param {Object} validationRules・・・・・・・バリデーションルールの設定
+  * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
+  * @param {Object} readonlyFlag・・・各フォームが読み取り専用かどうかの状態を管理。
+  * @param {Object} postContent・・・質問投稿のデータを管理
+  * @param {String} fileInfo・・・画像プレビュー用のURLを管理（現在不使用）
+  * @param {Object} categories・・・質問投稿の際のカテゴリ選択タブ用のデータを管理（要：DBから取得するように変更）
+  *
+  **/
   data() {
     return {
       //　バリデーション系の定義
-      rules: {
+      validationRules: {
         required: value => !!value || "入力必須です。",
         imageMax: value => !value || value.size < 200000000 || '画像は2MB以下のものを選択してください!',
       },
-
+      //真偽値の管理
       valid: true,
       readonlyFlag:{
         question: false,
       },
       
       //データ型の定義
-      questionPost:{},
+      postContent:{},
       fileInfo:"",
       categories:['トップス', 'アウター', 'ボトムス', 'スカート','ワンピース','シューズ' ,'ファッション小物'],
     };
@@ -74,44 +84,49 @@ export default {
 
   },
   methods: {
-    fileSelected(event) {
-        const file = event;
+    selectImageFile(imageFile) {
+        const postImageFile = imageFile;
         // const name = file.name;
         // const size = file.size;
         // const type = file.type;
         // const errors = 'type';
 
       //　画像の定義(プレビューは一旦保留)
-      this.fileInfo = event;    
+      this.postContent.image = postImageFile;    
       // this.questionPost.image = window.URL.createObjectURL(this.fileInfo);
-      console.log(this.fileInfo);
+      // console.log(this.fileInfo);
     },
     setQuestionData: function() {
       let formData = new FormData();
 
-      Object.keys(this.questionPost).forEach(key=>{
-          console.log(key,this.questionPost[key])
-          formData.append(key, this.questionPost[key]);
+      Object.keys(this.postContent).forEach(attributeName=>{
+          console.log(attributeName,this.postContent[attributeName])
+          formData.append(attributeName, this.postContent[attributeName]);
       });
-      formData.append("image", this.fileInfo);
+      // formData.append("image", this.fileInfo);
 
       return formData;
     },
     saveQuestionPostData: function() {
       if (this.$refs.form.validate()){
         const formData = this.setQuestionData();
-    
 
-      var config = {
-          headers: {
-            "content-type": "multipart/form-data"
-          }
-        };
-      axios
+        var config = {
+            headers: {
+              "content-type": "multipart/form-data"
+            }
+          };
+        axios
           .post("api/post/question", formData, config)
           .then(res => {
             console.log(res.data.id);
-            this.$router.push({ name: 'UserPostDetail', params: { postId: res.data.id }})
+            const transitionDestinationObj = {
+            name: 'UserPostDetail',
+            params: {
+                postId: res.data.id
+            }
+        };
+            this.$router.push(transitionDestinationObj);
           })
           .catch(err => {
             // this.isDialogOpen.errorDialog = true;

@@ -57,10 +57,10 @@ use App\TasteUser;
         {
             $postId = $id;
 
-            $posts = Post::where('id', '=', $id)->first();
+            $postContent = Post::where('id', '=', $id)->first();
 
             //　質問したユーザーの情報を取得
-            $postUserId = $posts->user_id;
+            $postUserId = $postContent->user_id;
             $postUser= User::where('id', '=', $postUserId)->select('name','gender','age','image')->first();
 
             //　質問したユーザーの好みの情報を取得
@@ -78,7 +78,7 @@ use App\TasteUser;
                         ->select('u.id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image', 'a.created_at')
                         ->get();
 
-            return response()->json(['posts'=>$posts, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes,'postedAnswers'=>$postedAnswers], 200);
+            return response()->json(['postContent'=>$postContent, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes,'postedAnswers'=>$postedAnswers], 200);
         }
     }
     
