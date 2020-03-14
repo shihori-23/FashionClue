@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="container">
-            <a class="btn-border" v-if="!originIsBookmarked" @click="addLike(post_id)">
+            <a class="btn-border" v-if="!isBookmarked" @click="addLike(post_id)">
                 <v-icon>mdi-heart-outline</v-icon>
             </a>
             <a class="btn-border" v-else @click="removeLike(post_id)">

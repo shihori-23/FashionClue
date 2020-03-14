@@ -12,9 +12,9 @@
               <div>
                 <p>{{ postUser.name }}</p>
                 <span>{{　gender[postUser.gender]　}}</span>
-                <span>{{ postUser.age }}歳</span>
+                <span v-if="postUser.age">{{ postUser.age }}歳</span>
               </div>
-              <div class="categoryChip">
+              <div v-if="postUser.category" class="categoryChip">
                 <v-chip class="ma-1" x-small>{{ postUser.category }}</v-chip>
               </div>
               <!-- <div>
@@ -27,8 +27,8 @@
             <v-btn icon @click="answerOperationAtClick()">
               <i class="fas fa-comment"></i>
             </v-btn>
-            <BookmarkComponent v-if="postIsBookmarkedId.includes($route.params.postId)" :post_id="parseInt($route.params.postId)" :isBookmarked="true"/>
-            <BookmarkComponent v-else :post_id="parseInt($route.params.postId)" :isBookmarked="false"/>
+            <BookmarkComponent v-if="postIsBookmarkedId.includes(parseInt(postContent.id))" :post_id="parseInt(postContent.id)" :isBookmarked="true"/>
+            <BookmarkComponent v-else :post_id="parseInt(postContent.id)" :isBookmarked="false"/>
             <span class="caption">{{ postContent.created_at }}</span>
           </v-card>
         </v-col>
@@ -145,7 +145,6 @@ export default {
         postedAnswers:false,
       },
       
-      //データ型の定義
       postContent:{},
       postUser:{},
       postedAnswers:{},
@@ -158,7 +157,6 @@ export default {
       fileInfo:"",
     };
   },
-
   created() {
     this.getPostData();
     this.postIsBookmarkedCheck();
@@ -204,7 +202,7 @@ export default {
         .get("api/get/bookmark/" + this.$route.params.postId)
         .then(res => {
           console.log(res.data.bookmarkId);
-          this.postIsBookmarkedId = res.data.bookmarkId
+          this.postIsBookmarkedId = res.data.bookmarkId;
         })
         .catch(err => console.log(err));
     },
