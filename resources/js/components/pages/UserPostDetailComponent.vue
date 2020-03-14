@@ -27,8 +27,8 @@
             <v-btn icon @click="answerOperationAtClick()">
               <i class="fas fa-comment"></i>
             </v-btn>
-            <BookmarkComponent v-if="postIsBookmarkedId.includes(parseInt(postContent.id))" :post_id="parseInt(postContent.id)" :isBookmarked="true"/>
-            <BookmarkComponent v-else :post_id="parseInt(postContent.id)" :isBookmarked="false"/>
+            <PostBookmarkComponent v-if="postIsBookmarkedId.includes(parseInt(postContent.id))" @remove-post-bookmark="removePostBookmark(postContent.id)" :post_id="parseInt(postContent.id)" :isBookmarked="true" />
+            <PostBookmarkComponent v-else @add-post-bookmark="addPostBookmark(postContent.id)" :post_id="parseInt(postContent.id)" :isBookmarked="false"/>
             <span class="caption">{{ postContent.created_at }}</span>
           </v-card>
         </v-col>
@@ -103,11 +103,11 @@
 </template>
 
 <script>
-import BookmarkComponent from "../items/BookmarkComponent"
+import PostBookmarkComponent from "../items/PostBookmarkComponent"
 
 export default {
   components: {
-    BookmarkComponent,
+    PostBookmarkComponent,
   },
     /**
   *
@@ -267,7 +267,30 @@ export default {
       } else {
         console.log('エラーがあるよ！');
       }
-
+    },
+    //質問投稿に対するお気に入りの登録
+    addPostBookmark: function(id){
+      axios
+        .post("api/post/post_bookmark/" + id)
+        .then(res => {
+          console.log(res.data.isBookmarked);
+          const postBookmarkIdArray = [];
+          postBookmarkIdArray.push(id);
+          this.postIsBookmarkedId = postBookmarkIdArray;
+          console.log(this.postIsBookmarkedId);
+        })
+        .catch(err => console.log(err));
+    }, 
+    removePostBookmark: function(id){
+      axios
+        .post("api/destory/post_bookmark/" + id)
+        .then(res => {
+        const postBookmarkIdArray = [];
+        console.log(res.data.isBookmarked);
+        this.postIsBookmarkedId = postBookmarkIdArray;
+        console.log(this.postIsBookmarkedId);
+        })
+        .catch(err => console.log(err));
     },
   }
 };

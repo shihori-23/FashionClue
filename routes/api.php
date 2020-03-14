@@ -38,9 +38,9 @@ Route::group(['middleware' => 'auth'], function () {
     //　質問投稿に対するお気に入りの有無を確認
     Route::get('get/bookmark/{id}', 'Api\BookmarkPostsController@show');
     //　投稿に対するお気に入り追加
-    Route::post('post/like/{id}', 'Api\BookmarkPostsController@save');
+    Route::post('post/post_bookmark/{id}', 'Api\BookmarkPostsController@save');
     //　投稿に対するお気に入りの取り消し
-    Route::post('release/like/{id}', 'Api\BookmarkPostsController@destroy');
+    Route::post('destory/post_bookmark/{id}', 'Api\BookmarkPostsController@destroy');
 //認証閉じタグここまで
 });
 //認証閉じタグここまで
