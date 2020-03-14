@@ -11,7 +11,7 @@ use App\BookmarkPost;
     
     class BookmarkPostsController extends Controller
     {   
-        //　詳細画面でお気に入りしているか確認
+        //　質問詳細画面でお気に入りしているか確認
         public function show($id) {
 
             $bookmarks = BookmarkPost::where('user_id','=', Auth::id())
@@ -26,7 +26,7 @@ use App\BookmarkPost;
         
             return response()->json(['bookmarkId'=>$bookmarksId], 200);
         }
-
+        //　お気に入りの登録
         public function save($id){
 
             $bookmark = New BookmarkPost;
@@ -36,7 +36,7 @@ use App\BookmarkPost;
 
             return response()->json(['isBookmarked'=>true], 200);
         }
-
+        //　お気に入りの解除
         public function destroy($id){
 
             $bookmark = BookmarkPost::where('user_id','=', Auth::id())
@@ -44,7 +44,17 @@ use App\BookmarkPost;
                                         ->delete();
 
             return response()->json(['isBookmarked'=>false], 200);
+        }
 
+        //　【お気に入り一覧ページ】質問投稿へのお気に入り取得
+        public function bookmarkedDataShow(){
+
+            $bookmarks = DB::table('bookmark_posts as bp')
+                            ->join('posts as p', 'p.id', '=', 'bp.post_id')
+                            ->where('bp.user_id', '=', Auth::id())
+                            ->get();
+
+            return response()->json(['bookmarkedPostsData'=>$bookmarks], 200);
         }
     }
     

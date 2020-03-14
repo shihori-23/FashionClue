@@ -29,8 +29,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('edit/profile', 'Api\UsersController@edit');
     //　テイストの編集
     Route::post('edit/tastes', 'Api\UsersController@editTaste');
+
     //　質問の投稿
     Route::post('post/question', 'Api\PostsController@save');
+
     //　質問詳細画面への投稿の表示
     Route::get('get/question/{postId}', 'Api\PostsController@show');
     //　回答投稿
@@ -47,6 +49,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('post/answer_bookmark/{id}', 'Api\BookmarkAnswersController@save');
     //　回答に対するお気に入りの取り消し
     Route::post('destory/answer_bookmark/{id}', 'Api\BookmarkAnswersController@destroy');
+
+    //　質問投稿に対するお気に入り一覧の取得
+    Route::get('get/post_bookmark', 'Api\BookmarkPostsController@bookmarkedDataShow');
+    //　回答に対するお気に入り一覧の取得
+    Route::get('get/answer_bookmark', 'Api\BookmarkAnswersController@bookmarkedDataShow');
 //認証閉じタグここまで
 });
 //認証閉じタグここまで

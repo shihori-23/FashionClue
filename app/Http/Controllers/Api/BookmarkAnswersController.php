@@ -70,6 +70,15 @@ use App\BookmarkAnswer;
             return response()->json(['bookmarksId'=>$bookmarksId], 200);
         }
 
+        //　【お気に入り一覧ページ】お気に入りした回答データ取得
+        public function bookmarkedDataShow(){
 
+            $bookmarks = DB::table('bookmark_answers as ba')
+                            ->join('answers as a', 'a.id', '=', 'ba.answer_id')
+                            ->where('ba.user_id', '=', Auth::id())
+                            ->get();
+
+            return response()->json(['bookmarkedAnswersData'=>$bookmarks], 200);
+        }
     
 }

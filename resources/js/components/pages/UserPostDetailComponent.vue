@@ -45,7 +45,7 @@
               </div>
               <div class="textWrap">
                 <p>{{ answer.text }}</p>
-                <AnswerBookmarkComponent v-if="isBookmarkedId.answer.includes(parseInt(answer.id))" @remove-answer-bookmark="removeAnswerBookmark(answer.id)":answer_id="parseInt(answer.id)" :isBookmarked="true"/>
+                <AnswerBookmarkComponent v-if="isBookmarkedId.answer.includes(parseInt(answer.id))" @remove-answer-bookmark="removeAnswerBookmark(answer.id)" :answer_id="parseInt(answer.id)" :isBookmarked="true"/>
                 <AnswerBookmarkComponent v-else @add-answer-bookmark="addAnswerBookmark(answer.id)" :answer_id="parseInt(answer.id)" :isBookmarked="false"/>
                 <span class="caption">{{ answer.created_at }}</span>
               </div>
