@@ -30,8 +30,8 @@ export default {
         },
         removeBookmarkOperationAtClick(){
             this.$emit('remove-post-bookmark');
-        }
-
+        },
+    //一旦残しておきます！
     //     addBookmark(id) {
     //     axios
     //         .post("api/post/post_bookmark/" + id)
@@ -51,6 +51,7 @@ export default {
     //         })
     //         .catch(err => console.log(err));
     //     }
+     //一旦残しておきます！
     }
 };
 </script>

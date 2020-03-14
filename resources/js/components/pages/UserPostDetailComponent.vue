@@ -27,7 +27,7 @@
             <v-btn icon @click="answerOperationAtClick()">
               <i class="fas fa-comment"></i>
             </v-btn>
-            <PostBookmarkComponent v-if="postIsBookmarkedId.includes(parseInt(postContent.id))" @remove-post-bookmark="removePostBookmark(postContent.id)" :post_id="parseInt(postContent.id)" :isBookmarked="true" />
+            <PostBookmarkComponent v-if="isBookmarkedId.post.includes(parseInt(postContent.id))" @remove-post-bookmark="removePostBookmark(postContent.id)" :post_id="parseInt(postContent.id)" :isBookmarked="true" />
             <PostBookmarkComponent v-else @add-post-bookmark="addPostBookmark(postContent.id)" :post_id="parseInt(postContent.id)" :isBookmarked="false"/>
             <span class="caption">{{ postContent.created_at }}</span>
           </v-card>
@@ -45,12 +45,13 @@
               </div>
               <div class="textWrap">
                 <p>{{ answer.text }}</p>
+                <AnswerBookmarkComponent v-if="isBookmarkedId.answer.includes(parseInt(answer.id))" @remove-answer-bookmark="removeAnswerBookmark(answer.id)":answer_id="parseInt(answer.id)" :isBookmarked="true"/>
+                <AnswerBookmarkComponent v-else @add-answer-bookmark="addAnswerBookmark(answer.id)" :answer_id="parseInt(answer.id)" :isBookmarked="false"/>
                 <span class="caption">{{ answer.created_at }}</span>
               </div>
             </div>
           </v-card>
         </v-col>
-
 
         <v-card v-if="isVisible.answerInput" class="mx-auto answerCard card" max-width="344" outlined>
           <v-form ref="form" v-model="valid" lazy-validation>
@@ -104,10 +105,12 @@
 
 <script>
 import PostBookmarkComponent from "../items/PostBookmarkComponent"
+import AnswerBookmarkComponent from "../items/AnswerBookmarkComponent"
 
 export default {
   components: {
     PostBookmarkComponent,
+    AnswerBookmarkComponent,
   },
     /**
   *
@@ -121,7 +124,7 @@ export default {
   * @param {Array} selectedTastes・・・質問投稿者の登録したテイストデータを管理
   * @param {Array} gender・・・性別データを管理
   * @param {Object} answerPost・・・質問投稿に対する新たに回答する入力データを管理
-  * @param {Array} postIsBookmarkedId・・・ログインユーザーのお気に入り済のpost_idを管理
+  * @param {Array} isBookmarkId・・・ログインユーザーのお気に入り済のidを管理
   * @param {String} fileInfo・・・画像プレビュー用のURLを管理（現在不使用）
   *
   **/
@@ -153,13 +156,19 @@ export default {
       answerContent:{
         postId:this.$route.params.postId,
       },
-      postIsBookmarkedId:[],
+      isBookmarkedId:{
+        post:[],
+        answer:[],
+      },
+      // postIsBookmarkedId:[],
+      // answerIsBookmarkedId:[],
       fileInfo:"",
     };
   },
   created() {
     this.getPostData();
     this.postIsBookmarkedCheck();
+    this.answerIsBookmarkedCheck();
   },
   mounted() {
   },
@@ -202,7 +211,17 @@ export default {
         .get("api/get/bookmark/" + this.$route.params.postId)
         .then(res => {
           console.log(res.data.bookmarkId);
-          this.postIsBookmarkedId = res.data.bookmarkId;
+          this.isBookmarkedId.post= res.data.bookmarkId;
+        })
+        .catch(err => console.log(err));
+    },
+    //回答に対してお気に入りしているか確認
+    answerIsBookmarkedCheck: function(){
+      axios
+        .get("api/get/answer_bookmark/" + this.$route.params.postId)
+        .then(res => {
+          console.log(res.data.bookmarkId);
+          this.isBookmarkedId.answer = res.data.bookmarkId;
         })
         .catch(err => console.log(err));
     },
@@ -276,19 +295,43 @@ export default {
           console.log(res.data.isBookmarked);
           const postBookmarkIdArray = [];
           postBookmarkIdArray.push(id);
-          this.postIsBookmarkedId = postBookmarkIdArray;
-          console.log(this.postIsBookmarkedId);
+          this.isBookmarkedId.post = postBookmarkIdArray;
+          console.log(this.isBookmarkedId.post);
         })
         .catch(err => console.log(err));
     }, 
+    //質問投稿に対するお気に入りの削除
     removePostBookmark: function(id){
       axios
         .post("api/destory/post_bookmark/" + id)
         .then(res => {
         const postBookmarkIdArray = [];
-        console.log(res.data.isBookmarked);
-        this.postIsBookmarkedId = postBookmarkIdArray;
-        console.log(this.postIsBookmarkedId);
+        this.isBookmarkedId.post = postBookmarkIdArray;
+        console.log(this.isBookmarkedId.post);
+        })
+        .catch(err => console.log(err));
+    },
+    //回答に対するお気に入り登録
+    addAnswerBookmark: function(id){
+      axios
+        .post("api/post/answer_bookmark/" + id)
+        .then(res => {
+          console.log(res.data.isBookmarked);
+          const answerBookmarkIdArray = this.isBookmarkedId.answer;
+          answerBookmarkIdArray.push(id);
+          this.isBookmarkedId.answer = answerBookmarkIdArray;
+          console.log(this.isBookmarkedId.answer);
+        })
+        .catch(err => console.log(err));
+    },
+    //回答に対するお気に入りの解除
+    removeAnswerBookmark: function(id){
+      axios
+        .post("api/destory/answer_bookmark/" + id)
+        .then(res => {
+          console.log(res.data.bookmarksId);
+          this.isBookmarkedId.answer = res.data.bookmarksId;
+
         })
         .catch(err => console.log(err));
     },

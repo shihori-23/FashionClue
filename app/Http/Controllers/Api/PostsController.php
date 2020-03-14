@@ -71,7 +71,7 @@ use App\TasteUser;
             $postedAnswers = DB::table('answers as a')
                         ->join('users as u', 'u.id', '=', 'a.user_id')
                         ->where('a.post_id', '=', $postId)
-                        ->select('u.id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image', 'a.created_at')
+                        ->select('a.id','u.id as user_id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image', 'a.created_at')
                         ->get();
 
             return response()->json(['postContent'=>$postContent, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes,'postedAnswers'=>$postedAnswers], 200);

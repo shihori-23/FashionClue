@@ -41,6 +41,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('post/post_bookmark/{id}', 'Api\BookmarkPostsController@save');
     //　投稿に対するお気に入りの取り消し
     Route::post('destory/post_bookmark/{id}', 'Api\BookmarkPostsController@destroy');
+    //　回答に対するお気に入りの有無を確認
+    Route::get('get/answer_bookmark/{id}', 'Api\BookmarkAnswersController@show');
+    //　回答に対するお気に入り追加
+    Route::post('post/answer_bookmark/{id}', 'Api\BookmarkAnswersController@save');
+    //　回答に対するお気に入りの取り消し
+    Route::post('destory/answer_bookmark/{id}', 'Api\BookmarkAnswersController@destroy');
 //認証閉じタグここまで
 });
 //認証閉じタグここまで
