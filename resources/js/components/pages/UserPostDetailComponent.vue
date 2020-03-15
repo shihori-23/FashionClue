@@ -2,6 +2,18 @@
   <div class="wrap">
     <v-container class="">
       <h1 class="subtitle-1">質問詳細画面</h1>
+
+      <v-dialog v-model="isDialogOpen.errorDialog" width="400">
+          <v-card>
+            <v-card-title class="headline lighten-2" primary-title>エラー</v-card-title>
+            <v-card-text><p v-for="(message,index) in axiosErrorMessages" :key="index">{{ axiosErrorMessages[index] }}</p></v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="closeDialog('errorDialog')">閉じる</v-btn>
+            </v-card-actions>
+          </v-card>
+      </v-dialog>
+
       <v-row>
         <v-col cols="12"> 
           <v-card class="mx-auto postCard card" max-width="344" outlined>
@@ -62,7 +74,7 @@
                 name="answer"
                 v-model="answerContent.text"
                 :readonly="isReadOnly.text"
-                :rules="[validationRules.required]"
+                :rules="[validationRules.required, validationRules.textCounter]"
                 counter="500"
                 color="#81cac4"
                 rows="3"
@@ -118,6 +130,7 @@ export default {
   * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
   * @param {Object} isReadOnly・・・各フォームが読み取り専用かどうかの状態を管理
   * @param {Object} isVisible・・・各セクションの表示非表示の切り替えを管理
+  * @param {Object} isDialogOpen・・・Dialogの表示非表示を管理。
   * @param {Object} postContent・・・質問投稿のデータを管理
   * @param {Object} postUser・・・質問投稿をしたユーザーのデータを管理
   * @param {Object} postedAnswers・・・質問投稿に対するすでに回答されたデータを管理
@@ -125,7 +138,8 @@ export default {
   * @param {Array} gender・・・性別データを管理
   * @param {Object} answerPost・・・質問投稿に対する新たに回答する入力データを管理
   * @param {Array} isBookmarkId・・・ログインユーザーのお気に入り済のidを管理
-  * @param {String} fileInfo・・・画像プレビュー用のURLを管理（現在不使用）
+  * @param {String} fileInfo・・・画像プレビュー用のURLを管理（現在不使用)
+  * @param {Array} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
   *
   **/
 
@@ -134,6 +148,8 @@ export default {
       //　バリデーション系の定義
       validationRules: {
         required: value => !!value || "入力必須です。",
+        textCounter:value => (value || '').length <= 500 || "回答は500字以下で入力してください。",
+        urlCounter:value => (value || '').length <= 500 || "urlは500字以下で入力してください。",
         imageMax: value => !value || value.size < 200000000 || '画像は2MB以下のものを選択してください!',
       },
 
@@ -146,6 +162,9 @@ export default {
       isVisible: {
         answerInput:false,
         postedAnswers:false,
+      },
+      isDialogOpen:{
+        errorDialog:false,
       },
       
       postContent:{},
@@ -160,9 +179,8 @@ export default {
         post:[],
         answer:[],
       },
-      // postIsBookmarkedId:[],
-      // answerIsBookmarkedId:[],
       fileInfo:"",
+      axiosErrorMessages:[],
     };
   },
   created() {
@@ -261,6 +279,33 @@ export default {
 
       return formData;
     },
+    //　サーバー側からのエラーを定義
+    setaxiosErrorData: function(err) {
+      const axiosErrorRes = err.response.data;
+      let axiosErrorMessageArray = [];
+  
+      if (axiosErrorRes.errors) {
+        const axiosvalidationErrorRes = axiosErrorRes.errors;
+
+        if (axiosvalidationErrorRes.image){
+          axiosErrorMessageArray.push(axiosvalidationErrorRes.image[0]);
+        }
+        if (axiosvalidationErrorRes.url){
+          axiosErrorMessageArray.push(axiosvalidationErrorRes.url[0]);
+        }
+        if(axiosvalidationErrorRes.text) {
+          const textErrors = axiosvalidationErrorRes.text;
+          textErrors.forEach(errorMessage => {
+            axiosErrorMessageArray.push(errorMessage);
+          });
+        }
+      } else {
+        axiosErrorMessageArray.push("回答が送信されませんでした。再度送信してください。");
+      }
+      this.axiosErrorMessages = axiosErrorMessageArray;
+      console.log(this.axiosErrorMessages);
+      this.isDialogOpen.errorDialog = true;
+    },
     // 回答のデータを送信
     saveAnswerPostData: function() {
       if (this.$refs.form.validate()){
@@ -280,7 +325,7 @@ export default {
             this.postedAnswers  = res.data.postedAnswers;
           })
           .catch(err => {
-            // this.isDialogOpen.errorDialog = true;
+            this.setaxiosErrorData(err);
             console.log(err);
             }) 
       } else {
@@ -334,6 +379,10 @@ export default {
 
         })
         .catch(err => console.log(err));
+    },
+    //　ダイアログを閉じる
+    closeDialog(dialogName){
+        this.isDialogOpen[dialogName] = false;
     },
   }
 };

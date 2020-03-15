@@ -6,7 +6,7 @@
       <v-dialog v-model="isDialogOpen.errorDialog" width="400">
           <v-card>
             <v-card-title class="headline lighten-2" primary-title>エラー</v-card-title>
-            <v-card-text>{{ axiosErrorMessages[0] }}<br>{{ axiosErrorMessages[1] }}</v-card-text>
+            <v-card-text><p v-for="(message,index) in axiosErrorMessages" :key="index">{{ axiosErrorMessages[index] }}</p></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="primary" text @click="closeDialog('errorDialog')">閉じる</v-btn>
@@ -21,10 +21,10 @@
               <v-textarea
                 label="質問や相談を記入してください"
                 id="question"
-                name="input-7-4"
+                name="question"
                 v-model="postContent.text"
                 :readonly="readOnly.question"
-                :rules="[validationRules.required]"
+                :rules="[validationRules.required,validationRules.textCounter]"
                 counter="500"
                 color="#81cac4"
                 rows="3"
@@ -35,7 +35,7 @@
               <v-select
               :items="categories"
               label="カテゴリ"
-              id="gender"
+              id="categories"
               color="#81cac4"
               v-model="postContent.category"
               ></v-select>
@@ -80,6 +80,7 @@ export default {
       //　バリデーション系の定義
       validationRules: {
         required: value => !!value || "入力必須です。",
+        textCounter:value => (value || '').length <= 500 || "質問は500字以下で入力してください。",
         imageMax: value => !value || value.size < 200000000 || '画像は2MB以下のものを選択してください!',
       },
       //真偽値の管理
@@ -178,6 +179,7 @@ export default {
             this.axiosErrorData(err);
             }) 
       } else {
+        this.axiosErrorMessages = "入力いただいた内容に再度確認の上、"
         console.log('エラーがあるよ！');
       }
     },

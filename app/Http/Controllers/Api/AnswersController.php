@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AnswerRequest;
 use Illuminate\Http\Request;
 use Auth;
 use Validate;
@@ -17,14 +18,8 @@ use App\User;
     class AnswersController extends Controller
     {
         //　回答投稿
-        public function save(Request $request)
+        public function save(AnswerRequest $request)
         {
-            // バリデーション
-            $validatedData = $request->validate([ 
-                'text' => 'required | max:500',
-                'url' => 'nullable| max:500',
-                'image' => 'max:3000000 | nullable'
-            ]);
 
             $userId = Auth::id();
             $postId = $request->postId;

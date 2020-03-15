@@ -4,7 +4,6 @@
       <v-tabs
       v-model="tabConfigurations.tab"
       class="elevation-2"
-      dark
       :centered="tabConfigurations.centered"
       :grow="tabConfigurations.grow"
       >

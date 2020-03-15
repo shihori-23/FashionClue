@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PostRequest extends FormRequest
+class AnswerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,15 +25,17 @@ class PostRequest extends FormRequest
     {
         return [
             //
-            'text' => 'required|max:500',
-            'image' => 'max:300000|nullable'
+            'text' => 'required | max:500',
+            'url' => 'nullable| max:500',
+            'image' => 'max:3000000 | nullable',
         ];
     }
 
     public function attributes()
     {
     return [
-        'text' => '質問',
+        'text' => '回答',
+        'url' => 'URL',
         'image' => '画像',
         ];
     }
@@ -42,6 +44,7 @@ class PostRequest extends FormRequest
         return [
             'text.required' => ':attributeは入力必須です。',
             'text.max'      => ':attributeは最低500文字以下で入力してください。',
+            'url.max'      => ':attributeは最低500文字以下で入力してください。',
             'image.max'      => '3MB以下の画像を選択してください。',
         ];
     }
