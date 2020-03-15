@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use Carbon\Carbon;
+use DB;
 
 use App\User;
 use App\Taste;
 use App\TasteUser;
+use App\Post;
+use App\Answer;
 
 class UsersController extends Controller
 {   
@@ -100,5 +103,35 @@ class UsersController extends Controller
         $tastesUser->insert($tastes);
 
         return response()->json(['done'=>true], 200);
+    }
+
+    // 【UserProfileConponent】ユーザーのプロフィール取得
+    public function showProfile()
+    {
+        $user = Auth::user(); 
+        $user_gender = Auth::user()->gender;               
+        $array = array('name'=>$user->name,'email'=>$user->email,'image'=>$user->image,'bio'=>$user->bio,'age'=>$user->age,'gender'=>$user->gender);
+        
+        //　選択済のテイストがあれば取得して配列に入れる
+        $selectedTastes = DB::table('taste_users as tu')
+        ->join('tastes as t', 't.id', '=', 'tu.taste_id')
+        ->where('tu.user_id', '=', Auth::id())
+        ->select('taste_name')
+        ->get();
+
+        //　ログインユーザーの質問投稿を取得
+        $userPostData = DB::table('posts as p')
+                            ->where('p.user_id', '=', Auth::id())
+                            ->select('p.id as post_id','p.text','p.post_image','p.created_at','p.category')
+                            ->get();
+
+        //　ログインユーザーの回答投稿を取得
+        $userAnswerData = DB::table('answers as a')
+                            ->join('posts as p', 'p.id', '=', 'a.post_id')
+                            ->where('a.user_id', '=', Auth::id())
+                            ->select('a.id','p.id as post_id','a.text','a.answer_image','a.created_at','p.category')
+                            ->get();
+
+        return response()->json(['profile'=>$array,'selectedTastes'=>$selectedTastes,'userPostData'=>$userPostData,'userAnswerData'=>$userAnswerData], 200);
     }
 }

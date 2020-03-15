@@ -39,7 +39,7 @@ use App\User;
             }
             $answers->save();
 
-            //             
+            // 回答を取得            
             $postedAnswers = DB::table('answers as a')
                                 ->join('users as u', 'u.id', '=', 'a.user_id')
                                 ->where('a.post_id', '=', $postId)

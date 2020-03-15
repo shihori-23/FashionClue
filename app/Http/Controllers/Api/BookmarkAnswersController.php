@@ -81,14 +81,6 @@ use App\BookmarkAnswer;
                             ->select('a.id','p.id as post_id','u.id as user_id','u.name','u.age','u.gender','u.image','a.text','a.answer_image','a.created_at','p.category')
                             ->get();
 
-            //サンプル
-            // $bookmarks = DB::table('bookmark_posts as bp')
-            // ->join('posts as p', 'p.id', '=', 'bp.post_id')
-            // ->join('users as u', 'p.user_id', '=', 'u.id')
-            // ->where('bp.user_id', '=', Auth::id())
-            // ->select('p.id','u.id as user_id','u.name','u.age','u.gender','u.image','p.text','p.post_image', 'p.category','p.created_at')
-            // ->get();
-
             return response()->json(['bookmarkedAnswersData'=>$bookmarks], 200);
         }
     

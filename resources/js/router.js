@@ -8,6 +8,7 @@ import UserPostDetailComponent from "./components/pages/UserPostDetailComponent"
 import UserNoticeComponent from "./components/pages/UserNoticeComponent";
 import UserSettingComponent from "./components/pages/UserSettingComponent";
 import UserBookmarkComponent from "./components/pages/UserBookmarkComponent";
+import UserProfileComponent from "./components/pages/UserProfileComponent";
 
 Vue.use(VueRouter);
 
@@ -51,6 +52,11 @@ const routes = [
                 path: "/user/setting",
                 component: UserSettingComponent,
                 name: "UserSetting"
+            },
+            {
+                path: "/user/profile",
+                component: UserProfileComponent,
+                name: "UserProfile"
             },
         ]
     },

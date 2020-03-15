@@ -3,12 +3,12 @@
       <p>お気に入り</p>
       <v-tabs
       v-model="tabConfigurations.tab"
-      class="elevation-2"
       :centered="tabConfigurations.centered"
       :grow="tabConfigurations.grow"
+      color="black"
       flat
       >
-      <v-tabs-slider></v-tabs-slider>
+      <!-- <v-tabs-slider></v-tabs-slider> -->
         <v-tab href="#posts">Posts</v-tab>
         <v-tab href="#answers">Answer</v-tab>
       </v-tabs>
@@ -25,7 +25,7 @@
             :to="{ name: 'UserPostDetail' , params: { postId: bookmarkedPost.id }}"
           > 
             <v-list-item>
-              <v-list-item-avatar><v-img :src="bookmarkedPost.image"></v-img></v-list-item-avatar>
+              <v-list-item-avatar　size=36><v-img :src="bookmarkedPost.image"></v-img></v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="">{{ bookmarkedPost.name }}
                   <span v-if="bookmarkedPost.category" class="categoryChip">
@@ -39,6 +39,7 @@
               </v-list-item-content>
             </v-list-item>
             <v-card-text>{{bookmarkedPost.text}}</v-card-text>
+            <v-img v-if="bookmarkedPost.post_image" :src="bookmarkedPost.post_image"></v-img>
           </v-card>
         </v-tab-item>
 
@@ -53,7 +54,7 @@
             :to="{ name: 'UserPostDetail' , params: { postId: bookmarkedAnswer.post_id }}"
           >
             <v-list-item>
-              <v-list-item-avatar><v-img :src="bookmarkedAnswer.image"></v-img></v-list-item-avatar>
+              <v-list-item-avatar　size=36><v-img :src="bookmarkedAnswer.image"></v-img></v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="">{{ bookmarkedAnswer.name }}
                   <span v-if="bookmarkedAnswer.category" class="categoryChip">
@@ -67,6 +68,7 @@
               </v-list-item-content>
             </v-list-item>
             <v-card-text>{{bookmarkedAnswer.text}}</v-card-text>
+            <v-img v-if="bookmarkedAnswer.answer_image" :src="bookmarkedAnswer.answer_image"></v-img>
           </v-card>
         </v-tab-item>
       </v-tabs-items>
@@ -91,7 +93,7 @@ export default {
       tabConfigurations:{
         tab: null,
         centered: true,
-        grow: false,
+        grow: true,
       },
       bookmarkedPostsData:{},
       bookmarkedAnswersData:{},

@@ -22,7 +22,7 @@
             <!-- <v-icon>mdi-bookmark-outline</v-icon> -->
         </v-btn>
         </router-link>
-        <router-link :to="{ name: 'UserSetting'}">
+        <router-link :to="{ name: 'UserProfile'}">
         <v-btn icon>
             <i class="fas fa-user"></i>
             <!-- <v-icon>mdi-settings</v-icon> -->

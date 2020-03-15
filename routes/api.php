@@ -24,6 +24,8 @@ Route::group(['middleware' => 'auth'], function () {
     //　ログイン中のuidの取得
     Route::get('uid', 'Api\UsersController@uid');
     //　ログイン中のユーザーのプロフィール取得
+    Route::get('show/profile', 'Api\UsersController@showProfile');
+    //　ログイン中のユーザーの編集用プロフィール取得
     Route::get('get/profile', 'Api\UsersController@show');
     //　プロフィールの編集
     Route::post('edit/profile', 'Api\UsersController@edit');
