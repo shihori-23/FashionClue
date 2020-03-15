@@ -5,20 +5,22 @@
       <div class="text-center">
         <v-dialog v-model="isDialogOpen.successDialog" width="400">
           <v-card>
-            <v-card-title class="headline grey lighten-2" primary-title>プロフィールを保存しました</v-card-title>
+            <v-card-title class="headline lighten-2 text--secondary" color="#3f3f3f" primary-title>Success</v-card-title>
+            <v-card-text>プロフィールの編集が完了しました！</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="closeDialog('successDialog')">閉じる</v-btn>
+              <v-btn color="#bc8f8f" text @click="closeDialog('successDialog')">閉じる</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
 
         <v-dialog v-model="isDialogOpen.errorDialog" width="400">
-          <v-card>
-            <v-card-title class="headline grey lighten-2" primary-title>入力エラーです。再度確認の上、変更を保存してください</v-card-title>
+                    <v-card>
+            <v-card-title class="headline lighten-2 text--secondary" primary-title>Error</v-card-title>
+            <v-card-text><p v-for="(message,index) in axiosErrorMessages" :key="index" class="errorMessage">・{{ axiosErrorMessages[index] }}</p></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="closeDialog('errorDialog')">閉じる</v-btn>
+              <v-btn color="#bc8f8f" text @click="closeDialog('errorDialog')">閉じる</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -47,7 +49,7 @@
               id="name"
               counter="20"
               v-model="userProfile.name"
-              color="#81cac4"
+              color="#bc8f8f"
               :readonly="readOnly.name"
               :rules="[validationRules.required, validationRules.nameCounter]"
               append-icon="mdi-pencil"
@@ -59,15 +61,16 @@
               id="email" 
               v-model="userProfile.email" 
               :readonly="readOnly.email" 
-              color="#81cac4" 
+              color="#bc8f8f" 
               append-icon="mdi-information-outline"
               ></v-text-field>
           </v-col>
-          <v-radio-group v-model="userProfile.gender" label="性別" id="gender" color="#81cac4">
+          <v-radio-group v-model="userProfile.gender" row label="性別" id="gender" color="#81cac4">
             <v-radio v-for="(item,index) in gender"
                 :key="index"
                 :label="item"
                 :value="index"
+                color="#bc8f8f"
             ></v-radio>
           </v-radio-group>
           <!-- <v-col cols="11">
@@ -87,7 +90,7 @@
               min="0"
               v-model="userProfile.age"
               :readonly="readOnly.age"
-              color="#81cac4"
+              color="#bc8f8f"
               append-icon="mdi-pencil"
             ></v-text-field>
           </v-col>
@@ -100,14 +103,14 @@
               :readonly="readOnly.bio"
               :rules="[validationRules.bioCounter]"
               counter="200"
-              color="#81cac4"
+              color="#bc8f8f"
               rows="3"
               row-height="15"
               append-icon="mdi-pencil"
             ></v-textarea>
           </v-col>
         </v-row>
-        <v-btn @click="saveUserProfileData" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
+        <v-btn @click="saveUserProfileData" color="#bc8f8f" class="submit_btn">変更を保存</v-btn>
         </v-form>
     </v-container>
     <v-container class="sub_profile">
@@ -122,7 +125,7 @@
         >
           <v-chip v-for="taste in tastes" :key="taste.id" :value="taste.id">{{ taste.taste_name }}</v-chip>
         </v-chip-group>
-        <v-btn @click="tasteSave" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
+        <v-btn @click="tasteSave" color="#bc8f8f" class="submit_btn">変更を保存</v-btn>
       </v-col>
         <v-col v-if="!notEntered">
           <p>性別を登録して追加情報を登録しましょう</p>
@@ -149,7 +152,6 @@ export default {
   * @param {Array} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
   *
   **/
-
     return {
       validationRules:  {
       required:value => !!value || "入力必須です。",
@@ -176,6 +178,7 @@ export default {
       gender: ['レディース', 'メンズ'],
       selection:[],
       tastes: [],
+      axiosErrorMessages:[],
     };
   },
   created() {
@@ -262,6 +265,36 @@ export default {
       // formData.append("image", this.fileInfo);
       return formData;
     },
+    //　サーバー側からのエラーを定義
+    setAxiosErrorData: function(err) {
+      const axiosErrorRes = err.response.data;
+      let axiosErrorMessageArray = [];
+  
+      if (axiosErrorRes.errors) {
+        const axiosvalidationErrorRes = axiosErrorRes.errors;
+
+        if (axiosvalidationErrorRes.image){
+          axiosErrorMessageArray.push(axiosvalidationErrorRes.image[0]);
+        }
+        if (axiosvalidationErrorRes.bio){
+          axiosErrorMessageArray.push(axiosvalidationErrorRes.bio[0]);
+        }
+        if (axiosvalidationErrorRes.age){
+          axiosErrorMessageArray.push(axiosvalidationErrorRes.age[0]);
+        }
+        if(axiosvalidationErrorRes.name) {
+          const textErrors = axiosvalidationErrorRes.name;
+          textErrors.forEach(errorMessage => {
+            axiosErrorMessageArray.push(errorMessage);
+          });
+        }
+      } else {
+        axiosErrorMessageArray.push("回答が送信されませんでした。再度送信してください。");
+      }
+      this.axiosErrorMessages = axiosErrorMessageArray;
+      console.log(this.axiosErrorMessages);
+      this.isDialogOpen.errorDialog = true;
+    },
     //変更を保存
     saveUserProfileData: function() {
       //入力値のエラーを確認
@@ -286,8 +319,8 @@ export default {
             this.userProfile.gender = updatedUserGender;
           })
           .catch(err => {
-            this.isDialogOpen.errorDialog = true;
-            console.log(err);
+            this.setAxiosErrorData(err)
+            console.log(err.response.data);
             }) 
       } else {
         console.log('エラーがあるよ！');
@@ -342,7 +375,7 @@ export default {
   position: absolute;
   top: 80px;
   right: 33%;
-  background: #81cac4;
+  background: #bc8f8f;
   padding: 4px;
   border-radius: 50%;
 }
@@ -378,5 +411,10 @@ export default {
   width: 95%;
   margin:1em auto;
   background: #fafafa;
+}
+
+/* Dialog */
+.errorMessage{
+  margin-bottom:0;
 }
 </style>

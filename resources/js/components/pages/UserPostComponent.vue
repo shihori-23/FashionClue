@@ -1,11 +1,11 @@
 <template>
   <div class="wrap">
-    <v-container　class="text-center">
+    <v-container class="text-center">
       <h2 class="subtitle-1">質問投稿ページ</h2>
 
       <v-dialog v-model="isDialogOpen.errorDialog" width="400">
           <v-card>
-            <v-card-title class="headline lighten-2" primary-title>エラー</v-card-title>
+            <v-card-title class="headline lighten-2" primary-title>Error</v-card-title>
             <v-card-text><p v-for="(message,index) in axiosErrorMessages" :key="index">{{ axiosErrorMessages[index] }}</p></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>

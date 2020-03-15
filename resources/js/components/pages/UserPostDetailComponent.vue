@@ -5,7 +5,7 @@
 
       <v-dialog v-model="isDialogOpen.errorDialog" width="400">
           <v-card>
-            <v-card-title class="headline lighten-2" primary-title>エラー</v-card-title>
+            <v-card-title class="headline lighten-2" primary-title>Error</v-card-title>
             <v-card-text><p v-for="(message,index) in axiosErrorMessages" :key="index">{{ axiosErrorMessages[index] }}</p></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -280,7 +280,7 @@ export default {
       return formData;
     },
     //　サーバー側からのエラーを定義
-    setaxiosErrorData: function(err) {
+    setAxiosErrorData: function(err) {
       const axiosErrorRes = err.response.data;
       let axiosErrorMessageArray = [];
   

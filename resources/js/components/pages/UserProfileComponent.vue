@@ -44,6 +44,7 @@
       :grow="tabConfigurations.grow"
       color="#808080"
       flat
+      class="tabBar"
       >
         <v-tab href="#posts">Posts</v-tab>
         <v-tab href="#answers">Answer</v-tab>
@@ -58,10 +59,13 @@
             outlined
             ripple
             v-for="(post,index) in userPostData" :key="index"
-            :to="{ name: 'UserPostDetail' , params: { postId: post.id }}"
+            :to="{ name: 'UserPostDetail' , params: { postId: post.post_id }}"
           > 
             <v-list-item>
-              <v-list-item-avatar　size=36><v-img :src="userProfileData.image"></v-img></v-list-item-avatar>
+              <v-list-item-avatar size=36>
+                <img :src="userProfileData.image"/>
+              </v-list-item-avatar>
+
               <v-list-item-content>
                 <v-list-item-title class="">{{ userProfileData.name }}
                   <span v-if="post.category" class="categoryChip">
@@ -90,7 +94,7 @@
             :to="{ name: 'UserPostDetail' , params: { postId: answer.post_id }}"
           >
             <v-list-item>
-              <v-list-item-avatar　size=36><v-img :src="userProfileData.image"></v-img></v-list-item-avatar>
+              <v-list-item-avatar size=36><v-img :src="userProfileData.image"></v-img></v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="">{{ userProfileData.name }}
                   <span v-if="answer.category" class="categoryChip">
@@ -198,6 +202,11 @@ p{
 .bioText{
   margin-bottom:8px;
   font-size:0.7em;
+}
+.tabBar{
+  position: sticky;
+  top: 56px;
+  z-index: 100;
 }
 .userContentCard{
   margin-bottom: 16px; 
