@@ -48,8 +48,8 @@
               counter="20"
               v-model="userProfile.name"
               color="#81cac4"
-              :readonly="readonlyFlag.name"
-              :rules="[rules.required, rules.nameCounter]"
+              :readonly="readOnly.name"
+              :rules="[validationRules.required, validationRules.nameCounter]"
               append-icon="mdi-pencil"
             ></v-text-field>
           </v-col>
@@ -58,7 +58,7 @@
               label="email"
               id="email" 
               v-model="userProfile.email" 
-              :readonly="readonlyFlag.email" 
+              :readonly="readOnly.email" 
               color="#81cac4" 
               append-icon="mdi-information-outline"
               ></v-text-field>
@@ -86,7 +86,7 @@
               type="number"
               min="0"
               v-model="userProfile.age"
-              :readonly="readonlyFlag.age"
+              :readonly="readOnly.age"
               color="#81cac4"
               append-icon="mdi-pencil"
             ></v-text-field>
@@ -97,8 +97,8 @@
               id="bio"
               name="bio"
               v-model="userProfile.bio"
-              :readonly="readonlyFlag.bio"
-              :rules="[rules.bioCounter]"
+              :readonly="readOnly.bio"
+              :rules="[validationRules.bioCounter]"
               counter="200"
               color="#81cac4"
               rows="3"
@@ -134,9 +134,24 @@
 <script>
 export default {
   data() {
+  /**
+  *
+  * @param {Object} validationRules・・・・・・・バリデーションルールの設定
+  * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
+  * @param {Object} readOnly・・・各フォームが読み取り専用かどうかの状態を管理
+  * @param {Object} isDialogOpen・・・Dialogの表示非表示を管理。
+  * @param {Boolean} notEntered・・・性別の登録があるか管理
+  * @param {Object} userProfile・・・ユーザーのプロフィールデータを管理
+  * @param {Array} gender・・・性別データを管理
+  * @param {Object} selection・・・選択済のテイストを管理
+  * @param {Array} tastes・・・テイストのデータを管理
+  * @param {String} fileInfo・・・画像プレビュー用のURLを管理
+  * @param {Array} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
+  *
+  **/
+
     return {
-      //バリデーション系の定義　（未対応TypeError: Cannot read property 'length' of undefined　というエラーが出るけど動く）
-      rules:  {
+      validationRules:  {
       required:value => !!value || "入力必須です。",
       nameCounter:value => (value || '').length <= 20 || "アカウント名は20字以下で入力してください。",
       bioCounter: value => (value || '').length <= 200 || "自己紹介は200字以下で入力してください。",
@@ -147,7 +162,7 @@ export default {
         successDialog:false,
         errorDialog:false,
       },
-      readonlyFlag:{
+      readOnly:{
         name: false,
         email: true,
         bio: false,
@@ -254,20 +269,6 @@ export default {
 
         const formData = this.setUserProfileData();
         console.log(this.userProfile.image);
-
-        // let formData = new FormData();
-        // formData.append("image", this.fileInfo);
-        // formData.append("name", this.user.name);
-        // formData.append("email", this.user.email);
-        // this.user.bio
-        //   ? formData.append("bio", this.user.bio)
-        //   : formData.append("bio", "");
-        // this.user.age
-        //   ? formData.append("age", this.user.age)
-        //   : formData.append("age", "");
-        // this.user.gender
-        //   ? formData.append("gender", this.user.gender)
-        //   : formData.append("gender", "");
         
         var config = {
           headers: {
