@@ -1,5 +1,12 @@
 <template>
   <v-container class="mainWrap">
+    <v-card v-if="isNotificationOpen" outlined flat max-width="93%" class="notificationCard">
+      <v-card-text class="notificationText">プロフィールの登録が完了していません。<br>設定ページより登録お願いします。</v-card-text>
+      <v-card-actions>
+        <v-btn text color="#bc8f8f" :to="{ name: 'UserSetting' }">プロフィール登録ページへ移動</v-btn>
+      </v-card-actions>
+      
+    </v-card>
     <v-tabs
       v-model="tabConfigurations.tab"
       :centered="tabConfigurations.centered"
@@ -102,7 +109,9 @@ export default {
   /**
   *
   * @param {Object} tabConfigurations・・・・・タブバーの設定を管理
+  * @param {Object} isNotificationOpen・・・・・性別登録がない場合に表示するお知らせの表示非表示を管理
   * @param {Array} gender・・・・・・・・・・・・性別データを管理
+  * @param {Array} filledUserGender・・・・・・性別の登録情報を管理
   * @param {Object} ladysPostsData・・・・・・・レディース分の質問投稿のデータを管理
   * @param {Object} mensPostsData・・・・・・・メンズ分の質問投稿のデータを管理
   * @param {Array} postBookmarkedId・・・・・・ログインユーザーがお気に入りしたpost_idを管理
@@ -112,11 +121,13 @@ export default {
   data() {
     return {
       tabConfigurations:{
-        tab: null,
+        tab: "",
         centered: true,
         grow: true,
       },
+      isNotificationOpen: false,
       gender:["レディース","メンズ"],
+      userGenderData:[],
       ladysPostsData:{},
       mensPostsData:{},
       postBookmarkedId:[],
@@ -127,6 +138,7 @@ export default {
     this.getPostsData();
   },
   methods: {
+    //　質問投稿のデータを取得
     getPostsData: function(){
       axios
         .get("api/get/home")
@@ -135,9 +147,24 @@ export default {
           this.ladysPostsData = axiosGetData.ladysPostsData;
           this.mensPostsData = axiosGetData.mensPostsData;
           this.postBookmarkedId = axiosGetData.postBookmarkedId;
+          this.filledUserGender(res);
           console.log(res.data);
         })
-        .catch(err => console.log(err.response.data));
+        .catch(err => console.log(err));
+    },
+    //性別の登録があるか判断
+    filledUserGender: function(res){
+      const userGender = parseInt(res.data.userGenderData);
+      if (userGender == 0){
+        this.tabConfigurations.tab = "lady";
+        console.log("ログインしている人はレディースだよ");
+      } else if (userGender == 1){
+        this.tabConfigurations.tab = "men";
+        console.log("ログインしている人はメンズだよ");
+      }else {
+        this.isNotificationOpen = true;
+      }
+      this.userGenderData = userGender;
     },
     //質問投稿に対するお気に入りの登録
     addPostBookmark: function(id){
@@ -170,6 +197,14 @@ export default {
 <style scoped>
 .mainWrap{
   padding:8px 0 56px;
+}
+
+.notificationCard{
+  margin:0 auto;
+}
+
+.notificationText{
+  padding-bottom:0px;
 }
 
 p{

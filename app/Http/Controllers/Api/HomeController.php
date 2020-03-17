@@ -19,10 +19,11 @@ use App\BookmarkAnswer;
 
     class HomeController extends Controller
     {
-        
         //　ホーム画面に表示するデータの取得
         public function show()
         {
+            
+            //　レディースの投稿を取得
             $ladysQuerys = DB::table('posts as p')
                                     ->join('users as u', 'u.id','=', 'p.user_id')
                                     ->where('u.gender','=',0)
@@ -59,7 +60,7 @@ use App\BookmarkAnswer;
                     // $ladysPostsData[]=$object; 
                 // }
                 //とりあえずここまで残しておきます〜
-
+            //　メンズの投稿を取得
             $mensQuerys = DB::table('posts as p')
                                     ->join('users as u', 'u.id','=', 'p.user_id')
                                     ->where('u.gender','=',1)
@@ -86,7 +87,10 @@ use App\BookmarkAnswer;
                 $postBookmarkedId[] = $bookmark->post_id;
                 }
 
-            return response()->json(['ladysPostsData'=>$ladysPostsData,'mensPostsData'=>$mensPostsData,'postBookmarkedId'=>$postBookmarkedId], 200);
+                        //　ログインユーザーの性別を取得
+                        $userGender = User::where('id','=',Auth::id())->first()->gender;
+
+            return response()->json(['userGenderData'=>$userGender,'ladysPostsData'=>$ladysPostsData,'mensPostsData'=>$mensPostsData,'postBookmarkedId'=>$postBookmarkedId], 200);
         }
     }
     
