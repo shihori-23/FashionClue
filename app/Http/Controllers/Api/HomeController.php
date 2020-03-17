@@ -68,7 +68,7 @@ use App\BookmarkAnswer;
                                     ->get();
             $mensPostsData = [];
 
-            foreach ($mensQuerys as $menssQuery) {
+            foreach ($mensQuerys as $mensQuery) {
                 $object = $mensQuery;
                 $answerCount = Answer::where('post_id','=',$mensQuery->post_id)->count();
 

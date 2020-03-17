@@ -26,7 +26,7 @@ class PostRequest extends FormRequest
         return [
             //
             'text' => 'required|max:500',
-            'image' => 'max:300000|nullable'
+            'image' => 'max:3000000|nullable'
         ];
     }
 
@@ -41,7 +41,7 @@ class PostRequest extends FormRequest
     public function messages() {
         return [
             'text.required' => ':attributeは入力必須です。',
-            'text.max'      => ':attributeは最低500文字以下で入力してください。',
+            'text.max'      => ':attributeは500文字以下で入力してください。',
             'image.max'      => '3MB以下の画像を選択してください。',
         ];
     }

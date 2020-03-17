@@ -135,15 +135,10 @@ export default {
       if (axiosErrorRes.errors) {
         const axiosvalidationErrorRes = axiosErrorRes.errors;
 
-        if (axiosvalidationErrorRes.image){
-          axiosErrorMessageArray.push(axiosvalidationErrorRes.image[0]);
-        }
-        if(axiosvalidationErrorRes.text) {
-          const textErrors = axiosvalidationErrorRes.text;
-          textErrors.forEach(errorMessage => {
-            axiosErrorMessageArray.push(errorMessage);
-          });
-        }
+          axiosErrorMessageArray = Object.keys(axiosvalidationErrorRes).map(dataField=>{
+          return axiosvalidationErrorRes[dataField][0];
+          })
+          
       } else {
         axiosErrorMessageArray.push("回答が送信されませんでした。再度送信してください。");
       }

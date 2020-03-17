@@ -35,15 +35,15 @@ class UsersController extends Controller
         $taste = Taste::where('taste_type','=',$user_gender)->select('id','taste_name')->get();
         //　性別登録をしているか判定
         if ($user_gender === null) {
-            $genderNotEntered = false;
+            $filledUserGender = false;
         } else {
-            $genderNotEntered = true;
+            $filledUserGender = true;
         }
 
         //　選択済のテイストがあれば取得して配列に入れる
         $selectedTastes = TasteUser::where('user_id','=',Auth::id())->select('taste_id')->get();
 
-        return response()->json(['profile'=>$array,'tastes'=>$taste,'notEntered'=>$genderNotEntered,'selectedTastes'=>$selectedTastes], 200);
+        return response()->json(['profile'=>$array,'tastes'=>$taste,'filledUserGender'=>$filledUserGender,'selectedTastes'=>$selectedTastes], 200);
     }
 
     //プロフィール編集

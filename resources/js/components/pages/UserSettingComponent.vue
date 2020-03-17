@@ -114,7 +114,7 @@
         </v-form>
     </v-container>
     <v-container class="sub_profile">
-      <v-col v-if="notEntered">
+      <v-col v-if="filledUserGender">
         <p>好みのテイストを３つまで選択して下さい</p>
         <v-chip-group
           v-model="selection"
@@ -125,11 +125,11 @@
         >
           <v-chip v-for="taste in tastes" :key="taste.id" :value="taste.id">{{ taste.taste_name }}</v-chip>
         </v-chip-group>
-        <v-btn @click="tasteSave" color="#bc8f8f" class="submit_btn">変更を保存</v-btn>
+        <v-btn @click="saveUserTaste" color="#bc8f8f" class="submit_btn">変更を保存</v-btn>
       </v-col>
-        <v-col v-if="!notEntered">
-          <p>性別を登録して追加情報を登録しましょう</p>
-        </v-col>
+      <v-col v-else>
+        <p>性別を登録して追加情報を登録しましょう</p>
+      </v-col>
     </v-container>
   </div>
 </template>
@@ -143,7 +143,7 @@ export default {
   * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
   * @param {Object} readOnly・・・各フォームが読み取り専用かどうかの状態を管理
   * @param {Object} isDialogOpen・・・Dialogの表示非表示を管理。
-  * @param {Boolean} notEntered・・・性別の登録があるか管理
+  * @param {Boolean} filledUserGender・・・性別の登録があるか管理
   * @param {Object} userProfile・・・ユーザーのプロフィールデータを管理
   * @param {Array} gender・・・性別データを管理
   * @param {Object} selection・・・選択済のテイストを管理
@@ -170,7 +170,7 @@ export default {
         bio: false,
         age: false,
       },
-      notEntered:false,
+      filledUserGender:false,
 
       //データ型の定義  
       userProfile: {},
@@ -199,7 +199,7 @@ export default {
         .then(res => {
           this.userProfile = res.data.profile;
           this.tastes = res.data.tastes;
-          this.notEntered = res.data.notEntered;
+          this.filledUserGender = res.data.filledUserGender
           this.fileInfo = res.data.profile.image;
           console.log(res.data);
           console.log(this.userProfile,111);
@@ -272,22 +272,11 @@ export default {
   
       if (axiosErrorRes.errors) {
         const axiosvalidationErrorRes = axiosErrorRes.errors;
+        
+        axiosErrorMessageArray = Object.keys(axiosvalidationErrorRes).map(dataField=>{
+            return axiosvalidationErrorRes[dataField][0];
+        })
 
-        if (axiosvalidationErrorRes.image){
-          axiosErrorMessageArray.push(axiosvalidationErrorRes.image[0]);
-        }
-        if (axiosvalidationErrorRes.bio){
-          axiosErrorMessageArray.push(axiosvalidationErrorRes.bio[0]);
-        }
-        if (axiosvalidationErrorRes.age){
-          axiosErrorMessageArray.push(axiosvalidationErrorRes.age[0]);
-        }
-        if(axiosvalidationErrorRes.name) {
-          const textErrors = axiosvalidationErrorRes.name;
-          textErrors.forEach(errorMessage => {
-            axiosErrorMessageArray.push(errorMessage);
-          });
-        }
       } else {
         axiosErrorMessageArray.push("回答が送信されませんでした。再度送信してください。");
       }
@@ -327,7 +316,7 @@ export default {
       }
     },
     //　テイスト情報を取得
-    tasteSave: function() {
+    saveUserTaste: function() {
       axios
         .post("api/edit/tastes",{
           tastes_id: this.selection

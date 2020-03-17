@@ -287,18 +287,11 @@ export default {
       if (axiosErrorRes.errors) {
         const axiosvalidationErrorRes = axiosErrorRes.errors;
 
-        if (axiosvalidationErrorRes.image){
-          axiosErrorMessageArray.push(axiosvalidationErrorRes.image[0]);
-        }
-        if (axiosvalidationErrorRes.url){
-          axiosErrorMessageArray.push(axiosvalidationErrorRes.url[0]);
-        }
-        if(axiosvalidationErrorRes.text) {
-          const textErrors = axiosvalidationErrorRes.text;
-          textErrors.forEach(errorMessage => {
-            axiosErrorMessageArray.push(errorMessage);
-          });
-        }
+        Object.keys(axiosvalidationErrorRes).map(dataField=>{
+        axiosErrorMessageArray.push(axiosvalidationErrorRes[dataField][0]);
+        axiosErrorMessageArray.push(axiosvalidationErrorRes[dataField][1]);
+        })
+
       } else {
         axiosErrorMessageArray.push("回答が送信されませんでした。再度送信してください。");
       }
@@ -325,7 +318,8 @@ export default {
             this.postedAnswers  = res.data.postedAnswers;
           })
           .catch(err => {
-            this.setaxiosErrorData(err);
+            console.log(err.response.data.errors);
+            this.setAxiosErrorData(err);
             console.log(err);
             }) 
       } else {
