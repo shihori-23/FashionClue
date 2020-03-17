@@ -46,7 +46,7 @@
               <PostBookmarkComponent v-if="postBookmarkedId.includes(parseInt(ladysPost.post_id))" @remove-post-bookmark="removePostBookmark(ladysPost.post_id)" :post_id="parseInt(ladysPost.post_id)" :isBookmarked="true" />
               <PostBookmarkComponent v-else @add-post-bookmark="addPostBookmark(ladysPost.post_id)" :post_id="parseInt(ladysPost.post_id)" :isBookmarked="false"/>
               <span class="commentIcon"><i class="far fa-comment"></i></span><span class="caption captionColor">{{ladysPost.answer_count}}</span>
-              <span class="caption captionColor data">{{ ladysPost.created_at }}</span>
+              <MomentJs :time="ladysPost.created_at" class="caption captionColor data"/>
             </v-card-actions>
           </v-card>
         </v-tab-item>
@@ -81,7 +81,7 @@
               <PostBookmarkComponent v-if="postBookmarkedId.includes(parseInt(mensPost.post_id))" @remove-post-bookmark="removePostBookmark(mensPost.post_id)" :post_id="parseInt(mensPost.post_id)" :isBookmarked="true" />
               <PostBookmarkComponent v-else @add-post-bookmark="addPostBookmark(mensPost.post_id)" :post_id="parseInt(mensPost.post_id)" :isBookmarked="false"/>
               <span class="commentIcon"><i class="far fa-comment"></i></span><span class="caption commentCaption">{{mensPost.answer_count}}</span>
-              <span class="caption captionColor data">{{ mensPost.created_at }}</span>
+              <MomentJs :time="mensPost.created_at" class="caption captionColor data"/>
             </v-card-actions>
           </v-card>
         </v-tab-item>
@@ -92,10 +92,12 @@
 <script>
 
 import PostBookmarkComponent from "../items/PostBookmarkComponent"
+import MomentJs from "../items/MomentJs"
 
 export default {
   components: {
     PostBookmarkComponent,
+    MomentJs,
   },
   /**
   *
