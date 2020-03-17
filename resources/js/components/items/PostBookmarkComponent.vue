@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="container">
-            <a class="btn-border" v-if="!isBookmarked" @click="BookmarkOperationAtClick">
+            <a class="btn-border" v-if="!isBookmarked" @click.stop="BookmarkOperationAtClick">
             <!-- <a class="btn-border" v-if="!isBookmarked" @click="addBookmark(post_id)"> -->
                 <v-icon>mdi-heart-outline</v-icon>
             </a>
-            <a class="btn-border" v-else @click="removeBookmarkOperationAtClick">
+            <a class="btn-border" v-else @click.stop="removeBookmarkOperationAtClick">
             <!-- <a class="btn-border" v-else @click="removeBookmark(post_id)"> -->
                 <v-icon color="#fbadff">mdi-heart</v-icon>
             </a>
@@ -58,5 +58,9 @@ export default {
 <style scoped>
 a {
     text-decoration: none;
+}
+
+.btn-border{
+    font-size:24px;
 }
 </style>

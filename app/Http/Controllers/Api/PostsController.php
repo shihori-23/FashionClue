@@ -27,11 +27,13 @@ use App\TasteUser;
         {
 
             $userId = Auth::id();
+            $userGender = Auth::user()->gender;
     
             $posts = new Post;
             $posts->user_id = $userId;
             $posts->category = $request->category;
             $posts->text = $request->text;
+            $posts->gender_id = $userGender;
 
             //もしファイルがあれば更新
             if ($request->file('image')) {   

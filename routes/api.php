@@ -23,6 +23,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['middleware' => 'auth'], function () {
     //　ログイン中のuidの取得
     Route::get('uid', 'Api\UsersController@uid');
+
+    //　ホーム画面で必要なデータの取得
+    Route::get('get/home', 'Api\HomeController@show');
+
     //　ログイン中のユーザーのプロフィール取得
     Route::get('show/profile', 'Api\UsersController@showProfile');
     //　ログイン中のユーザーの編集用プロフィール取得

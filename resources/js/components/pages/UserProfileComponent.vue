@@ -112,7 +112,6 @@
           </v-card>
         </v-tab-item>
       </v-tabs-items>
-
     </v-container>
 
   </div>
