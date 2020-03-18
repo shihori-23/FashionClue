@@ -14,7 +14,7 @@
                 {
                     Schema::create("posts", function (Blueprint $table) {
 						$table->increments('id');
-						$table->string('category')->nullable();
+						$table->integer('category_id')->nullable();
 						$table->text('text')->nullable();
 						$table->integer('user_id')->nullable();
 						$table->integer('gender_id');

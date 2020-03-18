@@ -28,7 +28,6 @@
             outlined
             ripple
             v-for="(ladysPost,index) in ladysPostsData" :key="index"
-            :to="{ name: 'UserPostDetail' , params: { postId: ladysPost.post_id }}"
           > 
             <v-list-item>
               <v-list-item-avatar size=36>
@@ -37,8 +36,8 @@
 
               <v-list-item-content>
                 <v-list-item-title class="">{{ ladysPost.name }}
-                  <span v-if="ladysPost.category" class="categoryChip">
-                    <v-chip class="ma-1" x-small>{{ ladysPost.category }}</v-chip>
+                  <span v-if="ladysPost.category_name" class="categoryChip">
+                    <v-chip class="ma-1" x-small>{{ ladysPost.category_name }}</v-chip>
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
@@ -72,8 +71,8 @@
               <v-list-item-avatar size=36><v-img :src="mensPost.image"></v-img></v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="">{{ mensPost.name }}
-                  <span v-if="mensPost.category" class="categoryChip">
-                    <v-chip class="ma-1" x-small>{{ mensPost.category }}</v-chip>
+                  <span v-if="mensPost.category_name" class="categoryChip">
+                    <v-chip class="ma-1" x-small>{{ mensPost.category_name }}</v-chip>
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
@@ -172,10 +171,7 @@ export default {
         .post("api/post/post_bookmark/" + id)
         .then(res => {
           console.log(res.data.isBookmarked);
-          const postBookmarkIdArray = [];
-          postBookmarkIdArray.push(id);
-          this.postBookmarkedId= postBookmarkIdArray;
-          console.log(this.postBookmarkedId);
+          this.postBookmarkedId.push(id);
         })
         .catch(err => console.log(err));
     }, 
@@ -184,8 +180,10 @@ export default {
       axios
         .post("api/destory/post_bookmark/" + id)
         .then(res => {
-        const postBookmarkIdArray = [];
-        this.postBookmarkedId = postBookmarkIdArray;
+
+        const order = this.postBookmarkedId.findIndex(item=>item == id);
+        this.postBookmarkedId.splice(order,1);
+
         console.log(this.postBookmarkedId);
         })
         .catch(err => console.log(err));

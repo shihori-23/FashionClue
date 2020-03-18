@@ -68,8 +68,8 @@
 
               <v-list-item-content>
                 <v-list-item-title class="">{{ userProfileData.name }}
-                  <span v-if="post.category" class="categoryChip">
-                    <v-chip class="ma-1" x-small>{{ post.category }}</v-chip>
+                  <span v-if="post.category_name" class="categoryChip">
+                    <v-chip class="ma-1" x-small>{{ post.category_name }}</v-chip>
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
@@ -97,8 +97,8 @@
               <v-list-item-avatar size=36><v-img :src="userProfileData.image"></v-img></v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="">{{ userProfileData.name }}
-                  <span v-if="answer.category" class="categoryChip">
-                    <v-chip class="ma-1" x-small>{{ answer.category }}</v-chip>
+                  <span v-if="answer.category_name" class="categoryChip">
+                    <v-chip class="ma-1" x-small>{{ answer.category_name }}</v-chip>
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle>

@@ -34,6 +34,6 @@ use Illuminate\Database\Seeder;
                     "updated_at" => $faker->dateTime("now"),
                 ],
             ];
-                DB::table('taste_users')->insert($data);
+                DB::table('taste_user')->insert($data);
         }
     }

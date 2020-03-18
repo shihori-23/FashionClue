@@ -288,14 +288,13 @@ export default {
         const axiosvalidationErrorRes = axiosErrorRes.errors;
 
         Object.keys(axiosvalidationErrorRes).map(dataField=>{
-        axiosErrorMessageArray.push(axiosvalidationErrorRes[dataField][0]);
-        axiosErrorMessageArray.push(axiosvalidationErrorRes[dataField][1]);
-        })
-
+          axiosErrorMessageArray.push(axiosvalidationErrorRes[dataField]);
+        });
+        
       } else {
         axiosErrorMessageArray.push("回答が送信されませんでした。再度送信してください。");
       }
-      this.axiosErrorMessages = axiosErrorMessageArray;
+      this.axiosErrorMessages = axiosErrorMessageArray.flat();
       console.log(this.axiosErrorMessages);
       this.isDialogOpen.errorDialog = true;
     },
@@ -327,53 +326,53 @@ export default {
       }
     },
     //質問投稿に対するお気に入りの登録
-    addPostBookmark: function(id){
-      axios
-        .post("api/post/post_bookmark/" + id)
-        .then(res => {
-          console.log(res.data.isBookmarked);
-          const postBookmarkIdArray = [];
-          postBookmarkIdArray.push(id);
-          this.isBookmarkedId.post = postBookmarkIdArray;
-          console.log(this.isBookmarkedId.post);
-        })
-        .catch(err => console.log(err));
-    }, 
+    // addPostBookmark: function(id){
+    //   axios
+    //     .post("api/post/post_bookmark/" + id)
+    //     .then(res => {
+    //       console.log(res.data.isBookmarked);
+    //       const postBookmarkIdArray = [];
+    //       postBookmarkIdArray.push(id);
+    //       this.isBookmarkedId.post = postBookmarkIdArray;
+    //       console.log(this.isBookmarkedId.post);
+    //     })
+    //     .catch(err => console.log(err));
+    // }, 
     //質問投稿に対するお気に入りの削除
-    removePostBookmark: function(id){
-      axios
-        .post("api/destory/post_bookmark/" + id)
-        .then(res => {
-        const postBookmarkIdArray = [];
-        this.isBookmarkedId.post = postBookmarkIdArray;
-        console.log(this.isBookmarkedId.post);
-        })
-        .catch(err => console.log(err));
-    },
+    // removePostBookmark: function(id){
+    //   axios
+    //     .post("api/destory/post_bookmark/" + id)
+    //     .then(res => {
+    //     const postBookmarkIdArray = [];
+    //     this.isBookmarkedId.post = postBookmarkIdArray;
+    //     console.log(this.isBookmarkedId.post);
+    //     })
+    //     .catch(err => console.log(err));
+    // },
     //回答に対するお気に入り登録
-    addAnswerBookmark: function(id){
-      axios
-        .post("api/post/answer_bookmark/" + id)
-        .then(res => {
-          console.log(res.data.isBookmarked);
-          const answerBookmarkIdArray = this.isBookmarkedId.answer;
-          answerBookmarkIdArray.push(id);
-          this.isBookmarkedId.answer = answerBookmarkIdArray;
-          console.log(this.isBookmarkedId.answer);
-        })
-        .catch(err => console.log(err));
-    },
+    // addAnswerBookmark: function(id){
+    //   axios
+    //     .post("api/post/answer_bookmark/" + id)
+    //     .then(res => {
+    //       console.log(res.data.isBookmarked);
+    //       const answerBookmarkIdArray = this.isBookmarkedId.answer;
+    //       answerBookmarkIdArray.push(id);
+    //       this.isBookmarkedId.answer = answerBookmarkIdArray;
+    //       console.log(this.isBookmarkedId.answer);
+    //     })
+    //     .catch(err => console.log(err));
+    // },
     //回答に対するお気に入りの解除
-    removeAnswerBookmark: function(id){
-      axios
-        .post("api/destory/answer_bookmark/" + id)
-        .then(res => {
-          console.log(res.data.bookmarksId);
-          this.isBookmarkedId.answer = res.data.bookmarksId;
+    // removeAnswerBookmark: function(id){
+    //   axios
+    //     .post("api/destory/answer_bookmark/" + id)
+    //     .then(res => {
+    //       console.log(res.data.bookmarksId);
+    //       this.isBookmarkedId.answer = res.data.bookmarksId;
 
-        })
-        .catch(err => console.log(err));
-    },
+    //     })
+    //     .catch(err => console.log(err));
+    // },
     //　ダイアログを閉じる
     closeDialog(dialogName){
         this.isDialogOpen[dialogName] = false;

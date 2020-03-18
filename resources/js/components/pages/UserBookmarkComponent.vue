@@ -28,8 +28,8 @@
               <v-list-item-avatar　size=36><v-img :src="bookmarkedPost.image"></v-img></v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="">{{ bookmarkedPost.name }}
-                  <span v-if="bookmarkedPost.category" class="categoryChip">
-                    <v-chip class="ma-1" x-small>{{ bookmarkedPost.category }}</v-chip>
+                  <span v-if="bookmarkedPost.category_name" class="categoryChip">
+                    <v-chip class="ma-1" x-small>{{ bookmarkedPost.category_name }}</v-chip>
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
@@ -57,8 +57,8 @@
               <v-list-item-avatar　size=36><v-img :src="bookmarkedAnswer.image"></v-img></v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="">{{ bookmarkedAnswer.name }}
-                  <span v-if="bookmarkedAnswer.category" class="categoryChip">
-                    <v-chip class="ma-1" x-small>{{ bookmarkedAnswer.category }}</v-chip>
+                  <span v-if="bookmarkedAnswer.category_name" class="categoryChip">
+                    <v-chip class="ma-1" x-small>{{ bookmarkedAnswer.category_name }}</v-chip>
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle>

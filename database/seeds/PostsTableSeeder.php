@@ -17,7 +17,7 @@ use Illuminate\Database\Seeder;
             for( $i=0; $i<10; $i++ ){
 
                 App\Post::create([
-					"category" => $faker->word(),
+					"category_id" => $faker->randomDigit(),
 					"text" => $faker->word(),
 					"user_id" => $faker->randomDigit(),
 					"gender_id" => $faker->randomDigit(),

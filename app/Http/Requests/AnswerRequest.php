@@ -25,9 +25,9 @@ class AnswerRequest extends FormRequest
     {
         return [
             //
-            'text' => 'required | max:500',
-            'url' => 'nullable| url | max:500',
-            'image' => 'max:3000000 | nullable',
+            'text' => 'required | max:5',
+            'url' => 'nullable| url | max:5',
+            'image' => 'max:3 | nullable',
         ];
     }
 

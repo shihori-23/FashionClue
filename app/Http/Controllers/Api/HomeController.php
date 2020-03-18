@@ -22,13 +22,13 @@ use App\BookmarkAnswer;
         //　ホーム画面に表示するデータの取得
         public function show()
         {
-            
             //　レディースの投稿を取得
             $ladysQuerys = DB::table('posts as p')
                                     ->join('users as u', 'u.id','=', 'p.user_id')
+                                    ->join('categories as c','p.category_id','=','c.id')
                                     ->where('u.gender','=',0)
                                     ->orderBy('p.created_at','desc')
-                                    ->select('p.id as post_id','p.text','p.post_image','p.category','p.created_at','u.id as user_id','u.name','u.image','u.age','u.gender')
+                                    ->select('p.id as post_id','p.text','p.post_image','p.created_at','u.id as user_id','u.name','u.image','u.age','u.gender','c.category_name')
                                     ->get();
             $ladysPostsData = [];
 
@@ -63,9 +63,10 @@ use App\BookmarkAnswer;
             //　メンズの投稿を取得
             $mensQuerys = DB::table('posts as p')
                                     ->join('users as u', 'u.id','=', 'p.user_id')
+                                    ->join('categories as c','p.category_id','=','c.id')
                                     ->where('u.gender','=',1)
                                     ->orderBy('p.created_at','desc')
-                                    ->select('p.id as post_id','p.text','p.post_image','p.category','p.created_at','u.id as user_id','u.name','u.image','u.age','u.gender')
+                                    ->select('p.id as post_id','p.text','p.post_image','p.created_at','u.id as user_id','u.name','u.image','u.age','u.gender','c.category_name')
                                     ->get();
             $mensPostsData = [];
 

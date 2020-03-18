@@ -41,7 +41,7 @@ class UsersController extends Controller
         }
 
         //　選択済のテイストがあれば取得して配列に入れる
-        $selectedTastes = TasteUser::where('user_id','=',Auth::id())->select('taste_id')->get();
+        $selectedTastes = $user->tastes()->where('user_id','=',Auth::id())->select('taste_id')->get();
 
         return response()->json(['profile'=>$array,'tastes'=>$taste,'filledUserGender'=>$filledUserGender,'selectedTastes'=>$selectedTastes], 200);
     }
@@ -86,22 +86,12 @@ class UsersController extends Controller
         //　Requestを定義
         $selectedTastes = $request->tastes_id;
         $user_id = Auth::id();
+        $user =Auth::user();
         $dt = now();
 
         //　一旦ログインユーザーのテイストデータを消す
-        $oldTastes = TasteUser::where('user_id','=',$user_id)->get();
-        if ($oldTastes->isEmpty()) { 
-
-        } else {
-            $delete = TasteUser::where('user_id','=',$user_id)->delete();
-        }
-
-        $tastes = [];
-        for($i = 0; $i < count($selectedTastes); $i++){
-            array_push($tastes,['user_id' => $user_id,'taste_id'=> $selectedTastes[$i],'created_at' => $dt,'updated_at' => $dt]);
-        }
-        $tastesUser = new TasteUser;
-        $tastesUser->insert($tastes);
+        $user->tastes()->detach();
+        $user->tastes()->attach($request->tastes_id);
 
         return response()->json(['done'=>true], 200);
     }
@@ -114,23 +104,21 @@ class UsersController extends Controller
         $array = array('name'=>$user->name,'email'=>$user->email,'image'=>$user->image,'bio'=>$user->bio,'age'=>$user->age,'gender'=>$user->gender);
         
         //　選択済のテイストがあれば取得して配列に入れる
-        $selectedTastes = DB::table('taste_users as tu')
-        ->join('tastes as t', 't.id', '=', 'tu.taste_id')
-        ->where('tu.user_id', '=', Auth::id())
-        ->select('taste_name')
-        ->get();
+        $selectedTastes = $user->tastes()->where('user_id','=',Auth::id())->select('taste_name')->get();
 
         //　ログインユーザーの質問投稿を取得
         $userPostData = DB::table('posts as p')
+                            ->join('categories as c','p.category_id','=','c.id')
                             ->where('p.user_id', '=', Auth::id())
-                            ->select('p.id as post_id','p.text','p.post_image','p.created_at','p.category')
+                            ->select('p.id as post_id','p.text','p.post_image','p.created_at','c.category_name')
                             ->get();
 
         //　ログインユーザーの回答投稿を取得
         $userAnswerData = DB::table('answers as a')
                             ->join('posts as p', 'p.id', '=', 'a.post_id')
+                            ->join('categories as c','p.category_id','=','c.id')
                             ->where('a.user_id', '=', Auth::id())
-                            ->select('a.id','p.id as post_id','a.text','a.answer_image','a.created_at','p.category')
+                            ->select('a.id','p.id as post_id','a.text','a.answer_image','a.created_at','c.category_name')
                             ->get();
 
         return response()->json(['profile'=>$array,'selectedTastes'=>$selectedTastes,'userPostData'=>$userPostData,'userAnswerData'=>$userAnswerData], 200);

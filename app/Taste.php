@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Taste extends Model
 {
     //
-	// protected $guarded = ["id"];
+    // protected $guarded = ["id"];
+    public function users(){
+        return $this->belongsToMany('App\User'); 
+    }
 
 }
 

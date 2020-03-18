@@ -13,7 +13,7 @@
                 public function up()
                 {
                     Schema::create("tastes", function (Blueprint $table) {
-						$table->increments('id');
+						$table->bigIncrements('id');
 						$table->integer('taste_type')->nullable();
 						$table->string('taste_name')->nullable();
 						$table->timestamps();

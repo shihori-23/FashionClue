@@ -18,11 +18,7 @@ use App\TasteUser;
 
     class PostsController extends Controller
     {
-        /**
-         * Display a listing of the resource.
-         *
-         * @return \Illuminate\View\View
-         */
+        // 質問投稿のデータを保存
         public function save(PostRequest $request)
         {
 
@@ -31,7 +27,7 @@ use App\TasteUser;
     
             $posts = new Post;
             $posts->user_id = $userId;
-            $posts->category = $request->category;
+            $posts->category_id = $request->category_id;
             $posts->text = $request->text;
             $posts->gender_id = $userGender;
 
@@ -55,15 +51,18 @@ use App\TasteUser;
         {
             $postId = $id;
 
-            $postContent = Post::where('id', '=', $id)->first();
+            $postContent = DB::table('posts as p')
+                                ->join('categories as c','c.id','=','p.category_id')
+                                ->where('p.id', '=', $id)
+                                ->first();
 
-            //　質問したユーザーの情報を取得
+            //　質問したユーザーの情報を取得(カテゴリ情報を別テーブルから取得するように変更) 
             $postUserId = $postContent->user_id;
-            $postUser= User::where('id', '=', $postUserId)->select('name','gender','age','image')->first();
+            $postUser = User::where('id', '=', $postUserId)->select('name','gender','age','image')->first();
 
             //　質問したユーザーの好みの情報を取得
             // $selectedTastes = TasteUser::where('user_id','=',$postUserId)->select('taste_id')->get();
-            $selectedTastes = DB::table('taste_users as tu')
+            $selectedTastes = DB::table('taste_user as tu')
                                 ->join('tastes as t', 't.id','=', 'tu.taste_id')
                                 ->where('tu.user_id','=',$postUserId)
                                 ->select('t.taste_name')

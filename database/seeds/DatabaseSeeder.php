@@ -22,10 +22,11 @@ class DatabaseSeeder extends Seeder
 		$this->call(BookmarkPostTableSeeder::class);
 		$this->call(PostNoticeTableSeeder::class);
 		$this->call(AdminsTableSeeder::class);
+		$this->call(UsersTableSeeder::class);
 		$this->call(TastesTableSeeder::class);
 		$this->call(TasteUserTableSeeder::class);
 		$this->call(BookmarkAnswerTableSeeder::class);
 		$this->call(AnswerNoticeTableSeeder::class);
-		$this->call(UsersTableSeeder::class);
+		$this->call(CategoryTableSeeder::class);
     }
 }

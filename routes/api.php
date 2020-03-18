@@ -36,6 +36,8 @@ Route::group(['middleware' => 'auth'], function () {
     //　テイストの編集
     Route::post('edit/tastes', 'Api\UsersController@editTaste');
 
+    //　カテゴリ情報を取得
+    Route::get('get/category', 'Api\CotegoriesController@show');
     //　質問の投稿
     Route::post('post/question', 'Api\PostsController@save');
 

@@ -32,13 +32,18 @@
               ></v-textarea>
             </v-col>
             <v-col cols="11">
-              <v-select
-              :items="categories"
+              <select v-model="postContent.category_id">
+                <option v-for="(category,index) in categories" :key="index" :value="category.id">
+                {{ category.category_name }}
+                </option>
+              </select>
+              <!-- <v-select
+              :items="categories.category_name"
               label="カテゴリ"
               id="categories"
               color="#81cac4"
               v-model="postContent.category"
-              ></v-select>
+              ></v-select> -->
             </v-col>
             <v-col cols="11">
               <v-file-input
@@ -71,7 +76,7 @@ export default {
   * @param {Object} isDialogOpen・・・Dialogの表示非表示を管理。
   * @param {Object} postContent・・・質問投稿のデータを管理
   * @param {String} fileInfo・・・画像プレビュー用のURLを管理（現在不使用）
-  * @param {Object} categories・・・質問投稿の際のカテゴリ選択タブ用のデータを管理（要：DBから取得するように変更）
+  * @param {Object} categories・・・質問投稿の際のカテゴリ選択タブ用のデータを管理
   * @param {Array} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
   *
   **/
@@ -95,15 +100,29 @@ export default {
       //データ型の定義
       postContent:{},
       fileInfo:"",
-      categories:['トップス', 'アウター', 'ボトムス', 'スカート','ワンピース','シューズ' ,'ファッション小物'],
+      categories:{},
       axiosErrorMessages:[],
     };
   },
 
   created() {
+    this.getCategoriesData();
 
   },
   methods: {
+    //　カテゴリ情報を取得
+    getCategoriesData() {
+      axios
+      .get("api/get/category")
+          .then(res => {
+            console.log(res.data);
+            this.categories = res.data.categories;
+          })
+          .catch(err => {
+            console.log(err.response.data);
+            }) 
+    },
+    //　登録されて画像を取得
     selectImageFile(imageFile) {
         const postImageFile = imageFile;
         // const name = file.name;
