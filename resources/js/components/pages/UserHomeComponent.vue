@@ -28,6 +28,7 @@
             outlined
             ripple
             v-for="(ladysPost,index) in ladysPostsData" :key="index"
+            :to="{ name: 'UserPostDetail' , params: { postId: ladysPost.post_id }}"
           > 
             <v-list-item>
               <v-list-item-avatar size=36>

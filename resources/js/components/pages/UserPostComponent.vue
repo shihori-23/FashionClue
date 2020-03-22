@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
-    <v-container class="text-center">
-      <h2 class="subtitle-1">質問投稿ページ</h2>
+    <v-container>
+      <!-- <h2 class="subtitle-1">質問投稿ページ</h2> -->
 
       <v-dialog v-model="isDialogOpen.errorDialog" width="400">
           <v-card>
@@ -9,13 +9,13 @@
             <v-card-text><p v-for="(message,index) in axiosErrorMessages" :key="index">{{ axiosErrorMessages[index] }}</p></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="closeDialog('errorDialog')">閉じる</v-btn>
+              <v-btn color="#bc8f8f" text @click="closeDialog('errorDialog')">閉じる</v-btn>
             </v-card-actions>
           </v-card>
       </v-dialog>
 
 
-      <v-form ref="form" v-model="valid" lazy-validation>
+      <v-form ref="form" v-model="valid" lazy-validation class="postQuestionWrap">
         <v-row justify="center">
             <v-col cols="11">
               <v-textarea
@@ -26,13 +26,13 @@
                 :readonly="readOnly.question"
                 :rules="[validationRules.required,validationRules.textCounter]"
                 counter="500"
-                color="#81cac4"
+                color="#bc8f8f"
                 rows="3"
                 row-height="15"
               ></v-textarea>
             </v-col>
             <v-col cols="11">
-              <select v-model="postContent.category_id">
+              <select v-model="postContent.category_id" class="selectbox">
                 <option v-for="(category,index) in categories" :key="index" :value="category.id">
                 {{ category.category_name }}
                 </option>
@@ -49,15 +49,22 @@
               <v-file-input
                 chips
                 counter
+                color="#bc8f8f"
                 accept="image/*"
                 label="添付画像を選択してください"
                 :rules="[validationRules.imageMax]"
                 @change="selectImageFile"
               ></v-file-input>
             </v-col>
+            <v-btn @click="saveQuestionPostData" color="#bc8f8f" outlined class="submit_btn text-center">変更を保存</v-btn>
           </v-row>
-            <v-btn @click="saveQuestionPostData" color="#81CAC4" class="submit_btn">変更を保存</v-btn>
       </v-form>
+
+      <v-row>
+        <v-col>
+          <p>人気の投稿を表示するかも。</p>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -206,6 +213,22 @@ export default {
 </script>
 
 <style scoped>
+.postQuestionWrap{
+  width: 95%;
+  margin:0 auto;
+  padding:8px 8px 16px;
+  /* border:1px solid #bcbcbc;  */
+  border-radius: 5px;
+  box-shadow:1px 1px 4px #bcbcbc
+}
+
+.selectbox{
+  width: 100%;
+  padding:8px;
+  border:1px solid #bcbcbc;
+  border-radius: 5px;
+}
+
 .image {
   width: 120px;
   margin: 8px auto;
