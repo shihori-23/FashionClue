@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProfileRequest;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use DB;
 
@@ -49,14 +49,6 @@ class UsersController extends Controller
     //プロフィール編集
     public function edit(ProfileRequest $request)
     {   
-        // バリデーション
-        // $validatedData = $request->validate([ 
-        //     'name' => 'required | max:20',
-        //     'email' => 'required | email',
-        //     // 'age' => 'integer | nullable',
-        //     'bio' =>  'max:200 | nullable',
-        //     'image' => 'max:3000000 | nullable'
-        // ]);
 
         $user = User::find(Auth::id());
 
@@ -83,11 +75,7 @@ class UsersController extends Controller
     //　テイストの編集
     public function editTaste(Request $request){
 
-        //　Requestを定義
-        $selectedTastes = $request->tastes_id;
-        $user_id = Auth::id();
-        $user =Auth::user();
-        $dt = now();
+        $user = Auth::user();
 
         //　一旦ログインユーザーのテイストデータを消す
         $user->tastes()->detach();
