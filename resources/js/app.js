@@ -36,14 +36,14 @@ require("./bootstrap");
 window.Vue=require("vue");
 import vuetify from"./vuetify";
 import router from"./router";
-// import vuex from './vuex';
+import store from './store/index';
 import AppComponent from"./components/AppComponent";
 
 const app = new Vue({
 el:"#app",
 router,
 vuetify,
-// vuex,
+store,
 components: {
 "app-component":AppComponent
     }

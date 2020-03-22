@@ -29,6 +29,9 @@ export default {
   created() {
     this.getUid();
   },
+  mounted(){
+
+  },
   methods: {
     getUid: function() {
       axios
@@ -38,7 +41,7 @@ export default {
           this.snackbar = true;
         })
         .catch(err => console.log(err));
-    }
+    },
   }
 };
 </script>

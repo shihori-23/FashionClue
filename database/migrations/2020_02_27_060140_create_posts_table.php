@@ -18,7 +18,8 @@
 						$table->text('text')->nullable();
 						$table->integer('user_id')->nullable();
 						$table->integer('gender_id');
-						$table->string('post_image')->nullable();
+                        $table->string('post_image')->nullable();
+                        $table->integer('status')->default(0);
 						$table->timestamps();
 						$table->softDeletes();
 
