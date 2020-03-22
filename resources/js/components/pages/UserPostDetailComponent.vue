@@ -45,7 +45,7 @@
         </v-col>
 
         <v-col v-if="isVisible.postedAnswer" cols="12">
-          <p>回答({{ postedAnswers.length }})</p>
+          <span>回答({{ postedAnswers.length }})</span> <v-btn v-if="loginUser == postUser.id" text>ベストアンサーを選択する</v-btn>
           <v-card v-for="(answer,index) in postedAnswers" :key="index" class="postedAnswerCard card" max-width="344" outlined>
             <div>
               <div class="answerImgFlex">
@@ -115,6 +115,7 @@
 </template>
 
 <script>
+import { mapActions ,mapGetters } from 'vuex';
 import PostBookmarkComponent from "../items/PostBookmarkComponent"
 import AnswerBookmarkComponent from "../items/AnswerBookmarkComponent"
 import MomentJs from "../items/MomentJs"
@@ -167,7 +168,6 @@ export default {
       isDialogOpen:{
         errorDialog:false,
       },
-      
       postContent:{},
       postUser:{},
       postedAnswers:{},
@@ -190,8 +190,14 @@ export default {
     this.answerIsBookmarkedCheck();
   },
   mounted() {
+    this.getLoginUserData();
+  },
+  computed:{
+    ...mapGetters(['loginUser'])
   },
   methods: {
+    //ログインしているユーザーの情報
+    ...mapActions(['getLoginUserData']),
     //質問内容の取得
     getPostData: function() {
       axios

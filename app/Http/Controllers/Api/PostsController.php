@@ -59,7 +59,7 @@ use App\TasteUser;
 
             //　質問したユーザーの情報を取得(カテゴリ情報を別テーブルから取得するように変更) 
             $postUserId = $postContent->user_id;
-            $postUser = User::where('id', '=', $postUserId)->select('name','gender','age','image')->first();
+            $postUser = User::where('id', '=', $postUserId)->select('id','name','gender','age','image')->first();
 
             //　質問したユーザーの好みの情報を取得
             // $selectedTastes = TasteUser::where('user_id','=',$postUserId)->select('taste_id')->get();
