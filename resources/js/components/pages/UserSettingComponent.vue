@@ -256,13 +256,11 @@ export default {
       let formData = new FormData();
 
       Object.keys(this.userProfile).forEach(key=>{
-          if(this.userProfile[key] === null){
-            }else{
+          if(this.userProfile[key]){
               console.log(key,this.userProfile[key])
               formData.append(key, this.userProfile[key]);
             }   
         });
-      // formData.append("image", this.fileInfo);
       return formData;
     },
     //　サーバー側からのエラーを定義
