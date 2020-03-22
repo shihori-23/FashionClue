@@ -16,7 +16,7 @@
 						$table->increments('id');
 						$table->integer('review_owner_id')->nullable();
 						$table->integer('role')->nullable();
-						$table->integer('user_id')->nullable();
+						$table->integer('answer_id');
 						$table->timestamps();
 						$table->softDeletes();
 

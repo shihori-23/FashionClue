@@ -45,6 +45,13 @@ use App\User;
                                 ->where('a.post_id', '=', $postId)
                                 ->select('a.id','u.id as user_id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image', 'a.created_at')
                                 ->get();
+
+            //　通知用のテーブルにデータを保存
+            $postNotice = new PostNotice;
+            $postNotice->post_id = $postId;
+            $postNotice->answer_owner_id = $userId; //回答者のuser_id
+            $postNotice->role = 0; //未読・既読の管理　未読の場合「０」
+            $postNotice->save();
             
             return response()->json(['id'=>$answers,'postedAnswers'=>$postedAnswers], 200);
         }
