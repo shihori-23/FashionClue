@@ -19,7 +19,7 @@ use Illuminate\Database\Seeder;
                 App\AnswerNotice::create([
 					"review_owner_id" => $faker->randomDigit(),
 					"role" => $faker->randomDigit(),
-					"user_id" => $faker->randomDigit(),
+					"answer_id" => $faker->randomDigit(),
 					"created_at" => $faker->dateTime("now"),
 					"updated_at" => $faker->dateTime("now")
                 ]);

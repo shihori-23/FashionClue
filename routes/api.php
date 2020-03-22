@@ -24,6 +24,9 @@ Route::group(['middleware' => 'auth'], function () {
     //　ログイン中のuidの取得
     Route::get('uid', 'Api\UsersController@uid');
 
+    //　通知があるか取得
+    Route::get('notice','Api\NoticeController@show');
+
     //　ホーム画面で必要なデータの取得
     Route::get('get/home', 'Api\HomeController@show');
 
@@ -62,6 +65,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get/post_bookmark', 'Api\BookmarkPostsController@bookmarkedDataShow');
     //　回答に対するお気に入り一覧の取得
     Route::get('get/answer_bookmark', 'Api\BookmarkAnswersController@bookmarkedDataShow');
+
+    //　通知ページ
+    Route::get('get/notice', 'Api\NoticeController@showNoticeData');
 //認証閉じタグここまで
 });
 //認証閉じタグここまで

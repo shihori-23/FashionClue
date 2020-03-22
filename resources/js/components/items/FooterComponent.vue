@@ -1,35 +1,70 @@
     <template>
     <footer>
         <router-link :to="{ name: 'UserHome'}">
-        <v-btn icon>
-            <i class="fas fa-home"></i>
-            <!-- <v-icon>mdi-home-outline</v-icon> -->
-        </v-btn>
+            <v-btn icon>
+                <i class="fas fa-home"></i>
+            </v-btn>
         </router-link>
         <router-link :to="{ name: 'UserBookmark'}">
-        <v-btn icon>
-            <i class="far fa-bookmark"></i>
-        </v-btn>
+            <v-btn icon>
+                <i class="far fa-bookmark"></i>
+            </v-btn>
         </router-link>
         <router-link :to="{ name: 'UserPost'}">
-        <v-btn icon>
-            <i class="far fa-edit"></i>
-        </v-btn>
+            <v-btn icon>
+                <i class="far fa-edit"></i>
+            </v-btn>
         </router-link>
         <router-link :to="{ name: 'UserNotice'}">
-        <v-btn icon>
-            <i class="far fa-bell"></i>
-            <!-- <v-icon>mdi-bookmark-outline</v-icon> -->
-        </v-btn>
+            <v-btn icon>
+                <v-badge
+                :value="isVisibleNoctice"
+                overlap
+                dot
+                color="#bc8f8f">
+                    <i class="far fa-bell"></i>
+                </v-badge>
+            </v-btn>
         </router-link>
         <router-link :to="{ name: 'UserProfile'}">
-        <v-btn icon>
-            <i class="fas fa-user"></i>
-            <!-- <v-icon>mdi-settings</v-icon> -->
-        </v-btn>
+            <v-btn icon>
+                <i class="fas fa-user"></i>
+            </v-btn>
         </router-link>
     </footer>
 </template>
+<script>
+export default {
+    data() {
+        return {
+            isVisibleNoctice:false,
+        };
+    },
+    created() {
+        this.getNoticeData();
+
+    },
+    mounted() {
+
+    },
+    methods: {
+        getNoticeData: function() {
+            axios
+            .get("api/notice")
+            .then(res => {
+                console.log(res.data.notice);
+                if (res.data.notice == 0) {
+                this.isVisibleNoctice = false;
+                } else {
+                this.isVisibleNoctice = true;
+                }
+            })
+            .catch(err => console.log(err));
+        },
+    }
+}
+</script>
+
 <style scoped>
     a {
         text-decoration: none;
