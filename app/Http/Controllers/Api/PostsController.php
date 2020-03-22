@@ -54,6 +54,7 @@ use App\TasteUser;
             $postContent = DB::table('posts as p')
                                 ->join('categories as c','c.id','=','p.category_id')
                                 ->where('p.id', '=', $id)
+                                ->select('p.id','p.text','p.post_image','p.user_id','p.created_at','c.category_name')
                                 ->first();
 
             //　質問したユーザーの情報を取得(カテゴリ情報を別テーブルから取得するように変更) 
