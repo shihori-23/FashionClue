@@ -66,7 +66,7 @@ class NoticeController extends Controller
                             ->join('answers as a', 'a.id', '=', 'an.answer_id')
                             ->where('a.user_id', '=', $userId)
                             ->orderBy('an.created_at', 'desc')
-                            ->select('an.id','an.review_owner_id','an.role','an.answer_id','an.created_at')
+                            ->select('an.id','an.review_owner_id','an.role','an.answer_id','an.created_at','a.post_id')
                             ->get();
 
         //　表示に必要なデータを追加
@@ -101,6 +101,6 @@ class NoticeController extends Controller
             ->update(['role' => 1]);
         };
 
-        return response()->json(['postNoticesData'=>$postNoticesArray,'answerNoticeData'=>$answerNoticesArray,'noticeData'=>$sorted], 200);
+        return response()->json(['postNoticesData'=>$postNoticesArray,'answerNoticeData'=>$answerNoticesArray,'userNoticeData'=>$sorted], 200);
     }
 }
