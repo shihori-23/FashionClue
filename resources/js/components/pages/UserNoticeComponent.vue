@@ -9,10 +9,10 @@
                   name: 'UserPostDetail',
                   params: { postId: notice.post_id }
           }">
-            <v-list-item-avatar v-if="notice.review_owner_image">
+            <v-list-item-avatar size=40 v-if="notice.review_owner_image">
               <v-img :src="notice.review_owner_image"></v-img>
             </v-list-item-avatar>
-            <v-list-item-avatar v-else-if="notice.answer_owner_image">
+            <v-list-item-avatar size=40 v-else-if="notice.answer_owner_image">
               <v-img :src="notice.answer_owner_image"></v-img>
             </v-list-item-avatar>
             <v-list-item-content v-if="notice.role == 0" :style="styleObject">
@@ -70,4 +70,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>

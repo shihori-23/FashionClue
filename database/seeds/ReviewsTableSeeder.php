@@ -18,6 +18,7 @@ use Illuminate\Database\Seeder;
 
                 App\Review::create([
 					"answer_id" => $faker->randomDigit(),
+					"post_id" => $faker->randomDigit(),
 					"created_at" => $faker->dateTime("now"),
 					"updated_at" => $faker->dateTime("now")
                 ]);

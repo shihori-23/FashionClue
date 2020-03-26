@@ -17,6 +17,7 @@
 						$table->integer('review_owner_id')->nullable();
 						$table->integer('role')->nullable();
 						$table->integer('answer_id');
+						$table->integer('post_id');
 						$table->timestamps();
 						$table->softDeletes();
 
