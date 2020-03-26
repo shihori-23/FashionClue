@@ -60,6 +60,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('post/answer_bookmark/{id}', 'Api\BookmarkAnswersController@save');
     //　回答に対するお気に入りの取り消し
     Route::post('destory/answer_bookmark/{id}', 'Api\BookmarkAnswersController@destroy');
+    //　回答に対する評価
+    Route::post('post/best_answer/{id}', 'Api\ReviewsController@save');
 
     //　質問投稿に対するお気に入り一覧の取得
     Route::get('get/post_bookmark', 'Api\BookmarkPostsController@bookmarkedDataShow');

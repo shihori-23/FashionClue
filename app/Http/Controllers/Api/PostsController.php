@@ -14,6 +14,7 @@ use App\PostNotice;
 use App\User;
 use App\Taste;
 use App\TasteUser;
+use App\Review;
     
 
     class PostsController extends Controller
@@ -54,7 +55,7 @@ use App\TasteUser;
             $postContent = DB::table('posts as p')
                                 ->join('categories as c','c.id','=','p.category_id')
                                 ->where('p.id', '=', $id)
-                                ->select('p.id','p.text','p.post_image','p.user_id','p.created_at','c.category_name')
+                                ->select('p.id','p.text','p.post_image','p.user_id','p.created_at','p.status','c.category_name')
                                 ->first();
 
             //　質問したユーザーの情報を取得(カテゴリ情報を別テーブルから取得するように変更) 
@@ -76,7 +77,16 @@ use App\TasteUser;
                         ->select('a.id','u.id as user_id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image', 'a.created_at')
                         ->get();
 
-            return response()->json(['postContent'=>$postContent, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes,'postedAnswers'=>$postedAnswers], 200);
+            //　回答に対して評価がついているか確認
+            $postedAnswerArray =[];
+            foreach ($postedAnswers as $p) {
+                $object = $p;
+                $isReviewed = Review::where('answer_id', '=', $p->id)->count();
+                $object->toggle = $isReviewed;
+                $postedAnswerArray[] = $object;
+            }
+
+            return response()->json(['postContent'=>$postContent, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes,'postedAnswers'=>$postedAnswerArray], 200);
         }
     }
     

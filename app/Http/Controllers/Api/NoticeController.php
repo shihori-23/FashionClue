@@ -45,7 +45,7 @@ class NoticeController extends Controller
         //　投稿に対する回答の通知情報を取得
         $postNotices = DB::table('post_notices as pn')
                             ->join('posts as p', 'p.id', '=', 'pn.post_id')
-                            ->join('answers as a', 'a.post_id', '=', 'pn.post_id')
+                            // ->join('answers as a', 'a.post_id', '=', 'pn.post_id')
                             ->where('p.user_id', '=', $userId)
                             ->orderBy('pn.created_at', 'desc')
                             ->select('pn.id','pn.post_id','pn.answer_owner_id','pn.created_at','pn.role')
@@ -101,6 +101,6 @@ class NoticeController extends Controller
             ->update(['role' => 1]);
         };
 
-        return response()->json(['postNoticesData'=>$postNoticesArray,'answerNoticeData'=>$answerNoticesArray,'userNoticeData'=>$sorted], 200);
+        return response()->json(['postNoticesData'=>$postNoticesArray,'answerNoticeData'=>$answerNotices,'userNoticeData'=>$sorted], 200);
     }
 }
