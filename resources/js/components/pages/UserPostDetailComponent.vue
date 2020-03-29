@@ -311,7 +311,7 @@ export default {
     //質問内容の取得
     getPostData: function() {
       axios
-        .get("api/get/question/" + this.$route.params.postId)
+        .get("api/question/get/" + this.$route.params.postId)
         .then(res => {
           console.log(res.data);
           const getData = res.data;
@@ -350,7 +350,7 @@ export default {
     //質問に対してお気に入りしているか確認
     postIsBookmarkedCheck: function() {
       axios
-        .get("api/get/bookmark/" + this.$route.params.postId)
+        .get("api/bookmark/get/" + this.$route.params.postId)
         .then(res => {
           console.log(res.data.bookmarkId);
           this.isBookmarkedId.post = res.data.bookmarkId;
@@ -360,7 +360,7 @@ export default {
     //回答に対してお気に入りしているか確認
     answerIsBookmarkedCheck: function() {
       axios
-        .get("api/get/answer_bookmark/" + this.$route.params.postId)
+        .get("api/answer_bookmark/get/" + this.$route.params.postId)
         .then(res => {
           console.log(res.data.bookmarkId);
           this.isBookmarkedId.answer = res.data.bookmarkId;
@@ -446,7 +446,7 @@ export default {
           }
         };
         axios
-          .post("api/post/answer", formData, config)
+          .post("api/answer/post", formData, config)
           .then(res => {
             console.log(res.data);
             this.isVisible.answerInput = false;
@@ -465,7 +465,7 @@ export default {
     //質問投稿に対するお気に入りの登録
     addPostBookmark: function(id) {
       axios
-        .post("api/post/post_bookmark/" + id)
+        .post("api/post_bookmark/post/" + id)
         .then(res => {
           console.log(res.data.isBookmarked);
           const postBookmarkIdArray = [];
@@ -478,7 +478,7 @@ export default {
     // 質問投稿に対するお気に入りの削除
     removePostBookmark: function(id) {
       axios
-        .post("api/destory/post_bookmark/" + id)
+        .post("api/post_bookmark/destory/" + id)
         .then(res => {
           const postBookmarkIdArray = [];
           this.isBookmarkedId.post = postBookmarkIdArray;
@@ -489,7 +489,7 @@ export default {
     // 回答に対するお気に入り登録
     addAnswerBookmark: function(id) {
       axios
-        .post("api/post/answer_bookmark/" + id)
+        .post("api/answer_bookmark/post/" + id)
         .then(res => {
           console.log(res.data.isBookmarked);
           const answerBookmarkIdArray = this.isBookmarkedId.answer;
@@ -502,7 +502,7 @@ export default {
     // 回答に対するお気に入りの解除
     removeAnswerBookmark: function(id) {
       axios
-        .post("api/destory/answer_bookmark/" + id)
+        .post("api/answer_bookmark/destory/" + id)
         .then(res => {
           console.log(res.data.bookmarksId);
           this.isBookmarkedId.answer = res.data.bookmarksId;
@@ -516,7 +516,7 @@ export default {
     saveBestAnswerData: function() {
       const id = this.reviewCheckbox;
       axios
-        .post("api/post/best_answer/" + id)
+        .post("api/best_answer/post/" + id)
         .then(res => {
           this.isVisible.reviewSubmitBtn = false;
           this.isVisible.editReviewBtn = true;

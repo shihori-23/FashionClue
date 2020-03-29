@@ -72,7 +72,7 @@ export default {
   methods: {
     getNoticeData: function() {
       axios
-        .get("api/get/notice")
+        .get("api/notice/get")
         .then(res => {
           console.log(res.data);
           this.userNoticeData = res.data.userNoticeData;

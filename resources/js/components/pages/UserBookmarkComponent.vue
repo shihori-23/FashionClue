@@ -123,7 +123,7 @@ export default {
   methods: {
     isBookmarkedPostsDataGet: function() {
       axios
-        .get("api/get/post_bookmark")
+        .get("api/post_bookmark/get")
         .then(res => {
           console.log(res.data.bookmarkedPostsData);
           const bookmarkedPostDataObj = res.data.bookmarkedPostsData;
@@ -138,7 +138,7 @@ export default {
     },
     isBookmarkedAnswersDataGet: function() {
       axios
-        .get("api/get/answer_bookmark")
+        .get("api/answer_bookmark/get")
         .then(res => {
           console.log(res.data.bookmarkedAnswersData);
           this.bookmarkedAnswersData = res.data.bookmarkedAnswersData;
