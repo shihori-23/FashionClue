@@ -209,6 +209,7 @@ import PostBookmarkComponent from "../items/PostBookmarkComponent";
 import AnswerBookmarkComponent from "../items/AnswerBookmarkComponent";
 import MomentJs from "../items/MomentJs";
 import Gender from "../items/GenderComponent";
+import Mixin from "../../mixin";
 
 export default {
   components: {
@@ -223,7 +224,6 @@ export default {
    * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
    * @param {Boolean} isReadOnly・・・各フォームが読み取り専用かどうかの状態を管理
    * @param {Boolean} isVisible・・・各セクションの表示非表示の切り替えを管理
-   * @param {Boolean} isDialogOpen・・・Dialogの表示非表示を管理。
    * @param {Boolean} isBookmarkedPost・・・質問投稿に対するブックマークの有無。
    * @param {Object} postContent・・・質問投稿のデータを管理
    * @param {Object} postUser・・・質問投稿をしたユーザーのデータを管理
@@ -233,7 +233,6 @@ export default {
    * @param {Object} answerPost・・・質問投稿に対する新たに回答する入力データを管理
    * @param {Array} isBookmarkId・・・ログインユーザーのお気に入り済のidを管理
    * @param {String} fileInfo・・・画像プレビュー用のURLを管理（現在不使用)
-   * @param {Array} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
    *
    **/
 
@@ -265,9 +264,6 @@ export default {
         reviewCheckbox: false,
         editReviewBtn: false
       },
-      isDialogOpen: {
-        errorDialog: false
-      },
       isBookmarkedPost: false,
       postContent: {},
       postUser: {},
@@ -281,10 +277,10 @@ export default {
         answer: []
       },
       fileInfo: "",
-      axiosErrorMessages: [],
       reviewCheckbox: []
     };
   },
+  mixins: [Mixin],
   created() {
     this.getPostData();
     this.answerIsBookmarkedCheck();
@@ -408,26 +404,6 @@ export default {
 
       return formData;
     },
-    //　サーバー側からのエラーを定義
-    setAxiosErrorData: function(err) {
-      const axiosErrorRes = err.response.data;
-      let axiosErrorMessageArray = [];
-
-      if (axiosErrorRes.errors) {
-        const axiosvalidationErrorRes = axiosErrorRes.errors;
-
-        Object.keys(axiosvalidationErrorRes).map(dataField => {
-          axiosErrorMessageArray.push(axiosvalidationErrorRes[dataField]);
-        });
-      } else {
-        axiosErrorMessageArray.push(
-          "回答が送信されませんでした。再度送信してください。"
-        );
-      }
-      this.axiosErrorMessages = axiosErrorMessageArray.flat();
-      console.log(this.axiosErrorMessages);
-      this.isDialogOpen.errorDialog = true;
-    },
     // 回答のデータを送信
     saveAnswerPostData: function() {
       if (this.$refs.form.validate()) {
@@ -447,9 +423,8 @@ export default {
             this.postedAnswers = res.data.postedAnswers;
           })
           .catch(err => {
-            console.log(err.response.data.errors);
+            console.log(err.response);
             this.setAxiosErrorData(err);
-            console.log(err);
           });
       } else {
         console.log("エラーがあるよ！");
@@ -464,7 +439,8 @@ export default {
           this.isBookmarkedPost = true;
         })
         .catch(err => {
-          console.log(err);
+          this.setBookmarkAxiosErrorData(err);
+          console.log(err.response);
         });
     },
     // 質問投稿に対するお気に入りの削除
@@ -474,7 +450,10 @@ export default {
         .then(res => {
           this.isBookmarkedPost = false;
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.setBookmarkAxiosErrorData(err);
+          console.log(err);
+        });
     },
     // 回答に対するお気に入り登録
     addAnswerBookmark: function(id) {
@@ -487,7 +466,9 @@ export default {
           this.isBookmarkedId.answer = answerBookmarkIdArray;
           console.log(this.isBookmarkedId.answer);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.setBookmarkAxiosErrorData(err);
+        });
     },
     // 回答に対するお気に入りの解除
     removeAnswerBookmark: function(id) {
@@ -497,11 +478,9 @@ export default {
           console.log(res.data.bookmarksId);
           this.isBookmarkedId.answer = res.data.bookmarksId;
         })
-        .catch(err => console.log(err));
-    },
-    //　ダイアログを閉じる
-    closeDialog(dialogName) {
-      this.isDialogOpen[dialogName] = false;
+        .catch(err => {
+          this.setBookmarkAxiosErrorData(err);
+        });
     },
     saveBestAnswerData: function() {
       const id = this.reviewCheckbox;
