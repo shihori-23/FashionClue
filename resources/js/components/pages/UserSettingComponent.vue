@@ -5,7 +5,11 @@
       <div class="text-center">
         <v-dialog v-model="isDialogOpen.successDialog" width="400">
           <v-card>
-            <v-card-title class="headline lighten-2 text--secondary" color="#3f3f3f" primary-title>Success</v-card-title>
+            <v-card-title
+              class="headline lighten-2 text--secondary"
+              color="#3f3f3f"
+              primary-title
+            >Success</v-card-title>
             <v-card-text>プロフィールの編集が完了しました！</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -15,9 +19,15 @@
         </v-dialog>
 
         <v-dialog v-model="isDialogOpen.errorDialog" width="400">
-                    <v-card>
+          <v-card>
             <v-card-title class="headline lighten-2 text--secondary" primary-title>Error</v-card-title>
-            <v-card-text><p v-for="(message,index) in axiosErrorMessages" :key="index" class="errorMessage">・{{ axiosErrorMessages[index] }}</p></v-card-text>
+            <v-card-text>
+              <p
+                v-for="(message,index) in axiosErrorMessages"
+                :key="index"
+                class="errorMessage"
+              >・{{ axiosErrorMessages[index] }}</p>
+            </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="#bc8f8f" text @click="closeDialog('errorDialog')">閉じる</v-btn>
@@ -26,24 +36,24 @@
         </v-dialog>
       </div>
       <v-form ref="form" v-model="valid" lazy-validation>
-      <div class="image_container">
-        <div class="image">
-          <img :src="fileInfo"/>
+        <div class="image_container">
+          <div class="image">
+            <img :src="fileInfo" />
+          </div>
+          <label class="user_profile" for="user_profile">
+            <v-icon color="#fff" class="add_btn">mdi-camera</v-icon>
+            <input
+              id="user_profile"
+              multiple
+              type="file"
+              accept="image/*"
+              name="image_url"
+              @change="fileSelected"
+            />
+          </label>
         </div>
-        <label class="user_profile" for="user_profile">
-          <v-icon color="#fff" class="add_btn">mdi-camera</v-icon>
-          <input
-            id="user_profile"
-            multiple
-            type="file"
-            accept="image/*"
-            name="image_url"
-            @change="fileSelected"
-          />
-        </label>
-      </div>
-      <v-row justify="center">
-        <v-col cols="11">
+        <v-row justify="center">
+          <v-col cols="11">
             <v-text-field
               label="アカウント名"
               id="name"
@@ -58,19 +68,20 @@
           <v-col cols="11">
             <v-text-field
               label="email"
-              id="email" 
-              v-model="userProfile.email" 
-              :readonly="readOnly.email" 
-              color="#bc8f8f" 
+              id="email"
+              v-model="userProfile.email"
+              :readonly="readOnly.email"
+              color="#bc8f8f"
               append-icon="mdi-information-outline"
-              ></v-text-field>
+            ></v-text-field>
           </v-col>
           <v-radio-group v-model="userProfile.gender" row label="性別" id="gender" color="#81cac4">
-            <v-radio v-for="(item,index) in gender"
-                :key="index"
-                :label="item"
-                :value="index"
-                color="#bc8f8f"
+            <v-radio
+              v-for="(item,index) in gender"
+              :key="index"
+              :label="item"
+              :value="index"
+              color="#bc8f8f"
             ></v-radio>
           </v-radio-group>
           <!-- <v-col cols="11">
@@ -81,7 +92,7 @@
             color="#81cac4"
             v-model="userProfile.gender"
             ></v-select>
-          </v-col> -->
+          </v-col>-->
           <v-col cols="11">
             <v-text-field
               label="年齢"
@@ -111,7 +122,7 @@
           </v-col>
         </v-row>
         <v-btn @click="saveUserProfileData" color="#bc8f8f" class="submit_btn">変更を保存</v-btn>
-        </v-form>
+      </v-form>
     </v-container>
     <v-container class="sub_profile">
       <v-col v-if="filledUserGender">
@@ -121,7 +132,7 @@
           active-class="deep-purple accent-4 white--text"
           column
           multiple
-          max=3
+          max="3"
         >
           <v-chip v-for="taste in tastes" :key="taste.id" :value="taste.id">{{ taste.taste_name }}</v-chip>
         </v-chip-group>
@@ -137,146 +148,160 @@
 <script>
 export default {
   data() {
-  /**
-  *
-  * @param {Object} validationRules・・・・・・・バリデーションルールの設定
-  * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
-  * @param {Object} readOnly・・・各フォームが読み取り専用かどうかの状態を管理
-  * @param {Object} isDialogOpen・・・Dialogの表示非表示を管理。
-  * @param {Boolean} filledUserGender・・・性別の登録があるか管理
-  * @param {Object} userProfile・・・ユーザーのプロフィールデータを管理
-  * @param {Array} gender・・・性別データを管理
-  * @param {Object} selection・・・選択済のテイストを管理
-  * @param {Array} tastes・・・テイストのデータを管理
-  * @param {String} fileInfo・・・画像プレビュー用のURLを管理
-  * @param {Array} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
-  *
-  **/
+    /**
+     *
+     * @param {Object} validationRules・・・・・・・バリデーションルールの設定
+     * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
+     * @param {Object} readOnly・・・各フォームが読み取り専用かどうかの状態を管理
+     * @param {Object} isDialogOpen・・・Dialogの表示非表示を管理。
+     * @param {Boolean} filledUserGender・・・性別の登録があるか管理
+     * @param {Object} userProfile・・・ユーザーのプロフィールデータを管理
+     * @param {Array} gender・・・性別データを管理
+     * @param {Object} selection・・・選択済のテイストを管理
+     * @param {Array} tastes・・・テイストのデータを管理
+     * @param {String} fileInfo・・・画像プレビュー用のURLを管理
+     * @param {Array} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
+     *
+     **/
     return {
-      validationRules:  {
-      required:value => !!value || "入力必須です。",
-      nameCounter:value => (value || '').length <= 20 || "アカウント名は20字以下で入力してください。",
-      bioCounter: value => (value || '').length <= 200 || "自己紹介は200字以下で入力してください。",
+      validationRules: {
+        required: value => !!value || "入力必須です。",
+        nameCounter: value =>
+          (value || "").length <= 20 ||
+          "アカウント名は20字以下で入力してください。",
+        bioCounter: value =>
+          (value || "").length <= 200 ||
+          "自己紹介は200字以下で入力してください。"
       },
       //真偽値の定義
       valid: true,
       isDialogOpen: {
-        successDialog:false,
-        errorDialog:false,
+        successDialog: false,
+        errorDialog: false
       },
-      readOnly:{
+      readOnly: {
         name: false,
         email: true,
         bio: false,
-        age: false,
+        age: false
       },
-      filledUserGender:false,
+      filledUserGender: false,
 
-      //データ型の定義  
+      //データ型の定義
       userProfile: {},
-      fileInfo:"",
-      gender: ['レディース', 'メンズ'],
-      selection:[],
+      fileInfo: "",
+      gender: ["レディース", "メンズ"],
+      selection: [],
       tastes: [],
-      axiosErrorMessages:[],
+      axiosErrorMessages: []
     };
   },
-  created() {
-  },
+  created() {},
   mounted() {
-      this.getUserProfileData();
+    this.getUserProfileData();
   },
   watch: {
-      selection: function(newVal, oldVal) {
+    selection: function(newVal, oldVal) {
       console.log(this.selection);
-  },
+    }
   },
   methods: {
     //プロフィールの取得
     getUserProfileData: function() {
       axios
-        .get("api/get/profile")
+        .get("api/profile/get")
         .then(res => {
           this.userProfile = res.data.profile;
           this.tastes = res.data.tastes;
-          this.filledUserGender = res.data.filledUserGender
+          this.filledUserGender = res.data.filledUserGender;
           this.fileInfo = res.data.profile.image;
           console.log(res.data);
-          console.log(this.userProfile,111);
+          console.log(this.userProfile, 111);
 
           this.selectedTasteConvert(res);
         })
         .catch(err => console.log(err));
     },
     //　ダイアログを閉じる
-    closeDialog(dialogName){
-        this.isDialogOpen[dialogName] = false;
+    closeDialog(dialogName) {
+      this.isDialogOpen[dialogName] = false;
     },
     //　テイストタグのデータを配列に入れる処理
     selectedTasteConvert: function(res) {
-        const selectedTasteArray = res.data.selectedTastes;
-        const selectedtasteList = selectedTasteArray.map(function(row){
-        return [ row["taste_id"] ]
-        }).reduce(function(a,b){
+      const selectedTasteArray = res.data.selectedTastes;
+      const selectedtasteList = selectedTasteArray
+        .map(function(row) {
+          return [row["taste_id"]];
+        })
+        .reduce(function(a, b) {
           return a.concat(b);
         });
-        this.selection = selectedtasteList;
-        console.log(this.selection);  
+      this.selection = selectedtasteList;
+      console.log(this.selection);
     },
     //画像の処理
     //画像ファイルを設置
     fileSelected(event) {
-        const file = event.target.files[0];
-        const name = file.name;
-        const size = file.size;
-        const type = file.type;
-        const errors = '';
+      const file = event.target.files[0];
+      const name = file.name;
+      const size = file.size;
+      const type = file.type;
+      const errors = "";
 
       //上限サイズを3MB確認
       if (size > 3000000) {
-        errors += 'ファイルの上限サイズ3MBを超えています\n'
+        errors += "ファイルの上限サイズ3MBを超えています\n";
       }
-  
+
       //.jpg .gif .png . pdf のみ許可
-      if (type != 'image/jpeg' && type != 'image/gif' && type != 'image/png' && type != 'application/pdf') {
-        errors += '.jpg、.gif、.png、.pdfのいずれかのファイルのみ許可されています\n'
+      if (
+        type != "image/jpeg" &&
+        type != "image/gif" &&
+        type != "image/png" &&
+        type != "application/pdf"
+      ) {
+        errors +=
+          ".jpg、.gif、.png、.pdfのいずれかのファイルのみ許可されています\n";
       }
-  
+
       if (errors) {
         //errorsが存在する場合は内容をalert
-        alert(errors)
+        alert(errors);
         //valueを空にしてリセットする
-        event.currentTarget.value = ''
+        event.currentTarget.value = "";
       }
-      this.userProfile.image  = event.target.files[0];
+      this.userProfile.image = event.target.files[0];
       this.fileInfo = window.URL.createObjectURL(this.userProfile.image);
     },
     //formのデータを定義
     setUserProfileData() {
       let formData = new FormData();
 
-      Object.keys(this.userProfile).forEach(key=>{
-          if(this.userProfile[key]){
-              console.log(key,this.userProfile[key])
-              formData.append(key, this.userProfile[key]);
-            }   
-        });
+      Object.keys(this.userProfile).forEach(key => {
+        if (this.userProfile[key]) {
+          console.log(key, this.userProfile[key]);
+          formData.append(key, this.userProfile[key]);
+        }
+      });
       return formData;
     },
     //　サーバー側からのエラーを定義
     setAxiosErrorData: function(err) {
       const axiosErrorRes = err.response.data;
       let axiosErrorMessageArray = [];
-  
+
       if (axiosErrorRes.errors) {
         const axiosvalidationErrorRes = axiosErrorRes.errors;
-        
-        axiosErrorMessageArray = Object.keys(axiosvalidationErrorRes).map(dataField=>{
-            return axiosvalidationErrorRes[dataField][0];
-        })
 
+        axiosErrorMessageArray = Object.keys(axiosvalidationErrorRes).map(
+          dataField => {
+            return axiosvalidationErrorRes[dataField][0];
+          }
+        );
       } else {
-        axiosErrorMessageArray.push("回答が送信されませんでした。再度送信してください。");
+        axiosErrorMessageArray.push(
+          "回答が送信されませんでした。再度送信してください。"
+        );
       }
       this.axiosErrorMessages = axiosErrorMessageArray;
       console.log(this.axiosErrorMessages);
@@ -286,17 +311,16 @@ export default {
     saveUserProfileData: function() {
       //入力値のエラーを確認
       if (this.$refs.form.validate()) {
-
         const formData = this.setUserProfileData();
         console.log(this.userProfile.image);
-        
+
         var config = {
           headers: {
             "content-type": "multipart/form-data"
           }
         };
         axios
-          .post("api/edit/profile", formData, config)
+          .post("api/profile/edit", formData, config)
           .then(res => {
             console.log(res.data.profile);
             const updatedUserProfile = res.data.profile;
@@ -306,24 +330,24 @@ export default {
             this.userProfile.gender = updatedUserGender;
           })
           .catch(err => {
-            this.setAxiosErrorData(err)
+            this.setAxiosErrorData(err);
             console.log(err.response.data);
-            }) 
+          });
       } else {
-        console.log('エラーがあるよ！');
+        console.log("エラーがあるよ！");
       }
     },
     //　テイスト情報を取得
     saveUserTaste: function() {
       axios
-        .post("api/edit/tastes",{
+        .post("api/tastes/edit", {
           tastes_id: this.selection
         })
         .then(res => {
           console.log(res.data);
         })
         .catch(err => console.log(err));
-    },
+    }
   }
 };
 </script>
@@ -335,7 +359,7 @@ export default {
 
 .wrap {
   width: 100%;
-  background-color:#fafafa;
+  background-color: #fafafa;
   margin-bottom: 56px;
 }
 
@@ -394,14 +418,14 @@ export default {
   font-weight: bold;
 }
 
-.sub_profile{
+.sub_profile {
   width: 95%;
-  margin:1em auto;
+  margin: 1em auto;
   background: #fafafa;
 }
 
 /* Dialog */
-.errorMessage{
-  margin-bottom:0;
+.errorMessage {
+  margin-bottom: 0;
 }
 </style>
