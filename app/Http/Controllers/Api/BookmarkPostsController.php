@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Auth;
 use Validate;
 use DB;
+
 use App\BookmarkPost;
+use App\Post;
     
     class BookmarkPostsController extends Controller
     {   
