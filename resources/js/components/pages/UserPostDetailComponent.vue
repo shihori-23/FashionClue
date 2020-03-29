@@ -53,11 +53,7 @@
                 <i class="fas fa-comment"></i>
               </v-btn>
               <PostBookmarkComponent
-                v-if="
-                                    isBookmarkedId.post.includes(
-                                        parseInt(postContent.id)
-                                    )
-                                "
+                v-if="isBookmarkedPost"
                 @remove-post-bookmark="
                                     removePostBookmark(postContent.id)
                                 "
@@ -225,9 +221,10 @@ export default {
    *
    * @param {Object} validationRules・・・・・・・バリデーションルールの設定
    * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
-   * @param {Object} isReadOnly・・・各フォームが読み取り専用かどうかの状態を管理
-   * @param {Object} isVisible・・・各セクションの表示非表示の切り替えを管理
-   * @param {Object} isDialogOpen・・・Dialogの表示非表示を管理。
+   * @param {Boolean} isReadOnly・・・各フォームが読み取り専用かどうかの状態を管理
+   * @param {Boolean} isVisible・・・各セクションの表示非表示の切り替えを管理
+   * @param {Boolean} isDialogOpen・・・Dialogの表示非表示を管理。
+   * @param {Boolean} isBookmarkedPost・・・質問投稿に対するブックマークの有無。
    * @param {Object} postContent・・・質問投稿のデータを管理
    * @param {Object} postUser・・・質問投稿をしたユーザーのデータを管理
    * @param {Object} postedAnswers・・・質問投稿に対するすでに回答されたデータを管理
@@ -271,12 +268,11 @@ export default {
       isDialogOpen: {
         errorDialog: false
       },
-      disabledReviewCheckBox: false,
+      isBookmarkedPost: false,
       postContent: {},
       postUser: {},
       postedAnswers: {},
       selectedTastes: [],
-      gender: ["女性", "男性"],
       answerContent: {
         postId: this.$route.params.postId
       },
@@ -291,7 +287,6 @@ export default {
   },
   created() {
     this.getPostData();
-    this.postIsBookmarkedCheck();
     this.answerIsBookmarkedCheck();
   },
   mounted() {
@@ -320,6 +315,7 @@ export default {
           this.postUser.gender = parseInt(getData.postUser.gender);
           const postedAnswersData = getData.postedAnswers;
           this.postedAnswers = postedAnswersData;
+          const bookmarkData = parseInt(getData.bookmarkData);
 
           if (getData.postContent.status == 1) {
             this.isVisible.reviewBtn = false;
@@ -330,6 +326,13 @@ export default {
             this.isVisible.postedAnswer = true;
             console.log(this.postedAnswers);
           }
+
+          if (bookmarkData == 0) {
+            this.isBookmarkedPost = false;
+          } else if (bookmarkData == 1) {
+            this.isBookmarkedPost = true;
+          }
+
           this.selectedTasteConvert(res);
         })
         .catch(err => console.log(err));
@@ -346,16 +349,6 @@ export default {
         });
       this.selectedTastes = selectedtasteList;
       console.log(this.selectedTastes);
-    },
-    //質問に対してお気に入りしているか確認
-    postIsBookmarkedCheck: function() {
-      axios
-        .get("api/bookmark/get/" + this.$route.params.postId)
-        .then(res => {
-          console.log(res.data.bookmarkId);
-          this.isBookmarkedId.post = res.data.bookmarkId;
-        })
-        .catch(err => console.log(err));
     },
     //回答に対してお気に入りしているか確認
     answerIsBookmarkedCheck: function() {
@@ -468,21 +461,18 @@ export default {
         .post("api/post_bookmark/post/" + id)
         .then(res => {
           console.log(res.data.isBookmarked);
-          const postBookmarkIdArray = [];
-          postBookmarkIdArray.push(id);
-          this.isBookmarkedId.post = postBookmarkIdArray;
-          console.log(this.isBookmarkedId.post);
+          this.isBookmarkedPost = true;
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          console.log(err);
+        });
     },
     // 質問投稿に対するお気に入りの削除
     removePostBookmark: function(id) {
       axios
         .post("api/post_bookmark/destory/" + id)
         .then(res => {
-          const postBookmarkIdArray = [];
-          this.isBookmarkedId.post = postBookmarkIdArray;
-          console.log(this.isBookmarkedId.post);
+          this.isBookmarkedPost = false;
         })
         .catch(err => console.log(err));
     },

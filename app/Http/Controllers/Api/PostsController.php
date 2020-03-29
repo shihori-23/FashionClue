@@ -10,6 +10,7 @@ use Validate;
 use DB;
 
 use App\Post;
+use App\BookmarkPost;
 use App\PostNotice;
 use App\User;
 use App\Taste;
@@ -51,6 +52,7 @@ use App\Review;
         public function show($id)
         {
             $postId = $id;
+            $user_id = Auth::id();
 
             $postContent = DB::table('posts as p')
                                 ->join('categories as c','c.id','=','p.category_id')
@@ -86,7 +88,10 @@ use App\Review;
                 $postedAnswerArray[] = $object;
             }
 
-            return response()->json(['postContent'=>$postContent, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes,'postedAnswers'=>$postedAnswerArray], 200);
+            //ブックマークしているか確認
+            $bookmarkData = Post::find($postId)->bookmark_posts()->where('post_id', $postId)->where('user_id', $user_id)->count();
+
+            return response()->json(['postContent'=>$postContent, 'postUser'=>$postUser, 'selectedTastes'=>$selectedTastes,'postedAnswers'=>$postedAnswerArray,'bookmarkData'=>$bookmarkData], 200);
         }
     }
     
