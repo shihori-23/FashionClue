@@ -1,5 +1,21 @@
 <template>
   <v-container class="mainWrap">
+    <v-dialog v-model="isDialogOpen.errorDialog" width="400">
+      <v-card>
+        <v-card-title class="headline lighten-2" primary-title>Error</v-card-title>
+        <v-card-text>
+          <p
+            v-for="(message, index) in axiosErrorMessages"
+            :key="index"
+          >{{ axiosErrorMessages[index] }}</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="#bc8f8f" text @click="closeDialog('errorDialog')">閉じる</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-card v-if="isNotificationOpen" outlined flat max-width="93%" class="notificationCard">
       <v-card-text class="notificationText">
         プロフィールの登録が完了していません。
@@ -171,6 +187,7 @@
 import PostBookmarkComponent from "../items/PostBookmarkComponent";
 import MomentJs from "../items/MomentJs";
 import Gender from "../items/GenderComponent";
+import Mixin from "../../mixin";
 
 export default {
   components: {
@@ -205,7 +222,7 @@ export default {
       postBookmarkedId: []
     };
   },
-
+  mixins: [Mixin],
   created() {
     this.getPostsData();
   },
@@ -241,24 +258,30 @@ export default {
     //質問投稿に対するお気に入りの登録
     addPostBookmark: function(id) {
       axios
-        .post("api/post/post_bookmark/" + id)
+        .post("api/post_bookmark/post/" + id)
         .then(res => {
           console.log(res.data.isBookmarked);
           this.postBookmarkedId.push(id);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.setBookmarkAxiosErrorData(err);
+          console.log(err);
+        });
     },
     //質問投稿に対するお気に入りの削除
     removePostBookmark: function(id) {
       axios
-        .post("api/destory/post_bookmark/" + id)
+        .post("api/post_bookmark/destory/" + id)
         .then(res => {
           const order = this.postBookmarkedId.findIndex(item => item == id);
           this.postBookmarkedId.splice(order, 1);
 
           console.log(this.postBookmarkedId);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.setBookmarkAxiosErrorData(err);
+          console.log(err);
+        });
     }
   }
 };
