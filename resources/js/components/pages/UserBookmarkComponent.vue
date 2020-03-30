@@ -1,6 +1,5 @@
 <template>
   <v-container class="main_container">
-    <p>お気に入り</p>
     <v-tabs
       v-model="tabConfigurations.tab"
       :centered="tabConfigurations.centered"

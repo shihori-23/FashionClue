@@ -26,8 +26,8 @@
               <v-list-item-avatar size="36">
                 <v-img :src="postUser.image"></v-img>
               </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title class>
+              <v-list-item-content class="list_title_wrap">
+                <v-list-item-title>
                   {{ postUser.name }}
                   <span v-if="postUser.category_name" class="categoryChip">
                     <v-chip class="ma-1" x-small>

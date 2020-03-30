@@ -14,20 +14,20 @@ use App\Post;
     class BookmarkPostsController extends Controller
     {   
         //　質問詳細画面でお気に入りしているか確認
-        public function show($id) {
+        // public function show($id) {
 
-            $bookmarks = BookmarkPost::where('user_id','=', Auth::id())
-                                        ->where('post_id','=',$id)
-                                        ->select('post_id')
-                                        ->get();
+        //     $bookmarks = BookmarkPost::where('user_id','=', Auth::id())
+        //                                 ->where('post_id','=',$id)
+        //                                 ->select('post_id')
+        //                                 ->get();
 
-            $bookmarksId = [];
-            foreach($bookmarks as $bookmark){
-                $bookmarksId[] = $bookmark->post_id;
-            }
+        //     $bookmarksId = [];
+        //     foreach($bookmarks as $bookmark){
+        //         $bookmarksId[] = $bookmark->post_id;
+        //     }
         
-            return response()->json(['bookmarkId'=>$bookmarksId], 200);
-        }
+        //     return response()->json(['bookmarkId'=>$bookmarksId], 200);
+        // }
         //　お気に入りの登録
         public function save($id){
 
