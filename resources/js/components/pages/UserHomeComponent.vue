@@ -57,24 +57,25 @@
               <img :src="ladysPost.image" />
             </v-list-item-avatar>
 
-            <v-list-item-content>
-              <v-list-item-title class>
+            <v-list-item-content class="list_title_wrap">
+              <v-list-item-title>
                 {{ ladysPost.name }}
-                <span v-if="ladysPost.category_name" class="categoryChip">
-                  <v-chip class="ma-1" x-small>
-                    {{
-                    ladysPost.category_name
-                    }}
-                  </v-chip>
-                </span>
+                <span v-if="ladysPost.category_name" class="categoryChip"></span>
               </v-list-item-title>
-              <v-list-item-subtitle>
+              <v-list-item-subtitle class="caption">
                 <Gender :genderRole="ladysPost.gender" />
-                <span v-if="ladysPost.age">{{ ladysPost.age }}歳</span>
+                <span v-if="ladysPost.age">/ {{ ladysPost.age }}歳</span>
               </v-list-item-subtitle>
+              <span v-if="ladysPost.category_name" class="categoryChip">
+                <v-chip class="ma-1 category_chips" small outlined color="#a0a0a0">
+                  {{
+                  ladysPost.category_name
+                  }}
+                </v-chip>
+              </span>
             </v-list-item-content>
           </v-list-item>
-          <v-card-text>{{ ladysPost.text }}</v-card-text>
+          <v-card-text class="px-4 pb-4 pt-0">{{ ladysPost.text }}</v-card-text>
           <v-img v-if="ladysPost.post_image" :src="ladysPost.post_image"></v-img>
           <v-card-actions class="iconWrap">
             <PostBookmarkComponent
@@ -128,24 +129,22 @@
             <v-list-item-avatar size="36">
               <v-img :src="mensPost.image"></v-img>
             </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class>
-                {{ mensPost.name }}
-                <span v-if="mensPost.category_name" class="categoryChip">
-                  <v-chip class="ma-1" x-small>
-                    {{
-                    mensPost.category_name
-                    }}
-                  </v-chip>
-                </span>
-              </v-list-item-title>
-              <v-list-item-subtitle>
+            <v-list-item-content class="list_title_wrap">
+              <v-list-item-title>{{ mensPost.name }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">
                 <Gender :genderRole="mensPost.gender" />
-                <span v-if="mensPost.age">{{ mensPost.age }}歳</span>
+                <span v-if="mensPost.age">/ {{ mensPost.age }}歳</span>
               </v-list-item-subtitle>
+              <span v-if="mensPost.category_name" class="categoryChip">
+                <v-chip class="ma-1 category_chips" small outlined color="#a0a0a0">
+                  {{
+                  mensPost.category_name
+                  }}
+                </v-chip>
+              </span>
             </v-list-item-content>
           </v-list-item>
-          <v-card-text>{{ mensPost.text }}</v-card-text>
+          <v-card-text class="px-4 pb-4 pt-0">{{ mensPost.text }}</v-card-text>
           <v-img v-if="mensPost.post_image" :src="mensPost.post_image"></v-img>
           <v-card-actions class="iconWrap">
             <PostBookmarkComponent
@@ -288,12 +287,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+body {
+  font-size: 14px;
+}
 .mainWrap {
   padding: 8px 0 56px;
+  background-color: #dddddd;
 }
-
 .notificationCard {
-  margin: 0 auto;
+  margin: 4px auto 8px;
 }
 
 .notificationText {
@@ -310,12 +312,27 @@ p {
   z-index: 100;
 }
 
+.v-tabs-items {
+  background-color: #dddddd;
+}
+
 .postContentCard {
-  margin-bottom: 16px;
+  padding-top: 8px;
+  margin-bottom: 8px;
 }
 
 .iconWrap {
   position: relative;
+}
+
+.list_title_wrap {
+  position: relative;
+
+  .category_chips {
+    position: absolute;
+    top: 8px;
+    right: 0;
+  }
 }
 
 .commentIcon {
