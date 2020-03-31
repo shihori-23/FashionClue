@@ -16,7 +16,7 @@
       </v-btn>
     </router-link>
     <router-link :to="{ name: 'UserNotice'}">
-      <v-btn icon>
+      <v-btn icon @click="isVisibleNoctice = false">
         <v-badge :value="isVisibleNoctice" overlap dot color="#bc8f8f">
           <i class="far fa-bell"></i>
         </v-badge>

@@ -1,27 +1,28 @@
 <template>
-  <div class="wrap">
-    <v-container>
-      <!-- <h2 class="subtitle-1">質問投稿ページ</h2> -->
+  <v-container class="mainWrap">
+    <!-- <div v-if="isVisible.overlay" class="overlay"></div> -->
 
-      <v-dialog v-model="isDialogOpen.errorDialog" width="400">
-        <v-card>
-          <v-card-title class="headline lighten-2" primary-title>Error</v-card-title>
-          <v-card-text>
-            <p
-              v-for="(message,index) in axiosErrorMessages"
-              :key="index"
-            >{{ axiosErrorMessages[index] }}</p>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="#bc8f8f" text @click="closeDialog('errorDialog')">閉じる</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-form ref="form" v-model="valid" lazy-validation class="postQuestionWrap">
+    <v-dialog v-model="isDialogOpen.errorDialog" width="400">
+      <v-card>
+        <v-card-title class="headline lighten-2" primary-title>Error</v-card-title>
+        <v-card-text>
+          <p
+            v-for="(message,index) in axiosErrorMessages"
+            :key="index"
+          >{{ axiosErrorMessages[index] }}</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="#bc8f8f" text @click="closeDialog('errorDialog')">閉じる</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- <v-overlay :value="isVisible.overlay" :z-index="1"></v-overlay> -->
+    <div class="postQuestionWrap">
+      <v-form ref="form" v-model="valid" lazy-validation>
         <v-row justify="center">
           <v-col cols="11">
+            <h2 class="subtitle-1">質問投稿ページ</h2>
             <v-textarea
               label="質問や相談を記入してください"
               id="question"
@@ -43,13 +44,6 @@
                 :value="category.id"
               >{{ category.category_name }}</option>
             </select>
-            <!-- <v-select
-              :items="categories.category_name"
-              label="カテゴリ"
-              id="categories"
-              color="#81cac4"
-              v-model="postContent.category"
-            ></v-select>-->
           </v-col>
           <v-col cols="11">
             <v-file-input
@@ -70,14 +64,14 @@
           >変更を保存</v-btn>
         </v-row>
       </v-form>
+    </div>
 
-      <v-row>
-        <v-col>
-          <p>人気の投稿を表示するかも。</p>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+    <v-row>
+      <v-col>
+        <p>人気の投稿を表示するかも。</p>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -87,6 +81,7 @@ export default {
    *
    * @param {Object} validationRules・・・・・・・バリデーションルールの設定
    * @param {Boolean} valid・・・・・・・バリデーションチェック用の真偽値
+   * @param {Boolean} isVisible・・・各セクションの表示非表示の切り替えを管理
    * @param {Object} readOnly・・・各フォームが読み取り専用かどうかの状態を管理。
    * @param {Object} isDialogOpen・・・Dialogの表示非表示を管理。
    * @param {Object} postContent・・・質問投稿のデータを管理
@@ -114,6 +109,9 @@ export default {
       },
       isDialogOpen: {
         errorDialog: false
+      },
+      isVisible: {
+        overlay: true
       },
       //データ型の定義
       postContent: {},
@@ -225,16 +223,30 @@ export default {
 };
 </script>
 
-<style scoped>
-.postQuestionWrap {
-  width: 95%;
-  margin: 0 auto;
-  padding: 8px 8px 16px;
-  /* border:1px solid #bcbcbc;  */
-  border-radius: 5px;
-  box-shadow: 1px 1px 4px #bcbcbc;
+<style lang="scss" scoped>
+.mainWrap {
+  width: 100%;
+  //   height: 100%;
+  //   background-color: rgb(0, 0, 0, 0.3);
 }
-
+// .overlay {
+//   position: fixed;
+//   top: 0;
+//   bottom: 0;
+//   right: 0;
+//   left: 0;
+//   background-color: rgb(0, 0, 0, 0.3);
+//   z-index: 1;
+// }
+.postQuestionWrap {
+  width: 100%;
+  margin: 0 auto;
+  padding: 8px 0px 16px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 4px #bcbcbc;
+  background-color: #fff;
+  z-index: 100;
+}
 .selectbox {
   width: 100%;
   padding: 8px;

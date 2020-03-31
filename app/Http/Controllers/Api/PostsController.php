@@ -76,7 +76,7 @@ use App\Review;
             $postedAnswers = DB::table('answers as a')
                         ->join('users as u', 'u.id', '=', 'a.user_id')
                         ->where('a.post_id', '=', $postId)
-                        ->select('a.id','u.id as user_id', 'u.name', 'u.image', 'a.text', 'a.url', 'a.answer_image', 'a.created_at')
+                        ->select('a.id','u.id as user_id', 'u.name', 'u.image', 'u.age','u.gender','a.text', 'a.url', 'a.answer_image', 'a.created_at')
                         ->get();
 
             //　回答に対して評価がついているか確認

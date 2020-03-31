@@ -1,15 +1,15 @@
 <template>
-    <v-app>
-        <Header />
-        <div class="router">
-            <router-view></router-view>
-        </div>
-        <v-snackbar v-model="snackbar" :timeout="timeout" class="snackbar">
-        ログインしました
-        <v-btn color="blue" text @click="snackbar = false">Close</v-btn>
-        </v-snackbar>
-        <Footer />
-    </v-app>
+  <v-app>
+    <Header />
+    <div class="router">
+      <router-view></router-view>
+    </div>
+    <v-snackbar v-model="snackbar" :timeout="timeout" class="snackbar">
+      ログインしました
+      <v-btn color="blue" text @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
+    <Footer />
+  </v-app>
 </template>
 <script>
 import Header from "../items/HeaderComponent";
@@ -29,9 +29,7 @@ export default {
   created() {
     this.getUid();
   },
-  mounted(){
-
-  },
+  mounted() {},
   methods: {
     getUid: function() {
       axios
@@ -41,7 +39,7 @@ export default {
           this.snackbar = true;
         })
         .catch(err => console.log(err));
-    },
+    }
   }
 };
 </script>
@@ -50,8 +48,8 @@ export default {
 .router {
   margin-top: 56px;
 }
-.snackbar{
-  margin-bottom:56px;
+.snackbar {
+  margin-bottom: 56px;
   z-index: 200;
 }
 </style>
