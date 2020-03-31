@@ -10,9 +10,8 @@
           <v-list-item-content>
             <v-list-item-title class="title">{{ userProfileData.name }}</v-list-item-title>
             <v-list-item-subtitle>
-              <span class="caption">{{gender[userProfileData.gender]}}</span>
-              ・
-              <span v-if="userProfileData.age" class="caption">{{ userProfileData.age }}歳</span>
+              <Gender :genderRole="userProfileData.gender" />
+              <span v-if="userProfileData.age" class="caption">/ {{ userProfileData.age }}歳</span>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -66,20 +65,23 @@
                 <img :src="userProfileData.image" />
               </v-list-item-avatar>
 
-              <v-list-item-content>
-                <v-list-item-title class>
-                  {{ userProfileData.name }}
-                  <span v-if="post.category_name" class="categoryChip">
-                    <v-chip class="ma-1" x-small>{{ post.category_name }}</v-chip>
-                  </span>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <span class="genderSpan">{{ gender[userProfileData.gender] }}</span>
-                  <span v-if="userProfileData.age">{{ userProfileData.age }}歳</span>
+              <v-list-item-content class="list_title_wrap">
+                <v-list-item-title class>{{ userProfileData.name }}</v-list-item-title>
+                <v-list-item-subtitle class="caption">
+                  <Gender :genderRole="userProfileData.gender" />
+                  <span v-if="userProfileData.age">/ {{ userProfileData.age }}歳</span>
                 </v-list-item-subtitle>
+                <span v-if="post.category_name" class="categoryChip">
+                  <v-chip
+                    class="ma-1 category_chips"
+                    small
+                    outlined
+                    color="#a0a0a0"
+                  >{{ post.category_name }}</v-chip>
+                </span>
               </v-list-item-content>
             </v-list-item>
-            <v-card-text>{{post.text}}</v-card-text>
+            <v-card-text class="px-4 pb-4 pt-0">{{post.text}}</v-card-text>
             <v-img v-if="post.post_image" :src="post.post_image"></v-img>
           </v-card>
         </v-tab-item>
@@ -99,20 +101,23 @@
               <v-list-item-avatar size="36">
                 <v-img :src="userProfileData.image"></v-img>
               </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title class>
-                  {{ userProfileData.name }}
-                  <span v-if="answer.category_name" class="categoryChip">
-                    <v-chip class="ma-1" x-small>{{ answer.category_name }}</v-chip>
-                  </span>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <span class="genderSpan">{{ gender[userProfileData.gender] }}</span>
-                  <span v-if="userProfileData.age">{{ userProfileData.age }}歳</span>
+              <v-list-item-content class="list_title_wrap">
+                <v-list-item-title class>{{ userProfileData.name }}</v-list-item-title>
+                <v-list-item-subtitle class="caption">
+                  <Gender :genderRole="userProfileData.gender" />
+                  <span v-if="userProfileData.age">/ {{ userProfileData.age }}歳</span>
                 </v-list-item-subtitle>
+                <span v-if="answer.category_name" class="categoryChip">
+                  <v-chip
+                    class="ma-1 category_chips"
+                    small
+                    outlined
+                    color="#a0a0a0"
+                  >{{ answer.category_name }}</v-chip>
+                </span>
               </v-list-item-content>
             </v-list-item>
-            <v-card-text>{{answer.text}}</v-card-text>
+            <v-card-text class="px-4 pb-4 pt-0">{{answer.text}}</v-card-text>
             <v-img v-if="answer.answer_image" :src="answer.answer_image"></v-img>
           </v-card>
         </v-tab-item>
@@ -122,7 +127,12 @@
 </template>
 
 <script>
+import Gender from "../items/GenderComponent";
+
 export default {
+  components: {
+    Gender
+  },
   data() {
     /**
      *
@@ -145,7 +155,6 @@ export default {
       userProfileData: {},
       userPostData: {},
       userAnswerData: {},
-      gender: ["レディース", "メンズ"],
       selectedTastes: []
     };
   },
@@ -188,7 +197,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 p {
   margin-bottom: 0px;
 }
@@ -197,6 +206,18 @@ p {
 }
 .profileCard {
   padding: 8px 16px;
+}
+.v-tabs-items {
+  background-color: #dddddd;
+}
+.list_title_wrap {
+  position: relative;
+
+  .category_chips {
+    position: absolute;
+    top: 8px;
+    right: 0;
+  }
 }
 .bioTextWrap {
   padding: 8px 16px 0px;
@@ -212,6 +233,6 @@ p {
   z-index: 100;
 }
 .userContentCard {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 </style>

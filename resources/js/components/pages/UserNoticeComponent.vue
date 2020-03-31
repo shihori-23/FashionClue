@@ -1,8 +1,6 @@
 <template>
-  <v-container>
+  <v-container class="mainWrap">
     <v-list three-line>
-      <v-subheader>通知</v-subheader>
-      <p>{{hello}}</p>
       <v-list-item-group>
         <div v-for="(notice, i) in userNoticeData" :key="i" class="notice_container">
           <v-list-item
@@ -11,10 +9,10 @@
                   params: { postId: notice.post_id }
           }"
           >
-            <v-list-item-avatar size="40" v-if="notice.review_owner_image">
+            <v-list-item-avatar size="48" v-if="notice.review_owner_image">
               <v-img :src="notice.review_owner_image"></v-img>
             </v-list-item-avatar>
-            <v-list-item-avatar size="40" v-else-if="notice.answer_owner_image">
+            <v-list-item-avatar size="48" v-else-if="notice.answer_owner_image">
               <v-img :src="notice.answer_owner_image"></v-img>
             </v-list-item-avatar>
             <v-list-item-content v-if="notice.role == 0" :style="styleObject">
@@ -83,5 +81,8 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.mainWrap {
+  padding-bottom: 58px;
+}
 </style>

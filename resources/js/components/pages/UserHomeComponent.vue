@@ -58,10 +58,7 @@
             </v-list-item-avatar>
 
             <v-list-item-content class="list_title_wrap">
-              <v-list-item-title>
-                {{ ladysPost.name }}
-                <span v-if="ladysPost.category_name" class="categoryChip"></span>
-              </v-list-item-title>
+              <v-list-item-title>{{ ladysPost.name }}</v-list-item-title>
               <v-list-item-subtitle class="caption">
                 <Gender :genderRole="ladysPost.gender" />
                 <span v-if="ladysPost.age">/ {{ ladysPost.age }}歳</span>
@@ -290,8 +287,9 @@ export default {
 body {
   font-size: 14px;
 }
+
 .mainWrap {
-  padding: 8px 0 56px;
+  padding: 0px 0 56px;
   background-color: #dddddd;
 }
 .notificationCard {

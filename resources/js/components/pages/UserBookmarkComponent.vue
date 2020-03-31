@@ -1,11 +1,12 @@
 <template>
-  <v-container class="main_container">
+  <v-container class="mainWrap">
     <v-tabs
       v-model="tabConfigurations.tab"
       :centered="tabConfigurations.centered"
       :grow="tabConfigurations.grow"
-      color="black"
+      color="#808080"
       flat
+      class="tabBar"
     >
       <!-- <v-tabs-slider></v-tabs-slider> -->
       <v-tab href="#posts">Posts</v-tab>
@@ -28,23 +29,23 @@
             <v-list-item-avatar size="36">
               <v-img :src="bookmarkedPost.image"></v-img>
             </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class>
-                {{ bookmarkedPost.name }}
-                <span
-                  v-if="bookmarkedPost.category_name"
-                  class="categoryChip"
-                >
-                  <v-chip class="ma-1" x-small>{{ bookmarkedPost.category_name }}</v-chip>
-                </span>
-              </v-list-item-title>
-              <v-list-item-subtitle>
+            <v-list-item-content class="list_title_wrap">
+              <v-list-item-title class>{{ bookmarkedPost.name }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">
                 <Gender :genderRole="bookmarkedPost.gender" />
-                <span v-if="bookmarkedPost.age">{{ bookmarkedPost.age }}歳</span>
+                <span v-if="bookmarkedPost.age">/ {{ bookmarkedPost.age }}歳</span>
               </v-list-item-subtitle>
+              <span v-if="bookmarkedPost.category_name" class="categoryChip">
+                <v-chip
+                  class="ma-1 category_chips"
+                  small
+                  outlined
+                  color="#a0a0a0"
+                >{{ bookmarkedPost.category_name }}</v-chip>
+              </span>
             </v-list-item-content>
           </v-list-item>
-          <v-card-text>{{bookmarkedPost.text}}</v-card-text>
+          <v-card-text class="px-4 pb-4 pt-0">{{bookmarkedPost.text}}</v-card-text>
           <v-img v-if="bookmarkedPost.post_image" :src="bookmarkedPost.post_image"></v-img>
         </v-card>
       </v-tab-item>
@@ -64,23 +65,23 @@
             <v-list-item-avatar size="36">
               <v-img :src="bookmarkedAnswer.image"></v-img>
             </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class>
-                {{ bookmarkedAnswer.name }}
-                <span
-                  v-if="bookmarkedAnswer.category_name"
-                  class="categoryChip"
-                >
-                  <v-chip class="ma-1" x-small>{{ bookmarkedAnswer.category_name }}</v-chip>
-                </span>
-              </v-list-item-title>
-              <v-list-item-subtitle>
+            <v-list-item-content class="list_title_wrap">
+              <v-list-item-title class>{{ bookmarkedAnswer.name }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">
                 <Gender :genderRole="bookmarkedAnswer.gender" />
-                <span v-if="bookmarkedAnswer.age">{{ bookmarkedAnswer.age }}歳</span>
+                <span v-if="bookmarkedAnswer.age">/ {{ bookmarkedAnswer.age }}歳</span>
               </v-list-item-subtitle>
+              <span v-if="bookmarkedAnswer.category_name" class="categoryChip">
+                <v-chip
+                  class="ma-1 category_chips"
+                  small
+                  outlined
+                  color="#a0a0a0"
+                >{{ bookmarkedAnswer.category_name }}</v-chip>
+              </span>
             </v-list-item-content>
           </v-list-item>
-          <v-card-text>{{bookmarkedAnswer.text}}</v-card-text>
+          <v-card-text class="px-4 pb-4 pt-0">{{bookmarkedAnswer.text}}</v-card-text>
           <v-img v-if="bookmarkedAnswer.answer_image" :src="bookmarkedAnswer.answer_image"></v-img>
         </v-card>
       </v-tab-item>
@@ -153,20 +154,45 @@ export default {
 };
 </script>
 
-<style scoped>
-.main_container {
+<style lang="scss" scoped>
+body {
+  font-size: 14px;
+}
+
+.mainWrap {
   width: 100%;
-  padding: 16px 0;
+  padding: 0 0 58px 0;
+  background-color: #dddddd;
 }
 
 .elevation-2 {
   width: 100%;
 }
 
+.tabBar {
+  position: sticky;
+  top: 56px;
+  z-index: 100;
+}
+
 .bookmarkedCard {
   width: 100%;
   /* margin: 8px auto; */
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.v-tabs-items {
+  background-color: #dddddd;
+}
+
+.list_title_wrap {
+  position: relative;
+
+  .category_chips {
+    position: absolute;
+    top: 8px;
+    right: 0;
+  }
 }
 
 .genderSpan {

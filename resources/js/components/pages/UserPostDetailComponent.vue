@@ -1,8 +1,6 @@
 <template>
   <div class="wrap">
-    <v-container class>
-      <h1 class="subtitle-1">質問詳細画面</h1>
-
+    <v-container class="mainWrap">
       <v-dialog v-model="isDialogOpen.errorDialog" width="400">
         <v-card>
           <v-card-title class="headline lighten-2" primary-title>Error</v-card-title>
@@ -19,186 +17,201 @@
         </v-card>
       </v-dialog>
 
-      <v-row>
-        <v-col cols="12">
-          <v-card class="mx-auto postCard card" max-width="344" outlined>
-            <v-list-item>
-              <v-list-item-avatar size="36">
-                <v-img :src="postUser.image"></v-img>
-              </v-list-item-avatar>
-              <v-list-item-content class="list_title_wrap">
-                <v-list-item-title>
-                  {{ postUser.name }}
-                  <span v-if="postUser.category_name" class="categoryChip">
-                    <v-chip class="ma-1" x-small>
-                      {{
-                      postUser.category_name
-                      }}
-                    </v-chip>
-                  </span>
-                  <span v-if="postContent.status == 1" class="statusChip">
-                    <v-chip class="ma-1" x-small>解決済みです</v-chip>
-                  </span>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <Gender :genderRole="postUser.gender" />
-                  <span v-if="postUser.age">{{ postUser.age }}歳</span>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-card-text>{{ postContent.text }}</v-card-text>
-            <v-img v-if="postContent.post_image" :src="postContent.post_image"></v-img>
-            <v-card-actions class="iconWrap">
-              <v-btn icon @click="answerOperationAtClick()">
-                <i class="fas fa-comment"></i>
-              </v-btn>
-              <PostBookmarkComponent
-                v-if="isBookmarkedPost"
-                @remove-post-bookmark="
+      <div class="mx-auto postCard card" max-width="344" outlined>
+        <v-list-item>
+          <v-list-item-avatar size="48">
+            <v-img :src="postUser.image"></v-img>
+          </v-list-item-avatar>
+          <v-list-item-content class="list_title_wrap">
+            <v-list-item-title>{{ postUser.name }}</v-list-item-title>
+            <v-list-item-subtitle class="caption">
+              <Gender :genderRole="postUser.gender" />
+              <span v-if="postUser.age">/ {{ postUser.age }}歳</span>
+            </v-list-item-subtitle>
+            <span v-if="postContent.category_name" class="categoryChip">
+              <v-chip class="ma-1 category_chips" small outlined color="#a0a0a0">
+                {{
+                postContent.category_name
+                }}
+              </v-chip>
+            </span>
+            <!-- <span v-if="postContent.status == 1" class>
+              <v-chip class="ma-1 category_chips" small outlined color="#a0a0a0">解決済みです</v-chip>
+            </span>-->
+          </v-list-item-content>
+        </v-list-item>
+        <v-card-text class="px-4 pb-0 pt-2">{{ postContent.text }}</v-card-text>
+        <v-img v-if="postContent.post_image" :src="postContent.post_image" class="mt-2"></v-img>
+        <v-card-actions class="iconWrap">
+          <PostBookmarkComponent
+            v-if="isBookmarkedPost"
+            @remove-post-bookmark="
                                     removePostBookmark(postContent.id)
                                 "
-                :post_id="parseInt(postContent.id)"
-                :isBookmarked="true"
-              />
-              <PostBookmarkComponent
-                v-else
-                @add-post-bookmark="
+            :post_id="parseInt(postContent.id)"
+            :isBookmarked="true"
+          />
+          <PostBookmarkComponent
+            v-else
+            @add-post-bookmark="
                                     addPostBookmark(postContent.id)
                                 "
-                :post_id="parseInt(postContent.id)"
-                :isBookmarked="false"
-              />
-              <MomentJs :time="postContent.created_at" class="caption captionColor data" />
-            </v-card-actions>
-          </v-card>
-        </v-col>
+            :post_id="parseInt(postContent.id)"
+            :isBookmarked="false"
+          />
+          <v-btn
+            icon
+            :disabled="isVisible.answerIcon"
+            @click="answerOperationAtClick()"
+            class="commentIcon"
+          >
+            <i class="far fa-comment"></i>
+          </v-btn>
+          <span class="caption captionColor answerCount">{{ postedAnswers.length }}</span>
 
-        <v-col v-if="isVisible.postedAnswer" cols="12">
-          <span>回答({{ postedAnswers.length }})</span>
-          <v-btn
+          <span
+            icon
+            v-if="loginUser == postUser.id && isVisible.editReviewBtn"
+            class="commentIcon"
+            @click="editReviewOperationAtClick()"
+          >
+            <v-icon>mdi-dots-horizontal</v-icon>
+            <!-- <span>ベストアンサーを編集</span> -->
+          </span>
+          <span
+            icon
             v-if="loginUser == postUser.id && isVisible.reviewBtn"
-            text
+            class="commentIcon"
             @click="reviewOperationAtClick()"
-          >ベストアンサーを選択する</v-btn>
-          <v-btn v-if="isVisible.reviewSubmitBtn" text @click="saveBestAnswerData()">ベストアンサーを決定</v-btn>
-          <v-btn
-            v-if="
+          >
+            <v-icon>mdi-dots-horizontal</v-icon>
+          </span>
+          <MomentJs :time="postContent.created_at" class="caption captionColor data" />
+        </v-card-actions>
+      </div>
+
+      <div v-if="isVisible.postedAnswer">
+        <v-btn
+          v-if="loginUser == postUser.id && isVisible.reviewBtn"
+          text
+          @click="reviewOperationAtClick()"
+        >ベストアンサーを選択する</v-btn>
+        <v-btn v-if="isVisible.reviewSubmitBtn" text @click="saveBestAnswerData()">ベストアンサーを決定</v-btn>
+        <v-btn
+          v-if="
                             loginUser == postUser.id && isVisible.editReviewBtn
                         "
-            text
-            @click="editReviewOperationAtClick()"
-          >ベストアンサーを編集</v-btn>
-          <v-card
-            v-for="(answer, index) in postedAnswers"
-            :key="index"
-            class="postedAnswerCard card"
-            max-width="344"
-            outlined
-          >
-            <div>
-              <input
-                v-if="isVisible.reviewCheckbox"
-                v-model="reviewCheckbox"
-                type="radio"
-                name="bestAnswer[]"
-                id="bestAnswerId"
-                :value="answer.id"
-              />
-              <div class="answerImgFlex">
-                <div class="answeIcoImg">
-                  <img :src="answer.image" />
-                </div>
+          text
+          @click="editReviewOperationAtClick()"
+        >ベストアンサーを編集</v-btn>
+        <v-card
+          v-for="(answer, index) in postedAnswers"
+          :key="index"
+          class="postedAnswerCard card"
+          outlined
+        >
+          <input
+            v-if="isVisible.reviewCheckbox"
+            v-model="reviewCheckbox"
+            type="radio"
+            name="bestAnswer[]"
+            id="bestAnswerId"
+            :value="answer.id"
+            class="bestAnswerRadio"
+          />
+          <label v-if="isVisible.reviewCheckbox">ベストアンサーに選ぶ</label>
+          <v-list-item>
+            <v-list-item-avatar size="36">
+              <v-img :src="answer.image"></v-img>
+            </v-list-item-avatar>
+            <v-list-item-content class="list_title_wrap">
+              <v-list-item-title>{{ answer.name }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">
+                <Gender :genderRole="answer.gender" />
+                <span v-if="answer.age">/ {{ answer.age }}歳</span>
+              </v-list-item-subtitle>
 
-                <p>{{ answer.name }}</p>
-                <span v-if="answer.toggle == 1" class="statusChip">
-                  <v-chip class="ma-1" x-small>ベストアンサー</v-chip>
-                </span>
-              </div>
-              <div class="textWrap">
-                <p>{{ answer.text }}</p>
-                <AnswerBookmarkComponent
-                  v-if="
+              <span v-if="answer.toggle == 1" class="statusChip">
+                <v-chip class="ma-1" small outlined color="#a0a0a0">ベストアンサー</v-chip>
+              </span>
+            </v-list-item-content>
+          </v-list-item>
+          <v-card-text class="px-4 pb-0 pt-2">{{ answer.text }}</v-card-text>
+          <v-img v-if="answer.image" :src="answer.image" class="mt-2"></v-img>
+
+          <v-card-actions class="iconWrap">
+            <AnswerBookmarkComponent
+              v-if="
                                         isBookmarkedId.answer.includes(
                                             parseInt(answer.id)
                                         )
                                     "
-                  @remove-answer-bookmark="
+              @remove-answer-bookmark="
                                         removeAnswerBookmark(answer.id)
                                     "
-                  :answer_id="parseInt(answer.id)"
-                  :isBookmarked="true"
-                />
-                <AnswerBookmarkComponent
-                  v-else
-                  @add-answer-bookmark="
+              :answer_id="parseInt(answer.id)"
+              :isBookmarked="true"
+            />
+            <AnswerBookmarkComponent
+              v-else
+              @add-answer-bookmark="
                                         addAnswerBookmark(answer.id)
                                     "
-                  :answer_id="parseInt(answer.id)"
-                  :isBookmarked="false"
-                />
-                <span class="caption">
-                  {{
-                  answer.created_at
-                  }}
-                </span>
-              </div>
-            </div>
-          </v-card>
-        </v-col>
+              :answer_id="parseInt(answer.id)"
+              :isBookmarked="false"
+            />
+            <MomentJs :time="answer.created_at" class="caption captionColor data" />
+          </v-card-actions>
+        </v-card>
+      </div>
 
-        <v-card
-          v-if="isVisible.answerInput"
-          class="mx-auto answerCard card"
-          max-width="344"
-          outlined
-        >
-          <v-form ref="form" v-model="valid" lazy-validation>
-            <v-col cols="12">
-              <v-textarea
-                label="回答の内容を入力してください"
-                id="answerText"
-                name="answer"
-                v-model="answerContent.text"
-                :readonly="isReadOnly.text"
-                :rules="[
+      <v-card v-if="isVisible.answerInput" class="mx-auto answerCard card" max-width="344" outlined>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-col cols="12">
+            <v-textarea
+              label="回答の内容を入力してください"
+              id="answerText"
+              name="answer"
+              v-model="answerContent.text"
+              :readonly="isReadOnly.text"
+              :rules="[
                                     validationRules.required,
                                     validationRules.textCounter
                                 ]"
-                counter="500"
-                color="#bc8f8f"
-                rows="3"
-                row-height="15"
-              ></v-textarea>
-            </v-col>
+              counter="500"
+              color="#bc8f8f"
+              rows="3"
+              row-height="15"
+            ></v-textarea>
+          </v-col>
 
-            <v-col cols="12">
-              <v-text-field
-                label="URL(任意)"
-                id="answerUrl"
-                name="url"
-                v-model="answerContent.url"
-                :readonly="isReadOnly.url"
-                counter="500"
-                color="#bc8f8f"
-              ></v-text-field>
-            </v-col>
+          <v-col cols="12">
+            <v-text-field
+              label="URL(任意)"
+              id="answerUrl"
+              name="url"
+              v-model="answerContent.url"
+              :readonly="isReadOnly.url"
+              counter="500"
+              color="#bc8f8f"
+            ></v-text-field>
+          </v-col>
 
-            <v-col cols="12">
-              <v-file-input
-                chips
-                counter
-                accept="image/*"
-                label="添付画像を選択してください"
-                :rules="[validationRules.imageMax]"
-                @change="fileSelected"
-              ></v-file-input>
-            </v-col>
-            <input type="hidden" name="postId" id="postId" v-model="answerContent.postId" />
-            <v-btn @click="cancelOperationAtClick()" class="cansel_btn" text>キャンセル</v-btn>
-            <v-btn @click="saveAnswerPostData" color="#bc8f8f" class="submit_btn" text>回答</v-btn>
-          </v-form>
-        </v-card>
-      </v-row>
+          <v-col cols="12">
+            <v-file-input
+              chips
+              counter
+              accept="image/*"
+              label="添付画像を選択してください"
+              :rules="[validationRules.imageMax]"
+              @change="fileSelected"
+            ></v-file-input>
+          </v-col>
+          <input type="hidden" name="postId" id="postId" v-model="answerContent.postId" />
+          <v-btn @click="cancelOperationAtClick()" class="cansel_btn" text>キャンセル</v-btn>
+          <v-btn @click="saveAnswerPostData" color="#bc8f8f" class="submit_btn" text>回答</v-btn>
+        </v-form>
+      </v-card>
     </v-container>
   </div>
 </template>
@@ -262,7 +275,8 @@ export default {
         reviewBtn: true,
         reviewSubmitBtn: false,
         reviewCheckbox: false,
-        editReviewBtn: false
+        editReviewBtn: false,
+        answerIcon: false
       },
       isBookmarkedPost: false,
       postContent: {},
@@ -311,11 +325,13 @@ export default {
           this.postUser.gender = parseInt(getData.postUser.gender);
           const postedAnswersData = getData.postedAnswers;
           this.postedAnswers = postedAnswersData;
+          this.postedAnswers.gender = parseInt(postedAnswersData.gender);
           const bookmarkData = parseInt(getData.bookmarkData);
 
           if (getData.postContent.status == 1) {
             this.isVisible.reviewBtn = false;
             this.isVisible.editReviewBtn = true;
+            this.isVisible.answerIcon = true;
           }
 
           if (postedAnswersData.length > 0) {
@@ -482,6 +498,7 @@ export default {
           this.setBookmarkAxiosErrorData(err);
         });
     },
+    //ベストアンサーを選ぶ処理
     saveBestAnswerData: function() {
       const id = this.reviewCheckbox;
       axios
@@ -489,6 +506,7 @@ export default {
         .then(res => {
           this.isVisible.reviewSubmitBtn = false;
           this.isVisible.editReviewBtn = true;
+          this.isVisible.reviewCheckbox = false;
           console.log(res.data);
         })
         .catch(err => console.log(err));
@@ -497,7 +515,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+body {
+  font-size: 14px;
+}
 p {
   margin: 0;
 }
@@ -508,11 +529,17 @@ i {
 
 .wrap {
   padding-bottom: 56px;
+  //   background-color: #ddd;
+}
+
+.mainWrap {
+  padding: 0;
+  background-color: #ddd;
 }
 
 .card {
-  width: 95%;
-  margin: 8px auto 0;
+  width: 100%;
+  //   margin: 8px 0 0;
   /* padding:8px 16px; */
 }
 
@@ -520,27 +547,33 @@ i {
   margin: 16px 0 0;
 }
 /* 質問に対するスタイル */
-.iconImage {
-  width: 50px;
-  margin-right: 16px;
-  height: 50px;
-  border-radius: 75px;
-}
-.iconImage img {
-  width: 50px;
-  height: 50px;
-  border-radius: 75px;
-  object-fit: cover;
+.postCard {
+  padding-top: 16px;
+  background-color: #fff;
 }
 
-.postImgWrap {
+.list_title_wrap {
+  position: relative;
+
+  .category_chips {
+    position: absolute;
+    top: 8px;
+    right: 0;
+  }
+  .statusChip {
+    position: absolute;
+    top: 8px;
+    right: 0;
+  }
+}
+.iconWrap {
   position: relative;
 }
 
-.categoryChip {
-  position: absolute;
-  top: 0;
-  right: 8px;
+.commentIcon {
+  font-size: 24px;
+  color: #808080;
+  padding: 12px 6px 12px 12px;
 }
 
 .captionColor {
@@ -555,23 +588,13 @@ i {
 /* 回答投稿に対するスタイル */
 
 /* 投稿済みの回答に対するスタイル */
-.answerImgFlex {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+.postedAnswerCard {
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
 }
-
-.answeIcoImg {
-  width: 50px;
-  margin-right: 16px;
-  height: 50px;
-  border-radius: 75px;
-}
-
-.answeIcoImg img {
-  width: 50px;
-  height: 50px;
-  border-radius: 75px;
-  object-fit: cover;
+.answerCount {
+  margin-left: 8px;
 }
 </style>
