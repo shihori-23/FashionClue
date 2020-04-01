@@ -255,6 +255,7 @@ export default {
                 .get("api/profile/get")
                 .then(res => {
                     this.userProfile = res.data.profile;
+                    this.userProfile.gender = parseInt(res.data.profile.gender);
                     this.tastes = res.data.tastes;
                     this.filledUserGender = res.data.filledUserGender;
                     this.fileInfo = res.data.profile.image;
@@ -319,6 +320,7 @@ export default {
         //formのデータを定義
         setUserProfileData() {
             let formData = new FormData();
+            const genderRole = parseInt(this.userProfile.gender);
 
             Object.keys(this.userProfile).forEach(key => {
                 if (this.userProfile[key]) {
@@ -326,6 +328,8 @@ export default {
                     formData.append(key, this.userProfile[key]);
                 }
             });
+            formData.append(gender, genderRole);
+            console.log(genderRole);
             return formData;
         },
         //　サーバー側からのエラーを定義

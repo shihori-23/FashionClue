@@ -178,7 +178,7 @@ export default {
           console.log(res.data);
           this.selectedTasteConvert(res);
         })
-        .catch(err => console.log(err.response.data));
+        .catch(err => console.log(err));
     },
     //　テイストタグのデータを配列に入れる処理
     selectedTasteConvert: function(res) {
