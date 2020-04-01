@@ -33,18 +33,21 @@
 
 require("./bootstrap");
 
-window.Vue=require("vue");
-import vuetify from"./vuetify";
-import router from"./router";
-import store from './store/index';
-import AppComponent from"./components/AppComponent";
+window.Vue = require("vue");
+import vuetify from "./vuetify";
+import router from "./router";
+import store from "./store/index";
+import Croppa from "vue-croppa";
+import AppComponent from "./components/AppComponent";
 
 const app = new Vue({
-el:"#app",
-router,
-vuetify,
-store,
-components: {
-"app-component":AppComponent
+    el: "#app",
+    router,
+    vuetify,
+    store,
+    Croppa,
+
+    components: {
+        "app-component": AppComponent
     }
 });
