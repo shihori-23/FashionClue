@@ -55,6 +55,13 @@ return [
             'visibility' => 'public',
         ],
 
+        // 'ftp' => [
+        //     'driver'   => 'ftp',
+        //     'host'     => env('HOST_SERVER'),
+        //     'username' => env('HOST_USERNAME'),
+        //     'password' => env('HOST_PASSWORD'),
+        // ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

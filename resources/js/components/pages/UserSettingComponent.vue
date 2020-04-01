@@ -101,26 +101,18 @@
                         v-model="userProfile.gender"
                         row
                         label="性別"
-                        id="gender"
+                        id="genderRadio"
                         color="#81cac4"
                     >
                         <v-radio
                             v-for="(item, index) in gender"
+                            name="gender"
                             :key="index"
                             :label="item"
                             :value="index"
                             color="#bc8f8f"
                         ></v-radio>
                     </v-radio-group>
-                    <!-- <v-col cols="11">
-            <v-select
-            :items="items"
-            label="性別"
-            id="gender"
-            color="#81cac4"
-            v-model="userProfile.gender"
-            ></v-select>
-          </v-col>-->
                     <v-col cols="11">
                         <v-text-field
                             label="年齢"
@@ -151,21 +143,24 @@
                 </v-row>
                 <v-btn
                     @click="saveUserProfileData"
+                    outlined
                     color="#bc8f8f"
                     class="submit_btn"
                     >変更を保存</v-btn
                 >
             </v-form>
         </v-container>
-        <v-container class="sub_profile">
+        <v-container class="sub_profile text-center">
             <v-col v-if="filledUserGender">
                 <p>好みのテイストを３つまで選択して下さい</p>
                 <v-chip-group
                     v-model="selection"
-                    active-class="purple lighten-4 white--text"
+                    active-class="red accent-3 white--text"
                     column
                     multiple
+                    dark
                     max="3"
+                    class="tasteChips"
                 >
                     <v-chip
                         v-for="taste in tastes"
@@ -174,8 +169,12 @@
                         >{{ taste.taste_name }}</v-chip
                     >
                 </v-chip-group>
-                <v-btn @click="saveUserTaste" color="#bc8f8f" class="submit_btn"
-                    >変更を保存</v-btn
+                <v-btn
+                    @click="saveUserTaste"
+                    outlined
+                    color="#bc8f8f"
+                    class="submit_btn"
+                    >保存</v-btn
                 >
             </v-col>
             <v-col v-else>
@@ -328,7 +327,7 @@ export default {
                     formData.append(key, this.userProfile[key]);
                 }
             });
-            formData.append(gender, genderRole);
+            formData.append("gender", genderRole);
             console.log(genderRole);
             return formData;
         },
@@ -465,12 +464,17 @@ export default {
 .submit_btn {
     color: #fff;
     font-weight: bold;
+    margin: 0 auto;
 }
 
 .sub_profile {
     width: 95%;
     margin: 1em auto;
     background: #fafafa;
+}
+
+.tasteChips {
+    margin-bottom: 16px;
 }
 
 /* Dialog */

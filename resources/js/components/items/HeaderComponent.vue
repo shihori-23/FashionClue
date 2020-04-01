@@ -111,7 +111,7 @@ header {
     justify-content: flex-start;
 
     .pev_left {
-        margin: 0 15%;
+        margin-left: 25%;
     }
 }
 
