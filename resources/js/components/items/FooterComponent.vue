@@ -2,29 +2,34 @@
   <footer>
     <router-link :to="{ name: 'UserHome'}">
       <v-btn icon>
-        <i class="fas fa-home"></i>
+        <span class="lnr lnr-home footericon"></span>
+        <!-- <i class="fas fa-home"></i> -->
       </v-btn>
     </router-link>
     <router-link :to="{ name: 'UserBookmark'}">
       <v-btn icon>
-        <i class="far fa-bookmark"></i>
+        <span class="lnr lnr-bookmark footericon"></span>
+        <!-- <i class="far fa-bookmark"></i> -->
       </v-btn>
     </router-link>
     <router-link :to="{ name: 'UserPost'}">
       <v-btn icon>
-        <i class="far fa-edit"></i>
+        <span class="lnr lnr-plus-circle footericon"></span>
+        <!-- <i class="far fa-edit"></i> -->
       </v-btn>
     </router-link>
     <router-link :to="{ name: 'UserNotice'}">
       <v-btn icon @click="isVisibleNoctice = false">
         <v-badge :value="isVisibleNoctice" overlap dot color="#bc8f8f">
-          <i class="far fa-bell"></i>
+          <span class="lnr lnr-alarm footericon"></span>
+          <!-- <i class="far fa-bell"></i> -->
         </v-badge>
       </v-btn>
     </router-link>
     <router-link :to="{ name: 'UserProfile'}">
       <v-btn icon>
-        <i class="fas fa-user"></i>
+        <span class="lnr lnr-user footericon"></span>
+        <!-- <i class="fas fa-user"></i> -->
       </v-btn>
     </router-link>
   </footer>
@@ -58,7 +63,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 a {
   text-decoration: none;
 }
@@ -75,6 +80,10 @@ footer {
   justify-content: space-between;
   padding: 14px 24px;
   z-index: 9000;
+
+  .footericon {
+    font-size: 24px;
+  }
 }
 
 i {

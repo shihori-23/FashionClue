@@ -36,7 +36,7 @@ use App\Review;
             //もしファイルがあれば更新
             if ($request->file('image')) {   
                 //ファイルが保存される先の名前
-                $posts->post_image = $request->file('image')->store('public/image/profile');
+                $posts->post_image = $request->file('image')->store('public/image/posts');
                 //保存される名前を決める
                 $posts->post_image = str_replace('public/', 'storage/', $posts->post_image);
             }

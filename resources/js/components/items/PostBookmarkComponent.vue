@@ -2,12 +2,12 @@
   <div>
     <div class="container">
       <button class="btn-border" v-if="!isBookmarked" @click.prevent="BookmarkOperationAtClick">
-        <!-- <button class="btn-border" v-if="!isBookmarked" @click="addBookmark(post_id)"> -->
-        <v-icon>mdi-heart-outline</v-icon>
+        <span class="lnr lnr-heart"></span>
+        <!-- <v-icon>mdi-heart-outline</v-icon> -->
       </button>
       <button class="btn-border" v-else @click.prevent="removeBookmarkOperationAtClick">
-        <!-- <button class="btn-border" v-else @click="removeBookmark(post_id)"> -->
-        <v-icon color="#ed4956">mdi-heart</v-icon>
+        <span class="lnr lnr-heart isBookmarkedIcon"></span>
+        <!-- <v-icon color="#ed4956">mdi-heart</v-icon> -->
       </button>
     </div>
   </div>
@@ -58,6 +58,10 @@ export default {
 <style scoped>
 a {
   text-decoration: none;
+}
+
+.isBookmarkedIcon {
+  color: #ed4956;
 }
 
 .btn-border {
