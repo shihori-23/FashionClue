@@ -9,6 +9,7 @@ import UserNoticeComponent from "./components/pages/UserNoticeComponent";
 import UserSettingComponent from "./components/pages/UserSettingComponent";
 import UserBookmarkComponent from "./components/pages/UserBookmarkComponent";
 import UserProfileComponent from "./components/pages/UserProfileComponent";
+import CroppaComponent from "./components/items/CroppaComponent.vue";
 
 Vue.use(VueRouter);
 
@@ -58,8 +59,13 @@ const routes = [
                 component: UserProfileComponent,
                 name: "UserProfile"
             },
+            {
+                path: "/user/croppa",
+                component: CroppaComponent,
+                name: "Croppa"
+            }
         ]
-    },
+    }
 ];
 
 // router.beforeEach((to, from, next) => {

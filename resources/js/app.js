@@ -37,7 +37,6 @@ window.Vue = require("vue");
 import vuetify from "./vuetify";
 import router from "./router";
 import store from "./store/index";
-import Croppa from "vue-croppa";
 import AppComponent from "./components/AppComponent";
 
 const app = new Vue({
@@ -45,7 +44,6 @@ const app = new Vue({
     router,
     vuetify,
     store,
-    Croppa,
 
     components: {
         "app-component": AppComponent
