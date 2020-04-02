@@ -14,68 +14,65 @@
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     <link href="{{ asset('css/login.css') }}" rel="stylesheet">
 
     <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
     </head>
 <body>
 <div id="register">
     <v-app>
-            <v-container>
-                <h2 class="main-title_a">Fashion clue</h2>
-                <div class="signin_container">
-                    <h2 class="sub-title_a">ユーザー登録</h2>
-                    <form method="POST" action="{{ route('register') }}">
-                        @csrf
-                        <v-text-field
-                            name="name"
-                            value="{{ old('name') }}"
-                            counter="10"
-                            label="ニックネーム"
-                            required
-                            color="#707070"
-                        ></v-text-field>
-                        <v-text-field
-                            name="email"
-                            value="{{ old('email') }}"
-                            label="メールアドレス"
-                            required
-                            color="#707070"
-                        ></v-text-field>
-                        <v-text-field
-                            name="password"
-                            value="{{ old('password') }}"
-                            label="パスワード"
-                            type="password"
-                            required
-                            color="#707070"
-                        ></v-text-field>
-                        <v-text-field
-                            name="password_confirmation"
-                            label="パスワードの確認"
-                            type="password"
-                            required
-                            color="#707070"
-                        ></v-text-field>
-                        <!-- <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>         -->
-                        <!-- <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email"> -->
-                        <input id="role" value="1" type="hidden" name="role">
-                        <!-- <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password"> -->
-                        <!-- <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password"> -->
-            
-                        <v-btn type="submit" class="btn btn-primary submit_btn_a" color="#707070">
-                                Register
-                        </v-btn>
-                    </form>
+        <div class="logo">
+            <h2 class="logo_title">Clue</h1>
+            <!-- <img src="{{ asset('img/logo.png')}}" alt="clueロゴ画像"> -->
+        </div>
+        <div class="form-wrapper">
+            <h1>Register</h1>
+            <form method="POST" action="{{ route('register') }}">
+            @csrf
+                <v-text-field
+                        name="name"
+                        value="{{ old('name') }}"
+                        counter="10"
+                        label="アカウント名"
+                        required
+                        color="#707070"
+                    ></v-text-field>
+                    <v-text-field
+                        name="email"
+                        value="{{ old('email') }}"
+                        label="メールアドレス"
+                        required
+                        color="#707070"
+                    ></v-text-field>
+                    <v-text-field
+                        name="password"
+                        value="{{ old('password') }}"
+                        label="パスワード"
+                        type="password"
+                        required
+                        color="#707070"
+                    ></v-text-field>
+                    <v-text-field
+                        name="password_confirmation"
+                        label="パスワードの確認"
+                        type="password"
+                        required
+                        color="#707070"
+                    ></v-text-field>
+                <div class="button-panel">
+                    <input type="submit" class="button" title="Submit" value="Submit"></input>
                 </div>
-            </v-container>
+            </form>
+            <div class="form-footer">
+                <p><a href="{{ route('login') }}">Sign In</a></p>
+            </div>
+        </div>
     </v-app>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
