@@ -14,24 +14,24 @@
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     <link href="{{ asset('css/login.css') }}" rel="stylesheet">
     <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
     </head>
 <body>
     <div id="login">
-        <div class="bg"></div>
         <v-app>
-            <v-container>
-                <h2 class="main-title_a">Fashion Clue</h2>
-                    <div class="signin_container">
-                    <h2 class="sub-title_a">Sign In</h2>
+            <div class="logo">
+                <h2 class="logo_title">Clue</h1>
+                <!-- <img src="{{ asset('img/logo.png')}}" alt="clueロゴ画像"> -->
+            </div>
+            <div class="form-wrapper">
+                <h1>Sign In</h1>
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <v-text-field
@@ -52,23 +52,25 @@
                             autocomplete="password"
                             color="#707070"
                         ></v-text-field>
-                        <!-- <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus> -->
-                        <!-- <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password"> -->
-                        <v-btn type="submit" class="submit_btn_a" color="#707070">
-                            ログイン
-                        </v-btn>
-                        @if (Route::has('password.request'))
-                        <div>
+                        <div class="button-panel">
+                        <input type="submit" class="button" title="Sign In" value="Sign In"></input>
+                        </div>
+                    </form>
+                    <div class="form-footer">
+                        <p><a href="{{ route('register') }}">Create an account</a></p>
+                    @if (Route::has('password.request'))
+                        <!-- <div>
                             <a class="btn btn-link text_btn_a" href="{{ route('password.request') }}">
                                 {{ __('Forgot Your Password?') }}
                             </a>
-                        </div>
-                        @endif
-                    </form>
-                </div>
-            </v-container>
+                        </div> -->
+                    @endif
+                    </div>
+                    
+            </div>
         </v-app>
     </div>
+
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script>
