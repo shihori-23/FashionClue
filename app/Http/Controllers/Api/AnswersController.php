@@ -33,7 +33,7 @@ use App\User;
             //もしファイルがあれば更新
             if ($request->file('image')) {   
                 //ファイルが保存される先の名前
-                $answers->answer_image = $request->file('image')->store('public/image/profile');
+                $answers->answer_image = $request->file('image')->store('public/image/answers');
                 //保存される名前を決める
                 $answers->answer_image = str_replace('public/', 'storage/', $answers->answer_image);
             }

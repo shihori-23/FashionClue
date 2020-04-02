@@ -10,14 +10,14 @@
           <v-list-item-content>
             <v-list-item-title class="title">{{ userProfileData.name }}</v-list-item-title>
             <v-list-item-subtitle>
-              <Gender :genderRole="userProfileData.gender" />
+              <Gender :genderRole="userProfileData.gender" class="caption" />
               <span v-if="userProfileData.age" class="caption">/ {{ userProfileData.age }}歳</span>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
 
         <v-card-text class="bioTextWrap">
-          <p>自己紹介</p>
+          <p class="caption">自己紹介</p>
           <p v-if="userProfileData.bio" class="bioText">{{ userProfileData.bio }}</p>
           <span v-if="selectedTastes">
             <v-chip
@@ -31,9 +31,12 @@
           </span>
         </v-card-text>
 
-        <v-card-actions class="text-center">
-          <v-btn text block color="#bc8f8f" :to="{ name: 'UserSetting'}">プロフィールを編集する</v-btn>
-        </v-card-actions>
+        <div class="text-center">
+          <div>
+            <v-btn text color="#8c8c8c" :to="{ name: 'UserSetting'}">プロフィールを編集する</v-btn>
+          </div>
+          <v-btn text color="#bc8f8f" @click="logout">ログアウト</v-btn>
+        </div>
       </v-card>
 
       <v-tabs
@@ -81,7 +84,7 @@
                 </span>
               </v-list-item-content>
             </v-list-item>
-            <v-card-text class="px-4 pb-4 pt-0">{{post.text}}</v-card-text>
+            <v-card-text class="px-4 pb-4 pt-0 textColor">{{post.text}}</v-card-text>
             <v-img v-if="post.post_image" :src="post.post_image"></v-img>
           </v-card>
         </v-tab-item>
@@ -117,7 +120,7 @@
                 </span>
               </v-list-item-content>
             </v-list-item>
-            <v-card-text class="px-4 pb-4 pt-0">{{answer.text}}</v-card-text>
+            <v-card-text class="px-4 pb-4 pt-0 textColor">{{answer.text}}</v-card-text>
             <v-img v-if="answer.answer_image" :src="answer.answer_image"></v-img>
           </v-card>
         </v-tab-item>
@@ -192,6 +195,15 @@ export default {
         });
       this.selectedTastes = selectedtasteList;
       console.log(this.selectedTastes);
+    },
+    //　ログアウト
+    logout: function() {
+      axios
+        .post("logout")
+        .then(res => {
+          location.href = "/fashionclue";
+        })
+        .catch(err => console.log(err));
     }
   }
 };
@@ -225,8 +237,9 @@ p {
 }
 .bioText {
   margin-bottom: 8px;
-  font-size: 0.7em;
+  font-size: 0.8em;
 }
+
 .tabBar {
   position: sticky;
   top: 56px;
@@ -234,5 +247,9 @@ p {
 }
 .userContentCard {
   margin-bottom: 8px;
+}
+
+.textColor {
+  color: #222 !important;
 }
 </style>

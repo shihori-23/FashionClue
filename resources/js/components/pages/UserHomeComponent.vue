@@ -72,7 +72,7 @@
               </span>
             </v-list-item-content>
           </v-list-item>
-          <v-card-text class="px-4 pb-4 pt-0">{{ ladysPost.text }}</v-card-text>
+          <v-card-text class="px-4 pb-4 pt-0 textColor">{{ ladysPost.text }}</v-card-text>
           <v-img v-if="ladysPost.post_image" :src="ladysPost.post_image"></v-img>
           <v-card-actions class="iconWrap">
             <PostBookmarkComponent
@@ -96,7 +96,7 @@
               :isBookmarked="false"
             />
             <span class="commentIcon">
-              <i class="far fa-comment"></i>
+              <span class="lnr lnr-bubble"></span>
             </span>
             <span class="caption captionColor">
               {{
@@ -141,7 +141,7 @@
               </span>
             </v-list-item-content>
           </v-list-item>
-          <v-card-text class="px-4 pb-4 pt-0">{{ mensPost.text }}</v-card-text>
+          <v-card-text class="px-4 pb-4 pt-0 textColor">{{ mensPost.text }}</v-card-text>
           <v-img v-if="mensPost.post_image" :src="mensPost.post_image"></v-img>
           <v-card-actions class="iconWrap">
             <PostBookmarkComponent
@@ -165,7 +165,7 @@
               :isBookmarked="false"
             />
             <span class="commentIcon">
-              <i class="far fa-comment"></i>
+              <span class="lnr lnr-bubble"></span>
             </span>
             <span class="caption commentCaption">
               {{
@@ -317,6 +317,10 @@ p {
 .postContentCard {
   padding-top: 8px;
   margin-bottom: 8px;
+}
+
+.textColor {
+  color: #222 !important;
 }
 
 .iconWrap {

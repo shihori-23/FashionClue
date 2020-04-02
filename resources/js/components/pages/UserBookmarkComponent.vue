@@ -45,7 +45,7 @@
               </span>
             </v-list-item-content>
           </v-list-item>
-          <v-card-text class="px-4 pb-4 pt-0">{{bookmarkedPost.text}}</v-card-text>
+          <v-card-text class="px-4 pb-4 pt-0 textColor">{{bookmarkedPost.text}}</v-card-text>
           <v-img v-if="bookmarkedPost.post_image" :src="bookmarkedPost.post_image"></v-img>
         </v-card>
       </v-tab-item>
@@ -81,7 +81,7 @@
               </span>
             </v-list-item-content>
           </v-list-item>
-          <v-card-text class="px-4 pb-4 pt-0">{{bookmarkedAnswer.text}}</v-card-text>
+          <v-card-text class="px-4 pb-4 pt-0 textColor">{{bookmarkedAnswer.text}}</v-card-text>
           <v-img v-if="bookmarkedAnswer.answer_image" :src="bookmarkedAnswer.answer_image"></v-img>
         </v-card>
       </v-tab-item>
@@ -179,6 +179,10 @@ body {
   width: 100%;
   /* margin: 8px auto; */
   margin-bottom: 8px;
+}
+
+.textColor {
+  color: #222 !important;
 }
 
 .v-tabs-items {
