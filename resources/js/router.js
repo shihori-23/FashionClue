@@ -58,12 +58,12 @@ const routes = [
                 path: "/user/profile",
                 component: UserProfileComponent,
                 name: "UserProfile"
-            },
-            {
-                path: "/user/croppa",
-                component: CroppaComponent,
-                name: "Croppa"
             }
+            // {
+            //     path: "/user/croppa",
+            //     component: CroppaComponent,
+            //     name: "Croppa"
+            // }
         ]
     }
 ];
