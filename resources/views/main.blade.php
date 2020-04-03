@@ -8,6 +8,9 @@
 
 
         <title>Fashion clue</title>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;700&display=swap" rel="stylesheet">
+
         <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
                 <link rel="stylesheet" href="{{asset('css/app.css')}}">
