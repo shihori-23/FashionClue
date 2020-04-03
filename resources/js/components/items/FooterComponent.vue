@@ -1,35 +1,34 @@
 <template>
     <footer>
         <router-link :to="{ name: 'UserHome' }">
-            <v-btn icon active-class="activeIcon">
-                <span class="lnr lnr-home footericon"></span>
-                <!-- <i class="fas fa-home"></i> -->
+            <v-btn icon>
+                <span
+                    v-if="$route.path === '/user/home'"
+                    class="lnr lnr-home footericon activeIcon"
+                ></span>
+                <span v-else class="lnr lnr-home footericon"></span>
             </v-btn>
         </router-link>
         <router-link :to="{ name: 'UserBookmark' }">
             <v-btn icon>
                 <span class="lnr lnr-bookmark footericon"></span>
-                <!-- <i class="far fa-bookmark"></i> -->
             </v-btn>
         </router-link>
         <router-link :to="{ name: 'UserPost' }">
             <v-btn icon>
                 <span class="lnr lnr-plus-circle footericon"></span>
-                <!-- <i class="far fa-edit"></i> -->
             </v-btn>
         </router-link>
         <router-link :to="{ name: 'UserNotice' }">
             <v-btn icon @click="isVisibleNoctice = false">
                 <v-badge :value="isVisibleNoctice" overlap dot color="#bc8f8f">
                     <span class="lnr lnr-alarm footericon"></span>
-                    <!-- <i class="far fa-bell"></i> -->
                 </v-badge>
             </v-btn>
         </router-link>
         <router-link :to="{ name: 'UserProfile' }">
             <v-btn icon>
                 <span class="lnr lnr-user footericon"></span>
-                <!-- <i class="fas fa-user"></i> -->
             </v-btn>
         </router-link>
     </footer>
