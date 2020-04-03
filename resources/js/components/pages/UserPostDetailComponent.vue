@@ -17,7 +17,7 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn
-                            color="#bc8f8f"
+                            color="#996666"
                             text
                             @click="closeDialog('errorDialog')"
                             >閉じる</v-btn
@@ -236,7 +236,7 @@
                                 validationRules.textCounter
                             ]"
                             counter="500"
-                            color="#bc8f8f"
+                            color="#996666"
                             rows="3"
                             row-height="15"
                         ></v-textarea>
@@ -250,7 +250,7 @@
                             v-model="answerContent.url"
                             :readonly="isReadOnly.url"
                             counter="500"
-                            color="#bc8f8f"
+                            color="#996666"
                         ></v-text-field>
                     </v-col>
 
@@ -258,6 +258,7 @@
                         <v-file-input
                             chips
                             counter
+                            color="#996666"
                             accept="image/*"
                             label="添付画像を選択してください"
                             :rules="[validationRules.imageMax]"

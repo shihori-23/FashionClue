@@ -16,7 +16,7 @@
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn
-                                color="#bc8f8f"
+                                color="#996666"
                                 text
                                 @click="closeDialog('successDialog')"
                                 >閉じる</v-btn
@@ -44,7 +44,7 @@
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn
-                                color="#bc8f8f"
+                                color="#996666"
                                 text
                                 @click="closeDialog('errorDialog')"
                                 >閉じる</v-btn
@@ -77,7 +77,7 @@
                             id="name"
                             counter="20"
                             v-model="userProfile.name"
-                            color="#bc8f8f"
+                            color="#996666"
                             :readonly="readOnly.name"
                             :rules="[
                                 validationRules.required,
@@ -92,7 +92,7 @@
                             id="email"
                             v-model="userProfile.email"
                             :readonly="readOnly.email"
-                            color="#bc8f8f"
+                            color="#996666"
                             append-icon="mdi-information-outline"
                         ></v-text-field>
                     </v-col>
@@ -101,7 +101,7 @@
                         row
                         label="性別"
                         id="genderRadio"
-                        color="#81cac4"
+                        color="#996666"
                     >
                         <v-radio
                             v-for="(item, index) in gender"
@@ -109,7 +109,7 @@
                             :key="index"
                             :label="item"
                             :value="index"
-                            color="#bc8f8f"
+                            color="#996666"
                         ></v-radio>
                     </v-radio-group>
                     <v-col cols="11">
@@ -120,7 +120,7 @@
                             min="0"
                             v-model="userProfile.age"
                             :readonly="readOnly.age"
-                            color="#bc8f8f"
+                            color="#996666"
                             append-icon="mdi-pencil"
                         ></v-text-field>
                     </v-col>
@@ -133,7 +133,7 @@
                             :readonly="readOnly.bio"
                             :rules="[validationRules.bioCounter]"
                             counter="200"
-                            color="#bc8f8f"
+                            color="#996666"
                             rows="3"
                             row-height="15"
                             append-icon="mdi-pencil"
@@ -143,7 +143,7 @@
                 <v-btn
                     @click="saveUserProfileData"
                     outlined
-                    color="#bc8f8f"
+                    color="#996666"
                     class="submit_btn"
                     >変更を保存</v-btn
                 >
@@ -171,7 +171,7 @@
                 <v-btn
                     @click="saveUserTaste"
                     outlined
-                    color="#bc8f8f"
+                    color="#996666"
                     class="submit_btn"
                     >保存</v-btn
                 >
