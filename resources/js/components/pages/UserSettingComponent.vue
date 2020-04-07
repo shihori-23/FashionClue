@@ -97,20 +97,21 @@
                         ></v-text-field>
                     </v-col>
                     <v-radio-group
-                        v-model="userGender"
+                        v-model="userProfile.gender"
                         row
                         label="性別"
                         id="genderRadio"
                         color="#996666"
                     >
                         <v-radio
-                            v-for="(item, index) in gender"
+                            v-for="(item, name, index) in gender"
                             name="gender"
                             :key="index"
                             :label="item"
-                            :value="item"
+                            :value="parseInt(name)"
                             color="#996666"
                         ></v-radio>
+
                     </v-radio-group>
                     <v-col cols="11">
                         <v-text-field
@@ -233,7 +234,10 @@ export default {
             //データ型の定義
             userProfile: {},
             fileInfo: "",
-            gender: ["レディース", "メンズ"],
+            gender: {
+                1: "レディース",
+                2: "メンズ"
+            },
             selection: [],
             tastes: [],
             axiosErrorMessages: []
@@ -250,37 +254,32 @@ export default {
     },
     methods: {
         //プロフィールの取得
-        getUserProfileData: function() {
-            axios
-                .get("api/profile/get")
-                .then(res => {
-                    this.userProfile = res.data.profile;
-                    this.tastes = res.data.tastes;
-                    this.filledUserGender = res.data.filledUserGender;
-                    this.fileInfo = res.data.profile.image;
-                    console.log(res.data);
-                    console.log(this.userProfile, 111);
+        async getUserProfileData() {
+            const _this = this;
+            const userData = await axios.get("api/profile/get")
+            const responseData = userData.data;
 
-                    this.selectedTasteConvert(res);
-                })
-                .catch(err => console.log(err));
+            this.userProfile = responseData.profile;
+            this.tastes = responseData.tastes;
+            this.filledUserGender = responseData.filledUserGender;
+            this.fileInfo = responseData.profile.image;
+
+            if(responseData.selectedTastes.length > 0){
+                this.selectedTasteConvert(responseData.selectedTastes);
+            }
+
         },
         //　ダイアログを閉じる
         closeDialog(dialogName) {
             this.isDialogOpen[dialogName] = false;
         },
         //　テイストタグのデータを配列に入れる処理
-        selectedTasteConvert: function(res) {
-            const selectedTasteArray = res.data.selectedTastes;
-            const selectedtasteList = selectedTasteArray
-                .map(function(row) {
-                    return [row["taste_id"]];
-                })
-                .reduce(function(a, b) {
-                    return a.concat(b);
-                });
-            this.selection = selectedtasteList;
-            console.log(this.selection);
+        selectedTasteConvert: function(data) {
+
+                this.selection = data.map(row=>[row["taste_id"]])
+                    .reduce((a, b) =>a.concat(b));
+
+
         },
         //画像の処理
         //画像ファイルを設置
@@ -319,7 +318,6 @@ export default {
         //formのデータを定義
         setUserProfileData() {
             let formData = new FormData();
-            const genderRole = parseInt(this.userProfile.gender);
 
             Object.keys(this.userProfile).forEach(key => {
                 if (this.userProfile[key]) {
@@ -327,8 +325,6 @@ export default {
                     formData.append(key, this.userProfile[key]);
                 }
             });
-            formData.append("gender", genderRole);
-            console.log(genderRole);
             return formData;
         },
         //　サーバー側からのエラーを定義
@@ -370,12 +366,12 @@ export default {
                     .then(res => {
                         console.log(res.data.profile);
                         const updatedUserProfile = res.data.profile;
-                        const updatedUserGender = parseInt(
-                            updatedUserProfile.gender
-                        );
+                        // const updatedUserGender = parseInt(
+                        //     this.userGender
+                        // );
                         this.isDialogOpen.successDialog = true;
                         // this.userProfile = updatedUserProfile;
-                        this.userProfile.gender = updatedUserGender;
+                        // this.userProfile.gender = updatedUserGender;
                     })
                     .catch(err => {
                         this.setAxiosErrorData(err);
@@ -398,9 +394,17 @@ export default {
         }
     },
     computed:{
-        userGender(){
-            const userGender = this.userProfile.gender;
-            return this.gender[userGender - 1];
+        userGender:{
+            get: function () {
+                const userGender = this.userProfile.gender;
+                return this.gender[userGender - 1];
+            },
+    // setter 関数
+            set: function (newValue) {
+                console.log(newValue,200)
+                const userGender = this.userProfile.gender;
+                return this.gender[userGender - 1];
+            },
         }
     }
 };
