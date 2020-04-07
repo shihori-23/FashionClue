@@ -43,7 +43,7 @@ class UsersController extends Controller
         //　選択済のテイストがあれば取得して配列に入れる
         $selectedTastes = $user->tastes()->where('user_id', '=', Auth::id())->select('taste_id')->get();
 
-        return response()->json(['profile' => $array, 'tastes' => $taste, 'filledUserGender' => $filledUserGender, 'selectedTastes' => $selectedTastes], 200);
+        return response()->json(['userProfile' => $array, 'tastes' => $taste, 'filledUserGender' => $filledUserGender, 'selectedTastes' => $selectedTastes], 200);
     }
 
     //プロフィール編集
@@ -70,7 +70,7 @@ class UsersController extends Controller
             $user->save();
         }
 
-        return response()->json(['done' => true, 'profile' => $ary], 200);
+        return response()->json(['done' => true, 'userProfile' => $ary], 200);
     }
     //　テイストの編集
     public function editTaste(Request $request)
@@ -110,6 +110,6 @@ class UsersController extends Controller
             ->select('a.id', 'p.id as post_id', 'a.text', 'a.answer_image', 'a.created_at', 'c.category_name')
             ->get();
 
-        return response()->json(['profile' => $array, 'selectedTastes' => $selectedTastes, 'userPostData' => $userPostData, 'userAnswerData' => $userAnswerData], 200);
+        return response()->json(['userProfile' => $array, 'selectedTastes' => $selectedTastes, 'userPostData' => $userPostData, 'userAnswerData' => $userAnswerData], 200);
     }
 }

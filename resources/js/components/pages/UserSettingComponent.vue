@@ -56,7 +56,7 @@
             <v-form ref="form" v-model="valid" lazy-validation>
                 <div class="image_container">
                     <div class="image">
-                        <img :src="fileInfo" />
+                        <img :src="previewImage" />
                     </div>
                     <label class="user_profile" for="user_profile">
                         <v-icon color="#fff" class="add_btn">mdi-camera</v-icon>
@@ -203,7 +203,7 @@ export default {
          * @param {Array} gender・・・性別データを管理
          * @param {Object} selection・・・選択済のテイストを管理
          * @param {Array} tastes・・・テイストのデータを管理
-         * @param {String} fileInfo・・・画像プレビュー用のURLを管理
+         * @param {String} previewImage・・・プレビュー画像表示
          * @param {Array} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
          *
          **/
@@ -233,7 +233,7 @@ export default {
 
             //データ型の定義
             userProfile: {},
-            fileInfo: "",
+            previewImage: "",
             gender: {
                 1: "レディース",
                 2: "メンズ"
@@ -256,64 +256,66 @@ export default {
         //プロフィールの取得
         async getUserProfileData() {
             const _this = this;
-            const userData = await axios.get("api/profile/get")
-            const responseData = userData.data;
+            const responseData = await axios.get("api/profile/get")
+            const userProfileData = responseData.data;
+            Object.keys(userProfileData).map(keys=>_this[keys]= userProfileData[keys]);
+            this.previewImage = userProfileData.userProfile.image
 
-            this.userProfile = responseData.profile;
-            this.tastes = responseData.tastes;
-            this.filledUserGender = responseData.filledUserGender;
-            this.fileInfo = responseData.profile.image;
-
-            if(responseData.selectedTastes.length > 0){
-                this.selectedTasteConvert(responseData.selectedTastes);
+            if(userProfileData.selectedTastes.length > 0){
+                _this.selectedTasteConvert(userProfileData.selectedTastes);
             }
-
         },
-        //　ダイアログを閉じる
+        /*　ダイアログを閉じる */
         closeDialog(dialogName) {
             this.isDialogOpen[dialogName] = false;
         },
         //　テイストタグのデータを配列に入れる処理
-        selectedTasteConvert: function(data) {
-
-                this.selection = data.map(row=>[row["taste_id"]])
-                    .reduce((a, b) =>a.concat(b));
-
-
+        selectedTasteConvert(data) {
+            this.selection = data.map(row=>[row["taste_id"]])
+                .reduce((a, b) =>a.concat(b));
         },
         //画像の処理
         //画像ファイルを設置
         fileSelected(event) {
-            const file = event.target.files[0];
-            const name = file.name;
-            const size = file.size;
-            const type = file.type;
-            const errors = "";
+            const selectedImageFile = event.target.files[0];
+            const imageFileSize = selectedImageFile.size;
+            const imageFileType = selectedImageFile.type;
 
-            //上限サイズを3MB確認
-            if (size > 3000000) {
-                errors += "ファイルの上限サイズ3MBを超えています\n";
+            const validateImage = {
+                invalidMsg:"",
+                checkFileType(){
+                    const limitedFileSize = 3000000;
+                    const isOverlimitedSize = imageFileSize > limitedFileSize;
+
+                    if(isOverlimitedSize){
+                        validateImageFile.invalidMsg += `ファイルの上限サイズ${limitedFileSize/1000000}MBを超えています\n`;
+                        return false
+                    }
+
+                    return true;
+                },
+                checkFileSize(){
+                    const permitFileType = ["image/jpeg", "image/gif", "image/gif"];
+                    const invalidFileType = !permitFileType.includes(imageFileType)
+
+                    if(invalidFileType){
+                        validateImageFile.invalidMsg +=".jpg、.gif、.png、.pdfのいずれかのファイルのみ許可されています\n";
+                        return false;
+                    }
+
+                    return true;
+                }
+            };
+
+            const isInvalidImageFile = !validateImage.checkFileType() || !validateImage.checkFileType();
+
+            if (isInvalidImageFile) {
+                alert(validateImage.invalidMsg);
+                return false;
             }
 
-            //.jpg .gif .png . pdf のみ許可
-            if (
-                type != "image/jpeg" &&
-                type != "image/gif" &&
-                type != "image/png" &&
-                type != "application/pdf"
-            ) {
-                errors +=
-                    ".jpg、.gif、.png、.pdfのいずれかのファイルのみ許可されています\n";
-            }
-
-            if (errors) {
-                //errorsが存在する場合は内容をalert
-                alert(errors);
-                //valueを空にしてリセットする
-                event.currentTarget.value = "";
-            }
-            this.userProfile.image = event.target.files[0];
-            this.fileInfo = window.URL.createObjectURL(this.userProfile.image);
+            this.userProfile.image = selectedImageFile;
+            this.previewImage = window.URL.createObjectURL(selectedImageFile);
         },
         //formのデータを定義
         setUserProfileData() {
@@ -321,10 +323,10 @@ export default {
 
             Object.keys(this.userProfile).forEach(key => {
                 if (this.userProfile[key]) {
-                    console.log(key, this.userProfile[key]);
                     formData.append(key, this.userProfile[key]);
                 }
             });
+
             return formData;
         },
         //　サーバー側からのエラーを定義
@@ -346,7 +348,6 @@ export default {
                 );
             }
             this.axiosErrorMessages = axiosErrorMessageArray;
-            console.log(this.axiosErrorMessages);
             this.isDialogOpen.errorDialog = true;
         },
         //変更を保存
@@ -354,57 +355,33 @@ export default {
             //入力値のエラーを確認
             if (this.$refs.form.validate()) {
                 const formData = this.setUserProfileData();
-                console.log(this.userProfile.image);
 
                 var config = {
                     headers: {
                         "content-type": "multipart/form-data"
                     }
                 };
-                axios
-                    .post("api/profile/edit", formData, config)
-                    .then(res => {
-                        console.log(res.data.profile);
-                        const updatedUserProfile = res.data.profile;
-                        // const updatedUserGender = parseInt(
-                        //     this.userGender
-                        // );
-                        this.isDialogOpen.successDialog = true;
-                        // this.userProfile = updatedUserProfile;
-                        // this.userProfile.gender = updatedUserGender;
-                    })
-                    .catch(err => {
-                        this.setAxiosErrorData(err);
-                        console.log(err.response.data);
-                    });
+
+                axios.post("api/profile/edit", formData, config).then(res => {
+                    const updatedUserProfile = res.data.userProfile;
+                    this.isDialogOpen.successDialog = true;
+                }).catch(err => {
+                    this.setAxiosErrorData(err);
+                    console.log(err.response.data);
+                });
             } else {
                 console.log("エラーがあるよ！");
             }
         },
         //　テイスト情報を取得
         saveUserTaste: function() {
-            axios
-                .post("api/tastes/edit", {
+            axios.post("api/tastes/edit", {
                     tastes_id: this.selection
                 })
                 .then(res => {
                     console.log(res.data);
                 })
                 .catch(err => console.log(err));
-        }
-    },
-    computed:{
-        userGender:{
-            get: function () {
-                const userGender = this.userProfile.gender;
-                return this.gender[userGender - 1];
-            },
-    // setter 関数
-            set: function (newValue) {
-                console.log(newValue,200)
-                const userGender = this.userProfile.gender;
-                return this.gender[userGender - 1];
-            },
         }
     }
 };
