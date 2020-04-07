@@ -97,7 +97,7 @@
                         ></v-text-field>
                     </v-col>
                     <v-radio-group
-                        v-model="userProfile.gender"
+                        v-model="userGender"
                         row
                         label="性別"
                         id="genderRadio"
@@ -108,7 +108,7 @@
                             name="gender"
                             :key="index"
                             :label="item"
-                            :value="index"
+                            :value="item"
                             color="#996666"
                         ></v-radio>
                     </v-radio-group>
@@ -255,7 +255,6 @@ export default {
                 .get("api/profile/get")
                 .then(res => {
                     this.userProfile = res.data.profile;
-                    this.userProfile.gender = parseInt(res.data.profile.gender);
                     this.tastes = res.data.tastes;
                     this.filledUserGender = res.data.filledUserGender;
                     this.fileInfo = res.data.profile.image;
@@ -396,6 +395,12 @@ export default {
                     console.log(res.data);
                 })
                 .catch(err => console.log(err));
+        }
+    },
+    computed:{
+        userGender(){
+            const userGender = this.userProfile.gender;
+            return this.gender[userGender - 1];
         }
     }
 };
