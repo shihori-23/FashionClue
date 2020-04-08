@@ -1,5 +1,5 @@
 <template>
-  <span class="genderSpan">{{ gender[genderRole] }}</span>
+  <span class="genderSpan">{{ gender[genderRole - 1] }}</span>
 </template>
 
 <script>

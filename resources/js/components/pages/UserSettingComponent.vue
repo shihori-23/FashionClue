@@ -154,7 +154,7 @@
             <v-col v-if="filledUserGender">
                 <p>好みのテイストを３つまで選択して下さい</p>
                 <v-chip-group
-                    v-model="selection"
+                    v-model="selectedTastes"
                     active-class="red accent-3 white--text"
                     column
                     multiple
@@ -187,6 +187,9 @@
 <script>
 // import { VueCropper } from "vue-cropper";
 
+import mixins from '../../mixin';
+import {mapState, mapMutations,mapActions} from 'vuex';
+
 export default {
     components: {
         // VueCropper
@@ -201,7 +204,7 @@ export default {
          * @param {Boolean} filledUserGender・・・性別の登録があるか管理
          * @param {Object} userProfile・・・ユーザーのプロフィールデータを管理
          * @param {Array} gender・・・性別データを管理
-         * @param {Object} selection・・・選択済のテイストを管理
+         * @param {Object} selectedTastes・・・選択済のテイストを管理
          * @param {Array} tastes・・・テイストのデータを管理
          * @param {String} previewImage・・・プレビュー画像表示
          * @param {Array} axiosErrorMessages・・・DB側のバリデーションエラーを受け取る
@@ -232,13 +235,12 @@ export default {
             filledUserGender: false,
 
             //データ型の定義
-            userProfile: {},
             previewImage: "",
             gender: {
                 1: "レディース",
                 2: "メンズ"
             },
-            selection: [],
+            selectedTastes: [],
             tastes: [],
             axiosErrorMessages: []
         };
@@ -248,30 +250,37 @@ export default {
         this.getUserProfileData();
     },
     watch: {
-        selection: function(newVal, oldVal) {
-            console.log(this.selection);
+        selectedTastes: function(newVal, oldVal) {
+            console.log(this.selectedTastes);
         }
     },
+    mixins:[mixins],
+    computed:{
+        ...mapState({
+            userProfile: (state)=>state.userProfileData.userProfile
+        })
+    },
     methods: {
+        ...mapMutations({
+            setUserProfile: 'userProfileData/setUserProfile'
+        }),
         //プロフィールの取得
         async getUserProfileData() {
             const _this = this;
             const responseData = await axios.get("api/profile/get")
             const userProfileData = responseData.data;
-            Object.keys(userProfileData).map(keys=>_this[keys]= userProfileData[keys]);
+
+            this.setUserProfile(userProfileData)
             this.previewImage = userProfileData.userProfile.image
 
             if(userProfileData.selectedTastes.length > 0){
                 _this.selectedTasteConvert(userProfileData.selectedTastes);
             }
         },
-        /*　ダイアログを閉じる */
-        closeDialog(dialogName) {
-            this.isDialogOpen[dialogName] = false;
-        },
+
         //　テイストタグのデータを配列に入れる処理
         selectedTasteConvert(data) {
-            this.selection = data.map(row=>[row["taste_id"]])
+            this.selectedTastes = data.map(row=>[row["taste_id"]])
                 .reduce((a, b) =>a.concat(b));
         },
         //画像の処理
@@ -356,7 +365,7 @@ export default {
             if (this.$refs.form.validate()) {
                 const formData = this.setUserProfileData();
 
-                var config = {
+                const config = {
                     headers: {
                         "content-type": "multipart/form-data"
                     }
@@ -376,7 +385,7 @@ export default {
         //　テイスト情報を取得
         saveUserTaste: function() {
             axios.post("api/tastes/edit", {
-                    tastes_id: this.selection
+                    tastes_id: this.selectedTastes
                 })
                 .then(res => {
                     console.log(res.data);

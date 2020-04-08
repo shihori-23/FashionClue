@@ -6,21 +6,18 @@
                 <v-list-item>
                     <v-list-item-avatar size="56">
                         <img
-                            :src="userProfileData.image"
+                            :src="userProfile.image"
                             alt="ユーザーのアイコン画像"
                         />
                     </v-list-item-avatar>
                     <v-list-item-content>
                         <v-list-item-title class="title">{{
-                            userProfileData.name
+                            userProfile.name
                         }}</v-list-item-title>
-                        <v-list-item-subtitle>
-                            <Gender
-                                :genderRole="userProfileData.gender"
-                                class="caption"
-                            />
-                            <span v-if="userProfileData.age" class="caption"
-                                >/ {{ userProfileData.age }}歳</span
+                            <span class="genderSpan">{{userGender}}</span>
+
+                            <span v-if="userProfile.age" class="caption"
+                                >/ {{ userProfile.age }}歳</span
                             >
                         </v-list-item-subtitle>
                     </v-list-item-content>
@@ -28,8 +25,8 @@
 
                 <v-card-text class="bioTextWrap">
                     <p class="caption">自己紹介</p>
-                    <p v-if="userProfileData.bio" class="bioText">
-                        {{ userProfileData.bio }}
+                    <p v-if="userProfile.bio" class="bioText">
+                        {{ userProfile.bio }}
                     </p>
                     <span v-if="selectedTastes">
                         <v-chip
@@ -88,19 +85,19 @@
                     >
                         <v-list-item>
                             <v-list-item-avatar size="36">
-                                <img :src="userProfileData.image" />
+                                <img :src="userProfile.image" />
                             </v-list-item-avatar>
 
                             <v-list-item-content class="list_title_wrap">
                                 <v-list-item-title class>{{
-                                    userProfileData.name
+                                    userProfile.name
                                 }}</v-list-item-title>
                                 <v-list-item-subtitle class="caption">
                                     <Gender
-                                        :genderRole="userProfileData.gender"
+                                        :genderRole="userProfile.gender"
                                     />
-                                    <span v-if="userProfileData.age"
-                                        >/ {{ userProfileData.age }}歳</span
+                                    <span v-if="userProfile.age"
+                                        >/ {{ userProfile.age }}歳</span
                                     >
                                 </v-list-item-subtitle>
                                 <span
@@ -143,18 +140,18 @@
                     >
                         <v-list-item>
                             <v-list-item-avatar size="36">
-                                <v-img :src="userProfileData.image"></v-img>
+                                <v-img :src="userProfile.image"></v-img>
                             </v-list-item-avatar>
                             <v-list-item-content class="list_title_wrap">
                                 <v-list-item-title class>{{
-                                    userProfileData.name
+                                    userProfile.name
                                 }}</v-list-item-title>
                                 <v-list-item-subtitle class="caption">
                                     <Gender
-                                        :genderRole="userProfileData.gender"
+                                        :genderRole="userProfile.gender"
                                     />
-                                    <span v-if="userProfileData.age"
-                                        >/ {{ userProfileData.age }}歳</span
+                                    <span v-if="userProfile.age"
+                                        >/ {{ userProfile.age }}歳</span
                                     >
                                 </v-list-item-subtitle>
                                 <span
@@ -186,6 +183,9 @@
 </template>
 
 <script>
+import mixins from '../../mixin';
+import {mapState, mapMutations,mapActions} from 'vuex';
+
 import Gender from "../items/GenderComponent";
 
 export default {
@@ -196,7 +196,7 @@ export default {
         /**
          *
          * @param {Object} tabConfigurations・・・タブバーの設定を管理
-         * @param {Object} userProfileData・・・ユーザーのプロフィールデータを管理
+         * @param {Object} userProfile・・・ユーザーのプロフィールデータを管理
          * @param {Object} userPostData・・・ユーザーのプロフィールデータを管理
          * @param {Object} userAnswerData・・・ユーザーのプロフィールデータを管理
          * @param {Array} gender・・・性別データを管理
@@ -211,7 +211,6 @@ export default {
                 centered: true,
                 grow: true
             },
-            userProfileData: {},
             userPostData: {},
             userAnswerData: {},
             selectedTastes: []
@@ -219,30 +218,56 @@ export default {
     },
     created() {},
     mounted() {
-        this.getUserProfileData();
+        this.getUserProfile();
+    },
+    computed:{
+        ...mapState({
+            userProfile: (state)=>state.userProfileData.userProfile
+        }),
+        userGender(){
+            const gender =  {
+                1: "レディース",
+                2: "メンズ"
+            };
+
+            return gender[this.userProfile.gender]
+
+        }
     },
     methods: {
+        ...mapMutations({
+            setUserProfile: 'userProfileData/setUserProfile'
+        }),
         //プロフィールの取得
-        getUserProfileData: function() {
-            axios
-                .get("api/profile/show")
-                .then(res => {
-                    const resData = res.data;
-                    const userProfileData = resData.profile;
-                    this.userProfileData = userProfileData;
-                    this.userProfileData.gender = parseInt(
-                        userProfileData.gender
-                    );
-                    this.selectedTastes = resData.selectedTastes;
-                    this.userPostData = resData.userPostData;
-                    this.userAnswerData = resData.userAnswerData;
-                    console.log(res.data);
-                    this.selectedTasteConvert(res);
-                })
-                .catch(err => console.log(err));
+        async getUserProfile() {
+            // axios.get("api/profile/show").then(res => {
+            //         const resData = res.data;
+            //         console.log(2, resData)
+            //         const userProfile = resData.userProfile;
+            //         this.userProfile = userProfile;
+            //         // this.userProfile.gender = parseInt(
+            //         //     userProfile.gender
+            //         // );
+            //         this.selectedTastes = resData.selectedTastes;
+            //         this.userPostData = resData.userPostData;
+            //         this.userAnswerData = resData.userAnswerData;
+            //         console.log(res.data);
+
+            //         this.selectedTasteConvert(res);
+            //     })
+            //     .catch(err => console.log(err));
+
+            const _this = this;
+            const responseData = await axios.get("api/profile/show");
+            const userProfileData = responseData.data;
+
+            this.setUserProfile(userProfileData)
+
+
+
         },
         //　テイストタグのデータを配列に入れる処理
-        selectedTasteConvert: function(res) {
+        selectedTasteConvert(res) {
             const selectedTasteArray = res.data.selectedTastes;
             const selectedtasteList = selectedTasteArray
                 .map(function(row) {
