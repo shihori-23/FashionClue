@@ -1,30 +1,33 @@
 const state = {
-    userProfile: {
-        name: "",
-        email: "",
-        bio: "",
-        age: "",
-        image: "",
-    },
-
-
-}
-
+  userProfile: {
+    name: '',
+    email: '',
+    bio: '',
+    age: '',
+    image: '',
+  },
+  selectedTastes: [],
+};
 
 const mutations = {
+  setUserProfile(state, payload) {
+    Object.keys(payload).map((keys) => (state[keys] = payload[keys]));
+    console.log(3, state);
+  },
 
-    setUserProfile(state, payload) {
-        console.log(state, payload)
-        Object.keys(payload).map(keys => state[keys] = payload[keys]);
+  setUsetTaste(state, payload) {},
+};
 
-    }
-
-}
-
-
+const actions = {
+  setUserProfile({ commit }, data) {
+    console.log(data);
+    commit('setUserProfile', data);
+  },
+};
 
 export default {
-    namespaced: true,
-    state,
-    mutations
-}
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+};

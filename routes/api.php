@@ -25,7 +25,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('uid', 'Api\UsersController@uid');
 
     //　通知があるか取得
-    Route::get('notice','Api\NoticeController@show');
+    Route::get('notice', 'Api\NoticeController@show');
 
     //　ホーム画面で必要なデータの取得
     Route::get('get/home', 'Api\HomeController@show');
@@ -70,6 +70,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     //　通知ページ
     Route::get('notice/get', 'Api\NoticeController@showNoticeData');
-//認証閉じタグここまで
+
+
+    Route::get('tastes/all', 'Api\TastesController@getAllTastes');
+
+
+
+
+    //認証閉じタグここまで
 });
 //認証閉じタグここまで
